@@ -46,14 +46,14 @@ import Terminal from '../components/Terminal.astro';
             <div
               class="group relative overflow-hidden rounded-lg border border-border-subtle bg-bg-secondary"
             >
-              <div class="flex items-center justify-between px-4 py-3">
-                <code class="text-sm text-text-secondary">
+              <div class="flex items-center justify-center gap-4 px-4 py-3">
+                <code class="text-sm text-text-secondary font-mono">
                   <span class="text-accent-green">$</span>
                   curl -fsSL https://quint.codes/install.sh | bash -s -- -g
                 </code>
                 <button
                   id="copy-btn"
-                  class="rounded px-2 py-1 text-xs text-text-muted transition-colors hover:bg-bg-tertiary hover:text-text-primary"
+                  class="rounded px-2 py-1 text-xs text-text-muted transition-colors hover:bg-bg-tertiary hover:text-text-primary shrink-0"
                 >
                   Copy
                 </button>
