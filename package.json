@@ -1,0 +1,31 @@
+{
+  "name": "qc-landing",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Landing page for quint-code - structured reasoning for AI coding tools",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m0n0x41d/qc-landing.git"
+  },
+  "keywords": ["astro", "landing-page", "quint-code"],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/m0n0x41d/qc-landing/issues"
+  },
+  "homepage": "https://github.com/m0n0x41d/qc-landing#readme",
+  "dependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "astro": "^5.16.6",
+    "tailwindcss": "^3.4.19"
+  }
+}

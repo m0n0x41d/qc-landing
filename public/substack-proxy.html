@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><title>Subscribe</title></head>
+<body>
+<script>
+window.addEventListener('message', async (event) => {
+  if (event.data?.type === 'subscribe') {
+    try {
+      const response = await fetch('https://ivanzakutnii.substack.com/api/v1/free', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          email: event.data.email,
+          first_url: window.location.href,
+          current_url: window.location.href,
+        }),
+      });
+
+      const data = await response.json();
+      event.source.postMessage({ type: 'subscribed', data }, event.origin);
+    } catch (error) {
+      event.source.postMessage({ type: 'error', error: error.message }, event.origin);
+    }
+  }
+});
+
+window.parent.postMessage({ type: 'ready' }, '*');
+</script>
+</body>
+</html>

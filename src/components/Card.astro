@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  class?: string;
+}
+
+const { title, class: className = '' } = Astro.props;
+---
+
+<div
+  class:list={[
+    'rounded-xl border border-border-subtle bg-bg-secondary p-6 transition-all duration-200 hover:border-border-hover hover:-translate-y-0.5',
+    className,
+  ]}
+>
+  <h3 class="mb-3 font-mono text-lg font-semibold text-text-primary">
+    {title}
+  </h3>
+  <div class="text-sm text-text-secondary">
+    <slot />
+  </div>
+</div>

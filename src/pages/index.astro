@@ -1,0 +1,437 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
+import Terminal from '../components/Terminal.astro';
+---
+
+<Layout title="Structured Reasoning for AI Coding Tools">
+  <Header />
+
+  <main class="flex-1">
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden py-24 sm:py-32">
+      <div class="hero-glow"></div>
+      <div class="bg-grid absolute inset-0"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-center text-center">
+          <!-- ASCII Logo - Desktop -->
+<pre class="ascii-logo hidden md:block" aria-hidden="true"><span class="ascii-1"> ██████╗ ██╗   ██╗██╗███╗   ██╗████████╗</span>
+<span class="ascii-2">██╔═══██╗██║   ██║██║████╗  ██║╚══██╔══╝</span>
+<span class="ascii-3">██║   ██║██║   ██║██║██╔██╗ ██║   ██║   </span>
+<span class="ascii-4">██║▄▄ ██║██║   ██║██║██║╚██╗██║   ██║   </span>
+<span class="ascii-5">╚██████╔╝╚██████╔╝██║██║ ╚████║   ██║   </span>
+<span class="ascii-6"> ╚══▀▀═╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝   ╚═╝   </span></pre>
+          <!-- Text Logo - Mobile -->
+          <h1
+            class="gradient-text-glow font-mono text-5xl font-bold md:hidden"
+          >
+            quint-code
+          </h1>
+          <!-- SR-only heading -->
+          <span class="sr-only">quint-code</span>
+
+          <p class="mt-6 max-w-2xl text-xl text-text-secondary sm:text-2xl">
+            Structured reasoning for AI coding tools
+          </p>
+
+          <p class="mt-4 text-lg text-text-muted">
+            Make better decisions. Remember why you made them.
+          </p>
+
+          <!-- Install Command -->
+          <div class="mt-10 w-full max-w-2xl">
+            <div
+              class="group relative overflow-hidden rounded-lg border border-border-subtle bg-bg-secondary"
+            >
+              <div class="flex items-center justify-between px-4 py-3">
+                <code class="text-sm text-text-secondary">
+                  <span class="text-accent-green">$</span>
+                  curl -fsSL https://raw.githubusercontent.com/m0n0x41d/quint-code/main/install.sh
+                  | bash
+                </code>
+                <button
+                  id="copy-btn"
+                  class="rounded px-2 py-1 text-xs text-text-muted transition-colors hover:bg-bg-tertiary hover:text-text-primary"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="mt-8 flex flex-wrap justify-center gap-4">
+            <Button href="/learn">Get Started</Button>
+            <Button
+              href="https://github.com/m0n0x41d/quint-code"
+              variant="secondary"
+              external
+            >
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                ></path>
+              </svg>
+              View on GitHub
+            </Button>
+          </div>
+
+          <!-- Platform Badges -->
+          <div class="platform-badges-container mt-10 flex flex-wrap justify-center gap-x-6 gap-y-2">
+            <span class="platform-badge">Claude Code</span>
+            <span class="text-text-muted/30">•</span>
+            <span class="platform-badge">Cursor</span>
+            <span class="text-text-muted/30">•</span>
+            <span class="platform-badge">Gemini CLI</span>
+            <span class="text-text-muted/30">•</span>
+            <span class="platform-badge">Codex CLI</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="border-t border-border-subtle py-20">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-3xl text-center">
+          <p class="text-lg leading-relaxed text-text-secondary">
+            You're deep in a codebase. You need to make an architectural
+            decision.
+            <br />
+            Event choreography? Saga pattern? Outbox with CDC?
+          </p>
+          <p class="mt-4 text-lg text-text-secondary">
+            Your AI assistant gives you an answer. It's coherent.
+            <span class="text-text-primary">But:</span>
+          </p>
+        </div>
+
+        <div class="mt-12 grid gap-6 sm:grid-cols-3">
+          <Card title='"Why this approach?"'>
+            <p>
+              You won't remember the reasoning in 3 months. The decision lives
+              in a chat thread you'll never find again.
+            </p>
+          </Card>
+          <Card title='"What alternatives?"'>
+            <p>
+              Were there alternatives, or did you anchor on the first idea? No
+              record of what was considered and rejected.
+            </p>
+          </Card>
+          <Card title='"When does it expire?"'>
+            <p>
+              The tradeoffs shift as the system evolves. No one tracks when
+              assumptions become invalid.
+            </p>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solution Section: ADI Cycle -->
+    <section class="border-t border-border-subtle bg-bg-secondary/50 py-20">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-3xl text-center">
+          <h2 class="text-3xl font-bold text-text-primary sm:text-4xl">
+            The ADI Cycle
+          </h2>
+          <p class="mt-4 font-mono text-text-muted">
+            Abduction → Deduction → Induction → Audit → Decision
+          </p>
+          <p class="mt-6 text-lg text-text-secondary">
+            AI generates options. You decide. Everything is documented.
+          </p>
+        </div>
+
+        <div class="mt-16 grid gap-4 sm:grid-cols-5">
+          <div
+            class="flex flex-col items-center rounded-lg border border-border-subtle bg-bg-secondary p-6 text-center"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-accent-green/10 font-mono text-lg font-bold text-accent-green"
+            >
+              1
+            </div>
+            <h3 class="mt-4 font-semibold text-text-primary">Hypothesize</h3>
+            <p class="mt-2 text-sm text-text-muted">
+              Generate 3-5 competing approaches
+            </p>
+          </div>
+          <div
+            class="flex flex-col items-center rounded-lg border border-border-subtle bg-bg-secondary p-6 text-center"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-accent-blue/10 font-mono text-lg font-bold text-accent-blue"
+            >
+              2
+            </div>
+            <h3 class="mt-4 font-semibold text-text-primary">Verify</h3>
+            <p class="mt-2 text-sm text-text-muted">
+              Check logical consistency
+            </p>
+          </div>
+          <div
+            class="flex flex-col items-center rounded-lg border border-border-subtle bg-bg-secondary p-6 text-center"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-accent-purple/10 font-mono text-lg font-bold text-accent-purple"
+            >
+              3
+            </div>
+            <h3 class="mt-4 font-semibold text-text-primary">Test</h3>
+            <p class="mt-2 text-sm text-text-muted">
+              Gather evidence: benchmarks, docs
+            </p>
+          </div>
+          <div
+            class="flex flex-col items-center rounded-lg border border-border-subtle bg-bg-secondary p-6 text-center"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-accent-green/10 font-mono text-lg font-bold text-accent-green"
+            >
+              4
+            </div>
+            <h3 class="mt-4 font-semibold text-text-primary">Audit</h3>
+            <p class="mt-2 text-sm text-text-muted">
+              WLNK analysis, check blind spots
+            </p>
+          </div>
+          <div
+            class="flex flex-col items-center rounded-lg border border-border-subtle bg-bg-secondary p-6 text-center"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-accent-blue/10 font-mono text-lg font-bold text-accent-blue"
+            >
+              5
+            </div>
+            <h3 class="mt-4 font-semibold text-text-primary">Decide</h3>
+            <p class="mt-2 text-sm text-text-muted">
+              Create Design Rationale Record
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Before/After Section -->
+    <section class="border-t border-border-subtle py-20">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <h2
+          class="mb-12 text-center text-3xl font-bold text-text-primary sm:text-4xl"
+        >
+          Before & After
+        </h2>
+
+        <div class="mx-auto max-w-4xl overflow-hidden rounded-xl border border-border-subtle">
+          <div class="grid sm:grid-cols-2">
+            <div class="border-b border-border-subtle bg-bg-secondary p-6 sm:border-b-0 sm:border-r">
+              <h3 class="mb-4 font-mono text-sm font-semibold text-red-400">
+                Without quint-code
+              </h3>
+              <ul class="space-y-4 text-sm text-text-secondary">
+                <li class="flex gap-3">
+                  <span class="text-red-400">×</span>
+                  <span>"Let's use Saga pattern" <em class="text-text-muted">(first idea)</em></span>
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-red-400">×</span>
+                  <span>"Why did we build it this way?" <em class="text-text-muted">(3 months later)</em></span>
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-red-400">×</span>
+                  <span>"Is this assumption still valid?"</span>
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-red-400">×</span>
+                  <span>Same debates in different meetings</span>
+                </li>
+              </ul>
+            </div>
+            <div class="bg-bg-secondary p-6">
+              <h3 class="mb-4 font-mono text-sm font-semibold text-accent-green">
+                With quint-code
+              </h3>
+              <ul class="space-y-4 text-sm text-text-secondary">
+                <li class="flex gap-3">
+                  <span class="text-accent-green">✓</span>
+                  <span>3 approaches analyzed, tradeoffs documented</span>
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-accent-green">✓</span>
+                  <span>Check <code class="text-accent-blue">DRR-001.md</code> — full rationale preserved</span>
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-accent-green">✓</span>
+                  <span>Run <code class="text-accent-blue">/q-decay</code> — evidence freshness tracked</span>
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-accent-green">✓</span>
+                  <span>Query knowledge base — past decisions searchable</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Terminal Demo Section -->
+    <section class="border-t border-border-subtle bg-bg-secondary/50 py-20">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <h2
+          class="mb-12 text-center text-3xl font-bold text-text-primary sm:text-4xl"
+        >
+          See it in action
+        </h2>
+
+        <div class="mx-auto max-w-3xl">
+          <Terminal>
+            <div class="space-y-4">
+              <div>
+                <span class="text-accent-green">$</span>
+                <span class="text-text-primary">
+                  /q1-hypothesize "How should we handle cross-service transactions?"
+                </span>
+              </div>
+              <div class="text-text-muted">Generating hypotheses...</div>
+              <div class="space-y-3 pl-4 border-l-2 border-border-subtle">
+                <div>
+                  <span class="text-accent-blue">H1:</span>
+                  <span class="text-text-primary"> Saga pattern with orchestrator</span>
+                  <div class="text-text-muted text-xs mt-1">Central coordinator manages the workflow</div>
+                </div>
+                <div>
+                  <span class="text-accent-blue">H2:</span>
+                  <span class="text-text-primary"> Event choreography</span>
+                  <div class="text-text-muted text-xs mt-1">Services react to domain events, no coordinator</div>
+                </div>
+                <div>
+                  <span class="text-accent-blue">H3:</span>
+                  <span class="text-text-primary"> Outbox pattern with CDC</span>
+                  <div class="text-text-muted text-xs mt-1">Transactional outbox, Change Data Capture for publishing</div>
+                </div>
+              </div>
+              <div class="text-text-muted">
+                Hypotheses saved to <span class="text-accent-green">.quint/knowledge/L0/</span>
+              </div>
+              <div class="text-text-secondary">
+                Next: Run <span class="text-accent-blue">/q2-verify</span> to check logical consistency
+              </div>
+            </div>
+          </Terminal>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="border-t border-border-subtle py-20">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div
+          class="mx-auto max-w-xl rounded-2xl border border-border-subtle bg-bg-secondary p-8 text-center sm:p-12"
+        >
+          <p class="text-sm font-medium text-accent-green">From the creator of quint-code</p>
+          <h2 class="mt-3 text-2xl font-bold text-text-primary">
+            ivan zakutni
+          </h2>
+          <p class="mt-1 text-sm text-text-muted">First Principles Engineering</p>
+          <p class="mt-4 text-text-secondary">
+            Production AI systems. Software architecture decisions that don't age like milk.
+            The same methodology behind quint-code — applied to real-world engineering problems.
+          </p>
+          <p class="mt-3 text-sm text-text-muted">
+            Deep dives, not hot takes. For engineers who ship.
+          </p>
+
+          <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+            <input
+              type="email"
+              id="newsletter-email"
+              placeholder="your@email.com"
+              required
+              class="flex-1 rounded-lg border border-border-subtle bg-bg-primary px-4 py-3 text-text-primary placeholder:text-text-muted focus:border-accent-green focus:outline-none"
+            />
+            <button
+              id="subscribe-btn"
+              type="button"
+              class="rounded-lg bg-accent-green px-6 py-3 font-semibold text-bg-primary transition-colors hover:bg-green-600 disabled:opacity-50"
+            >
+              Subscribe
+            </button>
+          </div>
+          <p id="subscribe-status" class="mt-4 text-xs text-text-muted">Free. No spam. Unsubscribe anytime.</p>
+
+          <iframe id="substack-frame" src="/substack-proxy.html" class="hidden"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  // Copy install command
+  const copyBtn = document.getElementById('copy-btn');
+  const installCmd =
+    'curl -fsSL https://raw.githubusercontent.com/m0n0x41d/quint-code/main/install.sh | bash';
+
+  copyBtn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(installCmd);
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => {
+        copyBtn.textContent = 'Copy';
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  });
+
+  // Newsletter iframe subscription
+  let iframeReady = false;
+  const iframe = document.getElementById('substack-frame') as HTMLIFrameElement;
+  const subscribeBtn = document.getElementById('subscribe-btn');
+  const emailInput = document.getElementById('newsletter-email') as HTMLInputElement;
+  const statusEl = document.getElementById('subscribe-status');
+
+  window.addEventListener('message', (event) => {
+    if (event.data?.type === 'ready') {
+      iframeReady = true;
+    }
+    if (event.data?.type === 'subscribed') {
+      if (statusEl) {
+        statusEl.textContent = '✓ Check your email to confirm!';
+        statusEl.classList.remove('text-text-muted');
+        statusEl.classList.add('text-accent-green');
+      }
+      if (subscribeBtn) subscribeBtn.textContent = 'Subscribed!';
+    }
+    if (event.data?.type === 'error') {
+      if (statusEl) {
+        statusEl.textContent = 'Error. Try again or visit Substack directly.';
+        statusEl.classList.remove('text-text-muted');
+        statusEl.classList.add('text-red-400');
+      }
+    }
+  });
+
+  subscribeBtn?.addEventListener('click', () => {
+    const email = emailInput?.value;
+    if (!email) {
+      emailInput?.focus();
+      return;
+    }
+    if (!iframeReady) {
+      // Fallback: open Substack directly
+      window.open('https://ivanzakutnii.substack.com', '_blank');
+      return;
+    }
+
+    subscribeBtn.textContent = 'Subscribing...';
+    iframe?.contentWindow?.postMessage({ type: 'subscribe', email }, '*');
+  });
+</script>
