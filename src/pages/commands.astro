@@ -17,7 +17,7 @@ const commands: Command[] = [
   {
     name: '/q0-init',
     phase: 'Setup',
-    description: 'Initialize the .quint/ directory structure and scan repository context.',
+    description: 'Initialize .quint/ and record the Bounded Context.',
     usage: '/q0-init',
     example: 'Run this once at the start of a new project or when starting a new decision cycle.',
     related: ['/q1-hypothesize'],
@@ -25,23 +25,23 @@ const commands: Command[] = [
   {
     name: '/q1-hypothesize',
     phase: 'Abduction',
-    description: 'Generate 3-5 competing hypotheses for a given problem. Each hypothesis should be distinct.',
+    description: 'Generate L0 hypotheses for a problem.',
     usage: '/q1-hypothesize "problem description"',
-    example: '/q1-hypothesize "How should we handle user authentication?"',
+    example: '/q1-hypothesize "How should we handle cross-service transactions?"',
     related: ['/q1-add', '/q2-verify'],
   },
   {
     name: '/q1-add',
     phase: 'Abduction',
-    description: 'Manually inject a hypothesis into the current cycle. Useful when you have a specific approach in mind.',
+    description: 'Manually add your own L0 hypothesis.',
     usage: '/q1-add "hypothesis description"',
-    example: '/q1-add "Use OAuth 2.0 with JWT refresh tokens"',
+    example: '/q1-add "Use Saga pattern with orchestrator"',
     related: ['/q1-hypothesize', '/q2-verify'],
   },
   {
     name: '/q2-verify',
     phase: 'Deduction',
-    description: 'Check hypotheses for logical consistency. Eliminates contradictory or impossible approaches.',
+    description: 'Verify logic and constraints, promoting claims from L0 to L1.',
     usage: '/q2-verify [hypothesis-id]',
     example: '/q2-verify H1',
     related: ['/q1-hypothesize', '/q3-validate'],
@@ -49,7 +49,7 @@ const commands: Command[] = [
   {
     name: '/q3-validate',
     phase: 'Induction',
-    description: 'Gather empirical evidence for a hypothesis. Runs internal tests or external research.',
+    description: 'Gather empirical evidence, promoting claims from L1 to L2.',
     usage: '/q3-validate [hypothesis-id]',
     example: '/q3-validate H2',
     related: ['/q2-verify', '/q4-audit'],
@@ -57,7 +57,7 @@ const commands: Command[] = [
   {
     name: '/q4-audit',
     phase: 'Audit',
-    description: 'Run WLNK analysis and bias check. Identifies the weakest evidence and potential blind spots.',
+    description: 'Run an assurance audit and calculate trust scores.',
     usage: '/q4-audit',
     example: 'Automatically analyzes all hypotheses in the current cycle.',
     related: ['/q3-validate', '/q5-decide'],
@@ -65,7 +65,7 @@ const commands: Command[] = [
   {
     name: '/q5-decide',
     phase: 'Decision',
-    description: 'Create a Design Rationale Record (DRR) and archive the decision cycle.',
+    description: 'Select the winning hypothesis and create a Design Rationale Record.',
     usage: '/q5-decide [hypothesis-id]',
     example: '/q5-decide H2',
     related: ['/q4-audit', '/q-query'],
@@ -73,7 +73,7 @@ const commands: Command[] = [
   {
     name: '/q-status',
     phase: 'Utility',
-    description: 'Show the current phase of the cycle and next recommended steps.',
+    description: 'Show the current state of the reasoning cycle.',
     usage: '/q-status',
     example: 'Run anytime to see where you are in the decision process.',
     related: [],
@@ -81,7 +81,7 @@ const commands: Command[] = [
   {
     name: '/q-query',
     phase: 'Utility',
-    description: 'Search the knowledge base for past decisions and evidence.',
+    description: "Search the project's knowledge base.",
     usage: '/q-query "search term"',
     example: '/q-query "authentication"',
     related: ['/q-decay'],
@@ -89,10 +89,26 @@ const commands: Command[] = [
   {
     name: '/q-decay',
     phase: 'Utility',
-    description: 'Check evidence freshness. Identifies claims that may need re-verification.',
+    description: 'Check for and report expired evidence (Epistemic Debt).',
     usage: '/q-decay',
-    example: 'Flags evidence older than configured threshold (default: 90 days).',
-    related: ['/q-query'],
+    example: 'Flags evidence older than configured threshold.',
+    related: ['/q-query', '/q-actualize'],
+  },
+  {
+    name: '/q-actualize',
+    phase: 'Utility',
+    description: 'Reconcile the knowledge base with recent code changes.',
+    usage: '/q-actualize',
+    example: 'Run after significant code changes to update the knowledge base.',
+    related: ['/q-decay', '/q-query'],
+  },
+  {
+    name: '/q-reset',
+    phase: 'Utility',
+    description: 'Discard the current reasoning cycle.',
+    usage: '/q-reset',
+    example: 'Use when you want to start fresh without completing the current cycle.',
+    related: ['/q0-init'],
   },
 ];
 

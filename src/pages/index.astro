@@ -49,7 +49,7 @@ import Terminal from '../components/Terminal.astro';
               <div class="flex items-center justify-center gap-2 sm:gap-4 px-3 sm:px-4 py-3 overflow-x-auto">
                 <code class="text-xs sm:text-sm text-text-secondary font-mono whitespace-nowrap">
                   <span class="text-accent-green">$</span>
-                  curl -fsSL https://quint.codes/install.sh | bash -s -- -g
+                  curl -fsSL https://quint.codes/install.sh | bash
                 </code>
                 <button
                   id="copy-btn"
@@ -373,7 +373,7 @@ import Terminal from '../components/Terminal.astro';
   // Copy install command
   const copyBtn = document.getElementById('copy-btn');
   const installCmd =
-    'curl -fsSL https://quint.codes/install.sh | bash -s -- -g';
+    'curl -fsSL https://quint.codes/install.sh | bash';
 
   copyBtn?.addEventListener('click', async () => {
     try {
