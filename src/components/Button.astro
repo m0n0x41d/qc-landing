@@ -3,12 +3,13 @@ interface Props {
   href: string;
   variant?: 'primary' | 'secondary';
   external?: boolean;
+  class?: string;
 }
 
-const { href, variant = 'primary', external = false } = Astro.props;
+const { href, variant = 'primary', external = false, class: className = '' } = Astro.props;
 
 const baseClasses =
-  'inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-semibold transition-all duration-200';
+  'inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 min-h-[44px] text-sm font-semibold transition-all duration-200';
 
 const variantClasses = {
   primary:
@@ -17,7 +18,7 @@ const variantClasses = {
     'border border-border-subtle bg-transparent text-text-primary hover:border-text-muted hover:bg-bg-secondary',
 };
 
-const classes = `${baseClasses} ${variantClasses[variant]}`;
+const classes = `${baseClasses} ${variantClasses[variant]} ${className}`.trim();
 ---
 
 <a
