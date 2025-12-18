@@ -5,9 +5,9 @@ export default {
     extend: {
       colors: {
         bg: {
-          primary: '#0d1117',
-          secondary: '#161b22',
-          tertiary: '#21262d',
+          primary: '#020617',
+          secondary: '#0f172a',
+          tertiary: '#1e293b',
         },
         text: {
           primary: '#fafafa',
@@ -15,7 +15,7 @@ export default {
           muted: '#8b949e',
         },
         accent: {
-          green: '#22c55e',
+          green: '#46AB47',
           blue: '#3b82f6',
           purple: '#8b5cf6',
           // Fire palette for logo only
@@ -24,8 +24,8 @@ export default {
           red: '#ff4444',
         },
         border: {
-          subtle: '#30363d',
-          hover: '#484f58',
+          subtle: '#1e293b',
+          hover: '#334155',
         },
       },
       fontFamily: {
