@@ -40,3 +40,25 @@
     </div>
   </div>
 </header>
+
+<script>
+  async function fetchHeaderStars() {
+    try {
+      const res = await fetch('https://api.github.com/repos/m0n0x41d/quint-code');
+      if (!res.ok) return;
+      const data = await res.json();
+      const stars = data.stargazers_count;
+
+      document.querySelectorAll('[id$="-stars"]').forEach(el => {
+        el.textContent = stars;
+      });
+      document.querySelectorAll('[data-stars]').forEach(el => {
+        el.textContent = stars;
+      });
+    } catch (err) {
+      console.error('Failed to fetch stars:', err);
+    }
+  }
+
+  fetchHeaderStars();
+</script>
