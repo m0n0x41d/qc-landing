@@ -15,11 +15,11 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 
   <div style="position: relative;">
     <pre><code>/h-reason explain how to work with haft
-effectively — what commands exist, when to use
-each one, and what's the recommended workflow</code></pre>
+effectively — what capabilities exist and which
+one fits my current project question</code></pre>
     <button
       class="copy-btn"
-      data-copy="/h-reason explain how to work with haft effectively — what commands exist, when to use each one, and what's the recommended workflow"
+      data-copy="/h-reason explain how to work with haft effectively — what capabilities exist and which one fits my current project question"
       style="position: absolute; top: 0.75rem; right: 0.75rem; background: #1a1a1a; border: 1px solid #333; color: #888; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 3px; cursor: pointer; transition: color 0.2s, border-color 0.2s;"
     >Copy</button>
   </div>
@@ -82,7 +82,7 @@ haft init --codex</code></pre>
     The haft-specific sections (FPF Mode, Commands, Glossary) are the important parts.
   </p>
 
-  <h2>Two ways to make decisions</h2>
+  <h2>Start from the current question</h2>
 
   <h3>Quick mode: /h-reason</h3>
 
@@ -94,40 +94,40 @@ haft init --codex</code></pre>
 Latency matters, team is 3 people, we're on AWS.</code></pre>
 
   <p>
-    The agent frames the problem, generates options, compares them, and records the decision —
-    all in one conversation. Good for getting started and for decisions where speed matters more
-    than thoroughness.
+    The agent recovers the current object and question, consults FPF source when pattern choice is
+    material, and uses only the capabilities needed for the smallest useful result. It does not
+    create a chain of project artifacts unless a receiving use requires them.
   </p>
 
   <div class="callout-warn">
     <p>
-      <strong>Honest trade-off:</strong> <code>/h-reason</code> runs the entire cycle in one
-      conversation. With long context, the agent can lose focus — comparison criteria may blur,
-      variant generation may become superficial, the verification gate may get rushed. This is
-      not a haft limitation; it's how LLMs work with large prompts. The context fills up,
-      and quality at each step can degrade.
+      <strong>Honest trade-off:</strong> a broad <code>/h-reason</code> request can still accumulate
+      too much context. When the current need is already clear, invoke the narrower capability
+      directly so its question, evidence, and result boundary stay explicit.
     </p>
   </div>
 
-  <h3>Full manual cycle (recommended for important decisions)</h3>
+  <h3>Direct capability use</h3>
 
   <p>
-    For decisions that are hard to reverse, affect the team, or have real consequences if wrong —
-    drive each step yourself through all five modes:
+    For work that is hard to reverse, invoke each capability only when its own condition becomes
+    current. The list below is a palette, not an execution order:
   </p>
 
-  <pre><code>/h-frame  → /h-explore → /h-compare → /h-decide → /h-verify</code></pre>
+  <pre><code>/h-frame
+/h-explore
+/h-compare
+/h-decide
+/h-verify</code></pre>
 
   <p>
-    Each command loads its own focused prompt with specific guidance for that step. The context
-    stays clean. You think through each step deliberately — and the structured process works for
-    your brain too, not just the AI's. Defining the problem forces clarity. Setting criteria before
-    seeing options prevents bias. The verification gate catches weak reasoning.
+    Each command loads focused guidance for one capability. It may consume an inline question or
+    an existing project-memory relation; completion of one command never makes another mandatory.
   </p>
 
   <p>
-    This is where haft delivers the best results. Start here for anything that matters.
-    See the <a href="/docs/five-modes">five modes walkthrough</a> for details on each step.
+    See the <a href="/docs/five-modes">capability walkthrough</a> for the condition and result of
+    each entry point.
   </p>
 
   <h2>What happens after a decision?</h2>
@@ -144,9 +144,9 @@ Latency matters, team is 3 people, we're on AWS.</code></pre>
   </ul>
 
   <p>
-    You don't need to do anything extra. The system is self-correcting: when decisions go stale,
-    they surface. When you work on files covered by a decision, the agent can mention it. The
-    decide, measure, reframe loop runs naturally as part of your workflow.
+    Read-only status can surface stale evidence, drift, and exact code links. These are attention
+    cues, not proof and not authorization to interrupt unrelated Work. Verification or reframing
+    happens only when that question becomes current.
   </p>
 
   <h2>See your project state</h2>
@@ -225,8 +225,8 @@ Latency matters, team is 3 people, we're on AWS.</code></pre>
   <h2>Next steps</h2>
 
   <ul>
-    <li><a href="/docs/reasoning">How /h-reason works</a> — the full reasoning workflow</li>
-    <li><a href="/docs/five-modes">The five modes</a> — frame, explore, compare, decide, verify</li>
+    <li><a href="/docs/reasoning">How /h-reason works</a> — the source-first umbrella entry point</li>
+    <li><a href="/docs/five-modes">Independent capabilities</a> — when frame, explore, compare, decide, or verify is current</li>
     <li><a href="/docs/commands">All commands</a> — reference for every slash command</li>
   </ul>
 </DocsLayout>
