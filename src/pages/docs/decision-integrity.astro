@@ -14,9 +14,10 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
   <h2>Adversarial verification gate</h2>
 
   <p>
-    Before recording any decision, the agent runs a verification check. The principle: the agent
-    that generated the options cannot be the sole validator of those options (FPF A.12 — External
-    Transformer Principle).
+    Before recording any decision, the agent runs a Haft-local verification check: the agent
+    that generated the options cannot be the sole validator of those options. FPF A.12 supplies
+    the narrower boundary that acting-side output is not sufficient evidence by default; FPF
+    A.10 governs evidence and provenance.
   </p>
 
   <p>For <strong>tactical</strong> decisions (quick, reversible):</p>
