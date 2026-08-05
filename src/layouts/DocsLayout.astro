@@ -11,19 +11,29 @@ interface Props {
 const { title, description } = Astro.props;
 
 const currentPath = Astro.url.pathname;
-const currentDocsVersion = 'v8.1';
+const currentDocsVersion = 'v9 contract';
 
 const nav = [
   {
-    title: 'v8 — Governance Substrate',
+    title: 'v9 — Source-native Governance',
     items: [
       { href: '/docs', label: 'Introduction' },
+      { href: '/docs/9.0', label: 'v9 Overview' },
+      { href: '/docs/9.0/install', label: 'Install & init' },
+      { href: '/docs/reasoning', label: 'Reasoning & FPF' },
+      { href: '/docs/codebase-awareness', label: 'Code orientation' },
+      { href: '/docs/commands', label: 'CLI reference' },
+    ]
+  },
+  {
+    title: 'v8 — Published History',
+    items: [
       { href: '/docs/8.0', label: 'v8 Overview' },
       { href: '/docs/8.0/install', label: 'Install & init' },
       { href: '/docs/8.0/reasoning', label: 'Reasoning & FPF' },
       { href: '/docs/8.0/spec-onboarding', label: 'Spec onboarding' },
       { href: '/docs/8.0/check', label: 'Enforcement check' },
-      { href: '/docs/8.0/harness-batch', label: 'Harness (alpha, Codex)' },
+      { href: '/docs/8.0/harness-batch', label: 'Historical harness' },
     ]
   },
   {
@@ -76,7 +86,8 @@ function isActive(href: string): boolean {
               id="version-dropdown"
               class="hidden absolute top-6 left-0 z-50 bg-bg-secondary border border-border-subtle rounded shadow-lg py-1 min-w-[100px]"
             >
-              <a href="/docs/8.0" class="block px-3 py-1.5 text-xs font-mono text-accent-green bg-bg-tertiary hover:text-text-primary transition-colors">v8.1 (latest)</a>
+              <a href="/docs/9.0" class="block px-3 py-1.5 text-xs font-mono text-accent-green bg-bg-tertiary hover:text-text-primary transition-colors">v9 contract</a>
+              <a href="/docs/8.0" class="block px-3 py-1.5 text-xs font-mono text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors">v8.1 (published)</a>
               <a href="/docs/7.0" class="block px-3 py-1.5 text-xs font-mono text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors">v7.0</a>
               <a href="/docs/5.3" class="block px-3 py-1.5 text-xs font-mono text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors">v5.3</a>
               <a href="/docs/5.0" class="block px-3 py-1.5 text-xs font-mono text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors">v5.0</a>

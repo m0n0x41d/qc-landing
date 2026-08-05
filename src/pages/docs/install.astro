@@ -2,184 +2,70 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Installation" description="Install haft and configure it for your AI tool.">
-  <h1>Installation</h1>
+<DocsLayout title="Install Haft" description="Install the Haft CLI and initialize its governance surfaces for your coding agent.">
+  <h1>Install &amp; init</h1>
 
   <h2>Install the binary</h2>
 
-  <div style="position: relative;">
-    <pre><code>curl -fsSL https://haft.tools/install.sh | bash</code></pre>
-    <button
-      class="copy-btn"
-      data-copy="curl -fsSL https://haft.tools/install.sh | bash"
-      style="position: absolute; top: 0.75rem; right: 0.75rem; background: #1a1a1a; border: 1px solid #333; color: #888; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 3px; cursor: pointer; transition: color 0.2s, border-color 0.2s;"
-    >Copy</button>
-  </div>
+  <pre><code>curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/install.sh | bash</code></pre>
 
   <p>
-    This downloads the tagged release for your platform (macOS/Linux, arm64/amd64)
-    and places it in <code>~/.local/bin/</code>. Make sure this directory is in
-    your <code>PATH</code>.
+    The installer places <code>haft</code> in a writable binary directory,
+    normally <code>~/.local/bin</code>. v9 requires no Elixir, OTP, or BEAM
+    toolchain and ships no Open-Sleigh runtime. The optional
+    <code>haft-embed</code> compatibility sidecar is independent of the core
+    governance product.
   </p>
 
-  <h2>Initialize in your project</h2>
+  <h2>Initialize one project</h2>
+
+  <pre><code>cd /path/to/project
+haft init                    # interactive host selection in a terminal
+haft init --claude           # Claude MCP, skills, and CLAUDE.md section
+haft init --codex            # Codex MCP, skills, and AGENTS.md section
+haft init --core-only        # project core only
+haft init --all              # full Claude + Codex integrations</code></pre>
+
+  <p>
+    Bare non-interactive <code>haft init</code> fails before writing instead of
+    guessing a host. Scripts and CI must pass an explicit flag. Use
+    <code>--local</code> when you want supported skill carriers inside the
+    repository, and <code>--mcp-only</code> only with an explicit host target.
+  </p>
 
   <div class="callout-warn">
     <p>
-      <strong>You must run init in every project.</strong> haft runs through your
-      AI tool's MCP integration. Each project needs its own MCP config with a
-      unique project ID and path. A global MCP config pointing to a single
-      project will silently send all artifacts to that project, even when you're
-      working in a different directory.
-    </p>
-    <p style="margin-top: 0.75rem;">
-      Claude Code and Codex are the supported hosts in v8. Cursor, Gemini CLI, and
-      OpenCode configs are experimental; if something goes wrong, run init in the
-      correct directory and restart the tool.
+      <strong>Restart the host after init or upgrade.</strong> A running MCP
+      process keeps using the binary and skill catalog it already loaded.
     </p>
   </div>
 
-  <p>
-    <code>cd</code> into your project directory and run <code>init</code> with the flag for your AI tool:
-  </p>
-
-  <pre><code># Claude Code (default if no flag)
-haft init
-
-# Cursor
-haft init --cursor
-
-# Gemini CLI
-haft init --gemini
-
-# Codex CLI / Codex App
-haft init --codex
-
-# OpenCode (sst/opencode)
-haft init --opencode
-
-# All tools at once
-haft init --all</code></pre>
-
-  <div class="callout-warn">
-    <p>
-      <strong>The flag matters.</strong> Each tool looks for its MCP config in a different location.
-      Running <code>haft init</code> without a flag only configures Claude Code.
-      If you use Cursor, you need <code>--cursor</code>.
-    </p>
-  </div>
-
-  <h2>Where MCP config goes</h2>
+  <h2>Upgrade from v8.1</h2>
 
   <p>
-    The binary is the same for all tools. Init writes the MCP server config to the location your
-    tool expects:
-  </p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Tool</th>
-        <th>MCP Config</th>
-        <th>Commands</th>
-        <th>Note</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Claude Code</td>
-        <td><code>.mcp.json</code></td>
-        <td><code>~/.claude/commands/</code></td>
-        <td>Auto-detected</td>
-      </tr>
-      <tr>
-        <td>Cursor</td>
-        <td><code>.cursor/mcp.json</code></td>
-        <td><code>~/.cursor/commands/</code></td>
-        <td>Enable in Settings → MCP</td>
-      </tr>
-      <tr>
-        <td>Gemini CLI</td>
-        <td><code>~/.gemini/settings.json</code></td>
-        <td><code>~/.gemini/commands/</code></td>
-        <td>Global config</td>
-      </tr>
-      <tr>
-        <td>Codex</td>
-        <td><code>.codex/config.toml</code></td>
-        <td><code>~/.codex/prompts/</code></td>
-        <td>Trust project in Codex</td>
-      </tr>
-      <tr>
-        <td>OpenCode</td>
-        <td><code>opencode.json</code></td>
-        <td><code>~/.config/opencode/commands/</code></td>
-        <td>Use <code>--local</code> for <code>.opencode/</code></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h3>Cursor-specific setup</h3>
-
-  <p>
-    After running <code>haft init --cursor</code>, open Cursor Settings → MCP → find
-    <code>haft</code> → <strong>enable the toggle</strong>. Cursor adds MCP servers as
-    disabled by default.
+    Stop Haft writers and back up both the project <code>.haft/</code> directory
+    and <code>~/.haft/projects/&lt;project-id&gt;/haft.db</code> before the first v9
+    start. The database migration is forward-only across this boundary.
   </p>
 
   <p>
-    Cursor also picks up Claude Code slash commands from <code>~/.claude/commands/</code>, so
-    commands like <code>/h-reason</code> may work even without <code>--cursor</code>. But the
-    MCP connection (the tools backend) requires <code>.cursor/mcp.json</code>.
+    After a successful install, v9 removes only
+    <code>~/.haft/runtimes/open-sleigh/current</code>. It preserves
+    <code>~/.open-sleigh/</code> user data and
+    <code>~/.haft/runtimes/haft-embed/</code>. Migrate scripts that call
+    <code>haft run</code> or <code>haft harness</code> to host-agent work or an
+    external runner using the WorkCommission lifecycle.
   </p>
 
-  <h2>What init creates</h2>
+  <h2>Verify the connection</h2>
 
-  <p>Init creates a <code>.haft/</code> directory in your project:</p>
-
-  <pre><code>.haft/
-├── project.yaml        # Project identity (unique ID, name)
-├── decisions/          # Decision record markdown files
-├── problems/           # Problem card markdown files
-├── notes/              # Micro-decision markdown files
-├── solutions/          # Solution portfolio markdown files
-├── evidence/           # Evidence pack markdown files
-└── refresh/            # Verification report markdown files</code></pre>
+  <pre><code>haft version
+haft doctor</code></pre>
 
   <p>
-    These markdown files are <strong>projections</strong> — human-readable copies of what's in the
-    database. They're designed for code review: when you create a decision, a markdown file appears
-    in your PR diff. Reviewers can see and comment on engineering decisions alongside code changes.
-  </p>
-
-  <p>
-    The database itself lives in <code>~/.haft/projects/{'{'}id{'}'}/</code> (not in your repo). The <code>.haft/</code>
-    directory contains only markdown and YAML — safe to commit.
-  </p>
-
-  <div class="callout">
-    <p>
-      <strong>Migrating from v5?</strong> If you have an existing <code>.quint/</code> directory,
-      <code>haft init</code> detects it and migrates everything automatically — renames the directory
-      to <code>.haft/</code>, moves the database, preserves all artifacts.
-      See <a href="/docs/migration">Migration guide</a> for details.
-    </p>
-  </div>
-
-  <h2>Verify it works</h2>
-
-  <p>Open your AI tool in the project directory and type:</p>
-
-  <pre><code>/h-status</code></pre>
-
-  <p>
-    You should see an empty dashboard. If you see an error about MCP connection, check that
-    the MCP server is enabled in your tool's settings.
-  </p>
-
-  <h2>Next step</h2>
-
-  <p>
-    <a href="/docs/first-steps">First steps</a> — what to do after installation.
+    Then restart the coding agent in the project and request
+    <code>/h-status</code>. A source-level check confirms only the checkout; an
+    installed-runtime readiness claim needs evidence from the exact installed
+    candidate.
   </p>
 </DocsLayout>

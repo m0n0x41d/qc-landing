@@ -2,176 +2,65 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Documentation" description="Learn how to use haft for structured engineering decisions.">
-  <h1>haft Documentation</h1>
+<DocsLayout title="Haft documentation" description="Source-native FPF delivery and reliance-bearing project memory for AI-assisted engineering.">
+  <h1>Haft documentation</h1>
 
   <p>
-    haft is a decision engineering tool for AI coding assistants. It helps you frame problems,
-    compare options fairly, record decisions as contracts, and know when those decisions go stale.
-  </p>
-
-  <p>
-    In v8, haft runs as a <a href="https://modelcontextprotocol.io">MCP server</a>
-    plus local CLI. Your coding agent connects to <code>haft serve</code>; the
-    installed skills and slash commands guide the reasoning loop. Claude Code and
-    Codex are the supported hosts. Cursor, Gemini CLI, and OpenCode are experimental
-    host configs.
+    Haft is a governance substrate used from an existing coding agent. It
+    delivers versioned FPF source into the current question and preserves typed
+    project memory when later work must rely on the result.
   </p>
 
   <div class="callout">
     <p>
-      <strong>v8 is the current track.</strong> The standalone agent, TUI, and
-      desktop wrappers were removed. Haft is now a governance substrate: one artifact
-      graph, one kernel, reached through MCP tools, CLI commands, and host-agent
-      skills. New projects should start with
-      <a href="/docs/8.0">the v8 overview</a> and then run
-      <a href="/docs/8.0/install">Install &amp; init</a>.
+      <strong>This is the v9 contract track.</strong> The published product
+      remains v8.1 until the v9 release is separately qualified and published.
+      Source or documentation presence is not installed-runtime or release
+      evidence.
     </p>
   </div>
 
-  <div class="callout">
-    <p>
-      <strong>Start here.</strong> Use <code>haft init</code>, <code>/h-status</code>,
-      <code>/h-frame</code>, <code>/h-explore</code>, <code>/h-compare</code>,
-      <code>/h-decide</code>, and <code>/h-verify</code>. The execution harness is an
-      alpha Codex-only path for isolated WorkCommission runs; it is not the first
-      thing to learn.
-    </p>
-  </div>
+  <h2>The v9 product boundary</h2>
 
-  <h2>The five modes</h2>
-
-  <p>
-    haft organizes decision-making into five cognitive modes. Each mode has a dedicated slash command,
-    or you can let <code>/h-reason</code> drive the cycle automatically.
-  </p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Mode</th>
-        <th>Command</th>
-        <th>What happens</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Understand</strong></td>
-        <td><code>/h-frame</code></td>
-        <td>Frame the problem — signal, constraints, acceptance criteria</td>
-      </tr>
-      <tr>
-        <td><strong>Explore</strong></td>
-        <td><code>/h-explore</code></td>
-        <td>Generate genuinely distinct alternatives with weakest link per variant</td>
-      </tr>
-      <tr>
-        <td><strong>Choose</strong></td>
-        <td><code>/h-compare</code></td>
-        <td>Fair comparison on declared dimensions — parity enforced</td>
-      </tr>
-      <tr>
-        <td><strong>Execute</strong></td>
-        <td><code>/h-decide</code></td>
-        <td>Record the decision as a contract with invariants, rollback plan, and claims</td>
-      </tr>
-      <tr>
-        <td><strong>Verify</strong></td>
-        <td><code>/h-verify</code></td>
-        <td>Check claims against reality — refresh, supersede, or reopen</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <p>
-    Plus a fast path: <code>/h-note</code> captures micro-decisions inline — no ceremony,
-    auto-expires in 90 days, conflicts with active decisions are flagged.
-  </p>
-
-  <h2>What it does</h2>
-
-  <p>When you face a decision that's hard to reverse, affects the team, or has real consequences if
-    you get it wrong — migrating a database, picking an auth architecture, designing a public API,
-    restructuring a service boundary — you type <code>/h-reason</code> and describe the problem. The agent:</p>
-
-  <ol>
-    <li><strong>Understands</strong> the problem (what's broken, what are the constraints, how do we know it's solved)</li>
-    <li><strong>Explores</strong> genuinely different alternatives (not three versions of the same idea)</li>
-    <li><strong>Chooses</strong> by comparing them on a Pareto front (no single-score collapse, parity enforced)</li>
-    <li><strong>Executes</strong> by recording the decision as a contract with invariants, rollback plan, and verifiable claims</li>
-    <li><strong>Verifies</strong> claims over time — when evidence expires or claims fail, the decision surfaces as stale</li>
-  </ol>
-
-  <p>
-    Every decision gets an <strong>R_eff score</strong> — a computed trust metric that degrades over time
-    as evidence expires. Each decision carries <strong>claims</strong> with <code>verify_after</code> dates —
-    concrete statements that can be checked against reality. When R_eff drops below 0.5, the decision
-    surfaces as stale. You review it, re-validate, or supersede it with a new decision. This is the
-    continuous loop of decide, measure, reframe.
-  </p>
-
-  <h2>Who is this for</h2>
-
-  <p>
-    Anyone who makes decisions with real consequences — and needs those decisions to be
-    traceable, challengeable, and aware of their own expiry date. Software architects,
-    engineering managers, systems engineers, tech leads. The problems aren't limited to code:
-    technology selection, infrastructure strategy, process design, organizational trade-offs,
-    vendor evaluation, migration planning.
-  </p>
-
-  <p>
-    The current interface is developer-focused (MCP server for AI coding tools), but the
-    underlying methodology is domain-agnostic. haft aims to implement as much as possible of
-    <a href="https://github.com/ailev/FPF" target="_blank" rel="noopener">FPF (First Principles Framework)</a>
-    by Anatoly Levenchuk — a formal approach to structured reasoning that works wherever
-    decisions need evidence, comparison, and lifecycle management. No prior knowledge of
-    FPF is required; haft implements the practical parts and stays out of your way.
-  </p>
-
-  <h2>Supported tools</h2>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Tool</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Claude Code</td><td>Supported host (default)</td></tr>
-      <tr><td>Codex CLI / Codex App</td><td>Supported host</td></tr>
-      <tr><td>Cursor</td><td>Experimental MCP config</td></tr>
-      <tr><td>Gemini CLI</td><td>Experimental MCP config</td></tr>
-      <tr><td>OpenCode (sst/opencode)</td><td>Experimental MCP config</td></tr>
-      <tr><td>JetBrains Air</td><td>Experimental / pending docs</td></tr>
-    </tbody>
-  </table>
-
-  <h2>What's new in v8</h2>
+  <p>One local <code>.haft/</code> graph is available through three surfaces:</p>
 
   <ul>
-    <li><strong>Governance substrate pivot</strong> — skills + CLI + MCP replace the standalone runtime.</li>
-    <li><strong>15 installed skills</strong> — <code>h-reason</code>, <code>h-frame</code>,
-      <code>h-diagnose</code>, <code>h-explore</code>, <code>h-compare</code>,
-      <code>h-decide</code>, <code>h-verify</code>, and the supporting workflow skills.</li>
-    <li><strong>Fused code graph</strong> — <code>haft_query</code> can show callers,
-      callees, impact, source, and the decisions governing each symbol.</li>
-    <li><strong>Hybrid FPF search</strong> — exact pattern lookup plus keyword and local
-      semantic recall over baked FPF section vectors.</li>
-    <li><strong>Spec-first governance kept</strong> — active TargetSystemSpec,
-      EnablingSystemSpec, and TermMap sections still define what the project claims to be.</li>
-    <li><strong>Shared embedding sidecar</strong> — v8.1 shares one local
-      <code>haft-embed</code> model process across live <code>haft serve</code> sessions.</li>
-    <li><strong>CI governance gate</strong> — <code>haft check</code> gives a deterministic
-      pass/fail signal for stale, drifted, unassessed, and coverage-gap findings.</li>
+    <li>independent host-agent skills, including <code>h-reason</code> for source-first FPF reasoning;</li>
+    <li>the manual governance CLI;</li>
+    <li>the <code>haft serve</code> MCP server.</li>
   </ul>
 
-  <h2>Next step</h2>
+  <p>
+    v9 does not ship a coding-agent executor. <code>haft run</code>,
+    <code>haft harness</code>, Open-Sleigh, and the Elixir/OTP/BEAM runtime were
+    removed. WorkCommission and RuntimeRun lifecycle records remain
+    runner-neutral for host-agent work or separately operated integrations.
+  </p>
+
+  <h2>Start here</h2>
+
+  <ol>
+    <li><a href="/docs/9.0/install">Install and initialize Haft</a> for the host you use.</li>
+    <li>Restart the host so it loads the installed MCP server and skills.</li>
+    <li>Ask the agent your current engineering question; use <code>/h-reason</code> when you want an explicit FPF-supported pass.</li>
+    <li>Use <code>/h-status</code> when live project state, drift, coverage, or readiness is the question.</li>
+  </ol>
+
+  <h2>Authority stays explicit</h2>
 
   <p>
-    <a href="/docs/8.0/install">Install haft v8</a> and initialize one project.
-    Already on 5.x or 6.x? Read the older <a href="/docs/migration">migration guide</a>,
-    then re-run <code>haft init</code> to install the v8 skills.
+    A recommendation is not a decision, a plan is not performed work, and a
+    lifecycle result is not automatically evidence truth. <code>h-decide</code>
+    can route one direct, unambiguous operator choice. <code>h-commission</code>
+    stays manual-only because a WorkCommission grants bounded execution
+    authority.
   </p>
+
+  <h2>Versioned documentation</h2>
+
+  <ul>
+    <li><a href="/docs/9.0">v9 contract overview</a></li>
+    <li><a href="/docs/8.0">v8.1 published-track documentation</a></li>
+    <li><a href="/docs/7.0">v7 historical documentation</a></li>
+  </ul>
 </DocsLayout>
