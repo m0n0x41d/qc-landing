@@ -1,0 +1,47 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout title="Install Haft v9" description="Install the v9 governance substrate without a bundled execution runtime.">
+  <h1>Install &amp; init (v9 contract)</h1>
+
+  <pre><code>curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/install.sh | bash
+
+cd /path/to/project
+haft init --claude   # or --codex
+# restart the host after init</code></pre>
+
+  <p>
+    The v9 archive contains the Haft CLI and may contain the independent
+    optional <code>haft-embed</code> compatibility sidecar. It contains no
+    Open-Sleigh, ERTS, Elixir, or BEAM payload.
+  </p>
+
+  <h2>Upgrade safety</h2>
+
+  <ol>
+    <li>Stop every host process that can run <code>haft serve</code>.</li>
+    <li>Back up the project <code>.haft/</code> directory and its global project ledger.</li>
+    <li>Install the exact candidate and record <code>haft version</code> plus its checksum.</li>
+    <li>Re-run init for only the host targets you use, then fully restart them.</li>
+  </ol>
+
+  <p>
+    A successful v9 installer removes only the managed legacy path
+    <code>~/.haft/runtimes/open-sleigh/current</code>. It preserves all
+    <code>~/.open-sleigh/</code> data and the independent
+    <code>~/.haft/runtimes/haft-embed/</code> tree.
+  </p>
+
+  <h2>Removed command migration</h2>
+
+  <p>
+    Replace <code>haft run</code> and <code>haft harness</code> automation with
+    direct host-agent work or a separately operated runner. The surviving
+    integration boundary is <code>haft commission</code> plus the typed
+    <code>haft_commission</code> claim, preflight, start, event, and terminal
+    lifecycle operations.
+  </p>
+
+  <p><a href="/docs/install">Read the full install and rollback notes</a>.</p>
+</DocsLayout>

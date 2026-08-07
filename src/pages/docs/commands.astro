@@ -2,10 +2,10 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="All Commands" description="Complete reference for all haft slash commands, CLI commands, and the recommended protocol.">
+<DocsLayout title="All Commands" description="Reference for independent Haft skills, CLI commands, and MCP capabilities.">
   <h1>All Commands</h1>
 
-  <h2>Primary workflow</h2>
+  <h2>Primary entry points</h2>
 
   <table>
     <thead>
@@ -29,11 +29,12 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
     </tbody>
   </table>
 
-  <h2>The five modes</h2>
+  <h2>Independent reasoning capabilities</h2>
 
   <p>
-    Each mode creates or updates a specific artifact. Use these to drive each step manually,
-    or let <code>/h-reason</code> orchestrate:
+    Invoke the capability whose condition is current. None is a prerequisite for another.
+    Ordinary use stays conversational; an artifact is written only when explicitly requested
+    or when current work reveals a concrete need for durable project memory.
   </p>
 
   <table>
@@ -66,8 +67,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
       </tr>
       <tr>
         <td><code>/h-decide</code></td>
-        <td>Execute</td>
-        <td>Record decision as contract with invariants, claims, rollback</td>
+        <td>Bind a choice</td>
+        <td>Manually record a bounded choice with invariants, claims, and rollback</td>
         <td>DecisionRecord</td>
       </tr>
     </tbody>
@@ -179,6 +180,10 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
         <td>Initialize project. Flags: <code>--codex</code>, <code>--all</code>, and experimental host flags such as <code>--cursor</code>, <code>--gemini</code>, <code>--opencode</code></td>
       </tr>
       <tr>
+        <td><code>haft project migrate --project-root ... --project-id ...</code></td>
+        <td>Apply additive core database migrations to one exact initialized project without publishing or changing any agent-host carrier</td>
+      </tr>
+      <tr>
         <td><code>haft serve</code></td>
         <td>Start MCP server (used by AI tools to communicate with haft)</td>
       </tr>
@@ -224,18 +229,19 @@ $ haft check --json</code></pre>
     <a href="/docs/team-sync">Team Sync</a> for details.
   </p>
 
-  <h2>Recommended protocol</h2>
+  <h2>No canonical command order</h2>
 
-  <pre><code>/h-frame  → /h-explore → /h-compare → /h-decide → /h-verify
-  what's      genuinely     fair         engineering   still true?
-  broken?     different     comparison   contract
-              options</code></pre>
+  <pre><code>/h-frame     clarify an under-articulated problem
+/h-explore   generate distinct candidate approaches
+/h-compare   compare candidates that already exist
+/h-decide    manually bind a bounded human choice
+/h-verify    test a recorded claim against current evidence</code></pre>
 
   <p>
-    You can enter at any step, but the protocol works best in order.
-    <code>/h-frame</code> names the problem before the agent explores solutions.
-    <code>/h-compare</code> runs before <code>/h-decide</code> so the decision has
-    a declared comparison, not a post-hoc rationale.
+    Enter at the capability required now. A direct decision can carry its own problem statement
+    and option set; exploration can start from an inline question; comparison accepts inline
+    variants. An ordered local MethodDescription or WorkPlan remains valid when that method or
+    planning task is current, but it is not inferred from this catalog.
   </p>
 
   <h2>Next</h2>
