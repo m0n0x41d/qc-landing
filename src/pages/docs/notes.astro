@@ -2,97 +2,67 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Notes & Micro-decisions" description="Capture small decisions without running the full cycle.">
-  <h1>Notes & Micro-decisions</h1>
+<DocsLayout title="Notes in Haft v9" description="Persist one explicit non-binding fact, observation, caveat, or rationale without turning it into a decision.">
+  <h1>Notes</h1>
 
   <p>
-    Not every decision needs five modes. "We're using RWMutex instead of channels
-    because contention is under 0.1%" is a perfectly valid engineering choice that should be
-    recorded — but doesn't need characterization, Pareto computation, and adversarial verification.
+    A Haft note records a non-binding fact, observation, caveat, or small
+    rationale. Use <code>h-note</code> when the operator explicitly asks to save
+    that material. Ordinary reasoning is not auto-captured.
   </p>
-
-  <h2>How notes work</h2>
-
-  <pre><code>/h-note</code></pre>
-
-  <p>
-    Record a micro-decision with a title and rationale. The agent validates before persisting:
-  </p>
-
-  <ul>
-    <li><strong>Rationale required</strong> — why this choice? No rationale, no record.</li>
-    <li><strong>Conflict check</strong> — does this contradict an active decision?</li>
-    <li><strong>Overlap check</strong> — does an existing decision already cover this topic?
-      <ul>
-        <li>&gt;70% word overlap → rejected outright</li>
-        <li>50-70% overlap → warning, you can proceed</li>
-      </ul>
-    </li>
-    <li><strong>Scope check</strong> — if it affects many files, the agent suggests <code>/h-frame</code> instead.
-      A note that touches half the codebase is not a micro-decision.</li>
-  </ul>
-
-  <h2>Auto-capture</h2>
-
-  <p>
-    When <code>/h-reason</code> is active in a session, the agent may record notes automatically
-    when it notices decisions in conversation. This is best-effort — the auto-capture logic is
-    part of the <code>/h-reason</code> skill prompt. If <code>/h-reason</code> hasn't been
-    invoked in the current session, the agent won't auto-capture.
-  </p>
-
-  <p>
-    For reliable capture, use <code>/h-note</code> explicitly. It takes seconds and ensures
-    the rationale is recorded properly.
-  </p>
-
-  <p>Auto-capture does NOT trigger for:</p>
-  <ul>
-    <li>Formatting choices, import ordering, variable naming (too trivial)</li>
-    <li>Topics already covered by an active decision (overlap check prevents duplicates)</li>
-  </ul>
 
   <h2>Notes are not decisions</h2>
 
   <p>
-    Notes are observations and micro-decisions. They are NOT architectural decisions.
-    If you find yourself writing a note about a fundamental approach or strategy — stop.
-    Use <code>/h-frame</code> → <code>/h-decide</code> instead.
+    A note can describe a choice or a condition. It cannot bind a choice among
+    alternatives, authorize work, approve a specification, or establish that a
+    claim is true. Use <code>h-decide</code> for a direct binding choice and
+    <code>h-commission</code> for execution authority.
+  </p>
+
+  <h2>Record through the typed contract</h2>
+
+  <pre><code>haft interface note.record --json
+haft artifact create note.record --input-file input.json --json</code></pre>
+
+  <p>
+    The input requires a title. It may carry observations, evidence, rationale,
+    anchors, affected files, context, <code>valid_until</code>, search keywords,
+    and exact EntityOfConcern coordinates. The kernel validates the payload.
+  </p>
+
+  <p>The MCP surface is:</p>
+
+  <pre><code>haft_note(title="...", observations=[...])</code></pre>
+
+  <h2>Typed projection is conditional</h2>
+
+  <p>
+    A note may persist without becoming an exact typed
+    <code>NoteAtConcern</code> projection. That projection requires both an exact
+    <code>entity_ref</code> and its <code>bounded_context_ref</code>. Missing
+    coordinates remain visible as underdetermined; Haft does not infer identity
+    from names or rank.
+  </p>
+
+  <h2>Freshness and later use</h2>
+
+  <p>
+    Use <code>valid_until</code> when a receiving use needs a freshness boundary.
+    Expiry is an attention signal, not automatic deletion or a claim that the
+    historical observation became false.
   </p>
 
   <p>
-    Notes auto-expire after 90 days. If the choice is still relevant in 3 months, it deserves
-    a proper decision record with the <a href="/docs/five-modes">full cycle</a>.
+    If later work needs a binding choice, create that DecisionRecord through
+    its own authority path. Do not "promote" a note by treating its existing
+    text as operator approval.
   </p>
 
-  <h2>Notes in /h-status</h2>
-
-  <p>
-    <code>/h-status</code> shows the 5 most recent active notes. Deprecated and superseded notes
-    are filtered out. Notes do not count toward module coverage — only decisions do.
-  </p>
-
-  <h2>Cleaning up notes</h2>
-
-  <p>
-    <code>/h-verify action="reconcile"</code> scans all active notes against all active decisions.
-    If a note overlaps significantly with a decision, it suggests deprecation. This is a batch
-    cleanup — one command, no per-note review needed.
-  </p>
-
-  <div class="callout">
-    <p>
-      <strong>When to promote a note:</strong> If you keep referencing a note in conversations,
-      or if the note has survived past its 90-day expiry and been waived, it's a signal that
-      this choice matters enough for a proper decision record. Run <code>/h-frame</code> to
-      start the full cycle.
-    </p>
-  </div>
-
-  <h2>Next</h2>
+  <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/lifecycle">Decision lifecycle</a> — staleness, evidence decay, drift detection</li>
-    <li><a href="/docs/concepts">Key concepts</a> — R_eff, CL, weakest link</li>
+    <li><a href="/docs/concepts">EntityOfConcern and typed project memory</a></li>
+    <li><a href="/docs/decision-integrity">Decision and commission authority</a></li>
   </ul>
 </DocsLayout>

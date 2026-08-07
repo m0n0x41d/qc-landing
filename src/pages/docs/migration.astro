@@ -2,180 +2,161 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Migrating from older releases" description="How to upgrade from quint-code 5.x or older haft releases to haft v8.">
-  <h1>Migrating to v8</h1>
+<DocsLayout title="Migrate from Haft v8.1 to v9.0" description="The supported backup, upgrade, host restart, removed-surface migration, verification, and downgrade boundary.">
+  <h1>Migrate v8.1 → v9.0</h1>
 
   <p>
-    v8 keeps the v5-to-v6 rename from quint-code to haft, keeps the v7
-    spec-first governance model, and removes the standalone agent, TUI, and
-    desktop wrappers. Your existing artifacts are preserved; migration runs
-    through <code>haft init</code>.
+    v9.0.0 is the published successor to v8.1.0. There was no published v8.2
+    release. This guide states the supported migration boundary; successful
+    command exit alone is not evidence that a particular project upgraded
+    correctly.
   </p>
 
-  <div class="callout">
-    <p>
-      <strong>Why the rename?</strong> The name "quint" conflicts with
-      <a href="https://github.com/informalsystems/quint" target="_blank" rel="noopener">Quint</a> —
-      a formal specification language by Informal Systems. To avoid confusion between the two
-      projects, haft adopted a new name in v6: <strong>haft</strong> (the handle of an axe — the part you
-      actually grip when doing the work).
-    </p>
-  </div>
+  <h2>Breaking change: built-in execution is gone</h2>
 
-  <h2>What changed</h2>
-
-  <h3>Naming</h3>
+  <p>v9 removes:</p>
 
   <ul>
-    <li>Binary: <code>quint-code</code> → <code>haft</code></li>
-    <li>Project directory: <code>.quint/</code> → <code>.haft/</code></li>
-    <li>User home: <code>~/.quint-code/</code> → <code>~/.haft/</code></li>
-    <li>All slash commands: <code>/q-*</code> → <code>/h-*</code></li>
-  </ul>
-
-  <h3>Data model</h3>
-
-  <ul>
-    <li><strong>Claims</strong> — decisions now carry verifiable claims with <code>verify_after</code> dates. Existing decisions get claims generated from their evidence during migration.</li>
-    <li><strong><code>/h-verify</code> replaces <code>/q-refresh</code></strong> — the fifth cognitive mode actively checks claims against reality, not just evidence age.</li>
-    <li><strong>5-mode model</strong> — Understand, Explore, Choose, Execute, Verify maps to <code>/h-frame</code>, <code>/h-explore</code>, <code>/h-compare</code>, <code>/h-decide</code>, <code>/h-verify</code>.</li>
-    <li><strong>Spec-first readiness</strong> — v8 expects TargetSystemSpec, EnablingSystemSpec, and TermMap carriers before broad governed work.</li>
+    <li><code>haft run</code> and <code>haft harness</code>;</li>
+    <li>the bundled Open-Sleigh source and runtime;</li>
+    <li>the Elixir/OTP/BEAM build, installer, CI, and archive dependency.</li>
   </ul>
 
   <p>
-    This list describes the historical v8 model. V9 keeps these skills as independent
-    capabilities and removes the implied project-wide sequence; no item is a prerequisite for
-    another.
+    There are no compatibility stubs for those commands. Runner-neutral
+    <code>WorkCommission</code> and <code>RuntimeRunRecord</code> history remains,
+    along with <code>haft commission</code>, <code>haft_commission</code>, and
+    <code>haft commission complete-external</code>. Perform work in the host
+    agent or use an independently operated runner.
   </p>
 
-  <h3>v8 surface changes</h3>
-
-  <ul>
-    <li><code>haft init</code> installs host skills and MCP config for supported agents.</li>
-    <li><code>haft serve</code> is the MCP surface used by Claude Code and Codex.</li>
-    <li><code>haft_query</code> exposes search, status, and the fused code graph.</li>
-    <li><code>haft check</code> is the deterministic CI governance gate.</li>
-    <li>The optional execution harness is alpha and Codex-only; learn the reasoning and governance loop first.</li>
-  </ul>
-
-  <h2>How to migrate</h2>
-
-  <p>Update the binary, then re-run init in each project for your host:</p>
-
-  <pre><code># Install haft (replaces quint-code)
-curl -fsSL https://haft.tools/install.sh | bash
-
-# In each project directory
-cd your-project
-haft init</code></pre>
-
-  <p><code>haft init</code> detects your existing <code>.quint/</code> directory and automatically:</p>
-
-  <ol>
-    <li>Renames <code>.quint/</code> to <code>.haft/</code></li>
-    <li>Migrates the database from <code>~/.quint-code/projects/{'{'}id{'}'}/</code> to <code>~/.haft/projects/{'{'}id{'}'}/</code></li>
-    <li>Runs schema migrations (adds claims table, updates artifact types)</li>
-    <li>Generates claims from existing evidence where possible</li>
-    <li>Updates <code>project.yaml</code> with the new schema version</li>
-  </ol>
-
-  <p>All your decisions, problems, notes, and evidence are preserved.</p>
-
-  <div class="callout">
-    <p>
-      <strong>Safe to run multiple times.</strong> <code>haft init</code> is idempotent — if it
-      detects <code>.haft/</code> already exists, it skips the rename and only runs pending
-      database migrations.
-    </p>
-  </div>
-
-  <h2>Update project prompt files</h2>
+  <h2>1. Stop writers and back up both state locations</h2>
 
   <p>
-    If you have a CLAUDE.md (or .cursorrules, AGENTS.md, GEMINI.md) with haft-specific instructions,
-    update the slash commands:
+    Quit every host process that can run <code>haft serve</code>. Back up:
   </p>
 
-  <pre><code># Download the current reference prompt
-curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/CLAUDE.md > CLAUDE.md</code></pre>
+  <ul>
+    <li>the project-local <code>.haft/</code> directory;</li>
+    <li><code>~/.haft/projects/&lt;project-id&gt;/haft.db</code>, where the ID comes from <code>.haft/project.yaml</code>.</li>
+  </ul>
 
-  <p>Or manually find-and-replace in your existing file:</p>
+  <p>
+    Use SQLite's online backup API or <code>.backup</code> command if the
+    database may still be open. If every writer is stopped, copy
+    <code>haft.db</code> together with any <code>-wal</code> and <code>-shm</code>
+    sidecars. Keep the backup outside the original directories and record its
+    checksum.
+  </p>
+
+  <h2>2. Install and identify v9.0.0</h2>
+
+  <pre><code>curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/install.sh | bash
+haft version</code></pre>
+
+  <p>
+    Record the version, commit, and binary checksum. They must identify the same
+    release that the host later loads.
+  </p>
+
+  <p>
+    A successful v9 install removes only the exact managed legacy path
+    <code>~/.haft/runtimes/open-sleigh/current</code>. It preserves
+    <code>~/.open-sleigh/</code> user data and
+    <code>~/.haft/runtimes/haft-embed/</code>.
+  </p>
+
+  <h2>3. Re-run init for each selected host</h2>
+
+  <pre><code>haft init --claude
+haft init --codex</code></pre>
+
+  <p>
+    Run only the targets you use. <code>--mcp-only</code> deliberately omits
+    skills and managed instructions. <code>--core-only</code> migrates project
+    core without publishing host files.
+  </p>
+
+  <p>
+    Re-init refreshes Haft-owned skills and only the marked Haft section in
+    project instructions. It removes recognized legacy skills. A foreign file
+    collision fails before writes.
+  </p>
+
+  <p>
+    During the core mutation, Haft automatically activates an exact bundled
+    <code>ProjectTypeEnv</code> successor only when transaction-current
+    compatibility checks pass. That branch records
+    <code>compatible_successor_policy</code>. A stale, incomplete,
+    incompatible, or underdetermined candidate leaves the current head
+    unchanged and reports the blocker.
+  </p>
+
+  <h2>4. Remove stale command references</h2>
 
   <table>
     <thead>
       <tr>
-        <th>v5 (old)</th>
-        <th>v8</th>
+        <th>Removed surface</th>
+        <th>v9 surface</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td><code>quint-code</code></td><td><code>haft</code></td></tr>
-      <tr><td><code>.quint/</code></td><td><code>.haft/</code></td></tr>
-      <tr><td><code>~/.quint-code/</code></td><td><code>~/.haft/</code></td></tr>
-      <tr><td><code>/q-reason</code></td><td><code>/h-reason</code></td></tr>
-      <tr><td><code>/q-frame</code></td><td><code>/h-frame</code></td></tr>
-      <tr><td><code>/q-char</code></td><td><code>/h-frame</code> / <code>/h-compare</code></td></tr>
-      <tr><td><code>/q-explore</code></td><td><code>/h-explore</code></td></tr>
-      <tr><td><code>/q-compare</code></td><td><code>/h-compare</code></td></tr>
-      <tr><td><code>/q-decide</code></td><td><code>/h-decide</code></td></tr>
-      <tr><td><code>/q-note</code></td><td><code>/h-note</code></td></tr>
-      <tr><td><code>/q-refresh</code></td><td><code>/h-verify</code></td></tr>
-      <tr><td><code>/q-status</code></td><td><code>/h-status</code></td></tr>
-      <tr><td><code>/q-search</code></td><td><code>/h-search</code></td></tr>
-      <tr><td><code>/q-problems</code></td><td><code>/h-problems</code></td></tr>
-      <tr><td><code>/q-onboard</code></td><td><code>/h-onboard</code></td></tr>
-      <tr><td><code>quint-code init</code></td><td><code>haft init</code></td></tr>
-      <tr><td><code>quint-code board</code></td><td><code>/h-status</code> / <code>haft check</code></td></tr>
+      <tr><td><code>haft run</code>, <code>haft harness</code></td><td>Host-agent work or an external runner using the WorkCommission lifecycle</td></tr>
+      <tr><td><code>/h-search</code></td><td>Focused <code>haft_query</code> search, exact record lookup, FPF Query, or typed-memory read</td></tr>
+      <tr><td><code>/h-problems</code></td><td><code>/h-status</code> and its explicit drill-downs</td></tr>
+      <tr><td><code>/h-view</code></td><td>Typed projection and query actions for the exact object</td></tr>
+      <tr><td><code>haft fpf search</code></td><td><code>haft fpf query|lookup|inspect</code></td></tr>
+      <tr><td>five-mode workflow instructions</td><td>12 independent skills selected by the current condition</td></tr>
     </tbody>
   </table>
 
-  <h2>Update CI scripts</h2>
-
   <p>
-    If you have CI pipelines that reference <code>quint-code</code>, update them:
+    Fresh v9 init does not create project-local <code>.haft/config.yaml</code>
+    as an authority-policy carrier. Recognized historical authority-only bytes
+    may be removed; modified or unrecognized files are preserved, ignored, and
+    reported as legacy.
   </p>
 
-  <ul>
-    <li>Binary name: <code>quint-code</code> → <code>haft</code></li>
-    <li>Directory references: <code>.quint/</code> → <code>.haft/</code></li>
-    <li>Database path: <code>~/.quint-code/</code> → <code>~/.haft/</code></li>
-    <li>CI governance gate: <code>quint-code board --check</code> → <code>haft sync && haft check</code></li>
-  </ul>
-
-  <h2>Verify migration</h2>
-
-  <p>After running <code>haft init</code>, verify everything works:</p>
-
-  <pre><code>/h-status</code></pre>
+  <h2>5. Restart and verify</h2>
 
   <p>
-    You should see your existing decisions, problems, and notes. If the MCP connection fails,
-    make sure the new binary is in your PATH and restart your AI tool.
+    Completely restart each host. Verify that its MCP server runs the binary
+    recorded in step 2. On a copied project, check status, read an existing
+    record, and exercise one explicitly authorized v9 write before migrating
+    the working project.
   </p>
-
-  <h2>Git cleanup</h2>
 
   <p>
-    After confirming migration, commit the renamed directory:
+    A complete rehearsal also checks legacy record counts and content, exact
+    project binding, typed-memory reads, one new write, idempotent retry, and
+    restoration from backup.
   </p>
 
-  <pre><code>git add .haft/
-git rm -r --cached .quint/   # if .quint/ was tracked
-git commit -m "chore: migrate quint-code to haft v8"</code></pre>
+  <h2>Downgrade boundary</h2>
 
   <div class="callout-warn">
     <p>
-      <strong>Coordinate with your team.</strong> If multiple engineers work on the same repo,
-      agree on a migration point. Once <code>.quint/</code> is renamed to <code>.haft/</code>
-      in the main branch, everyone needs to update their binary and run <code>haft init</code>.
+      <strong>Do not write a v9-migrated ledger with v8.1.</strong> Database
+      startup migrations are forward migrations. Installing the old binary
+      over v9 without restoring state is not a supported rollback.
     </p>
   </div>
 
-  <h2>What if I don't migrate?</h2>
+  <ol>
+    <li>Stop all v9 hosts and MCP servers.</li>
+    <li>Move the migrated <code>.haft/</code> and global project-ledger directory aside without deleting them.</li>
+    <li>Restore both locations from the pre-upgrade backup.</li>
+    <li>Reinstall v8.1.0 and re-run its host initialization.</li>
+    <li>Verify the restored project before resuming work.</li>
+  </ol>
+
+  <h2>Older installations</h2>
 
   <p>
-    Haft detects old <code>.quint/</code> directories and prompts you to run
-    <code>haft init</code>. Your data is safe — it just won't work until you migrate. The old
-    <code>quint-code</code> binary continues to work with v5 data if you need to roll back.
+    The v5-to-v6 rename from <code>quint-code</code> to <code>haft</code> and the
+    v7-to-v8 surface pivot remain historical migration steps. See the
+    <a href="/docs/8.0">v8 release documentation</a> when rehearsing those
+    boundaries; do not treat its execution harness or skill workflow as v9.
   </p>
 </DocsLayout>

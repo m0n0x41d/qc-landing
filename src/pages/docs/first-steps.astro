@@ -2,231 +2,128 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="First Steps" description="What to do after installing haft.">
-  <h1>First Steps</h1>
+<DocsLayout title="First steps with Haft v9" description="Initialize one host, restart it onto the v9 binary, check onboarding, and start from the current engineering question.">
+  <h1>First steps</h1>
+
+  <h2>1. Initialize the host you use</h2>
+
+  <pre><code>cd /path/to/project
+haft init                    # interactive host selection, TTY only
+haft init --claude           # Claude MCP, skills, and managed CLAUDE.md section
+haft init --codex            # Codex MCP, skills, and managed AGENTS.md section
+haft init --core-only        # project core without host publication</code></pre>
 
   <p>
-    You've installed haft and run <code>init</code>. Now what?
+    Scripts and CI must pass explicit flags. Bare non-interactive
+    <code>haft init</code> fails before writing instead of guessing a host.
+    Re-init replaces recognized legacy Haft skills and changes only the marked
+    Haft section of a project instruction file.
   </p>
 
-  <h2>Ask the agent to explain itself</h2>
+  <h2>2. Restart and verify the loaded runtime</h2>
 
-  <p>The fastest way to learn haft is to ask your AI agent:</p>
-
-  <div style="position: relative;">
-    <pre><code>/h-reason explain how to work with haft
-effectively — what capabilities exist and which
-one fits my current project question</code></pre>
-    <button
-      class="copy-btn"
-      data-copy="/h-reason explain how to work with haft effectively — what capabilities exist and which one fits my current project question"
-      style="position: absolute; top: 0.75rem; right: 0.75rem; background: #1a1a1a; border: 1px solid #333; color: #888; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 3px; cursor: pointer; transition: color 0.2s, border-color 0.2s;"
-    >Copy</button>
-  </div>
+  <pre><code>haft version
+haft doctor</code></pre>
 
   <p>
-    The agent has full knowledge of all haft tools and will walk you through them in
-    context of your specific project. This is not a canned tutorial — it's a live conversation
-    with an agent that understands both haft and your codebase.
+    Restart the coding agent after init or upgrade. A running MCP process keeps
+    the binary and skill catalog it loaded at startup. Command output from the
+    source checkout does not prove which binary the host process is using.
   </p>
 
-  <h2>Existing project? Run onboarding</h2>
+  <h2>3. Check onboarding state</h2>
 
   <p>
-    If you're adding haft to a project that already has code, architecture docs, or ADRs:
-  </p>
-
-  <pre><code>/h-onboard</code></pre>
-
-  <p>The agent will:</p>
-
-  <ul>
-    <li>Scan your README, architecture docs, ADR directories</li>
-    <li>Record discovered decisions as notes</li>
-    <li>Frame unresolved architectural tensions as problems</li>
-    <li>Run module coverage analysis (which parts of your codebase have decisions, which don't)</li>
-    <li>Suggest what to tackle first</li>
-  </ul>
-
-  <div class="callout">
-    <p>
-      <strong>Have existing specs or design docs in a gitignored folder?</strong>
-      Point the agent to them: "scan the docs in <code>.specs/</code> and record what you find."
-      The agent can read any file in your project — it's not limited to git-tracked files.
-    </p>
-  </div>
-
-  <h2>Set up a project prompt for better results</h2>
-
-  <p>
-    haft works without any project-level prompts. But adding a prompt file
-    with haft-aware instructions makes the agent significantly better
-    at using the tools proactively. See <a href="/docs/agent-prompt">Agent Prompt Setup</a>
-    for details.
-  </p>
-
-  <pre><code># Claude Code
-haft init
-
-# Codex CLI / App
-haft init --codex</code></pre>
-
-  <p>
-    <code>haft init</code> installs the host skills and project MCP config. If your
-    project also has <code>CLAUDE.md</code> or <code>AGENTS.md</code>, keep the
-    haft instructions there aligned with the installed skills.
+    Ask the host agent for <code>/h-onboard</code> or <code>/h-status</code> when
+    setup state is the current question. Onboarding reports one readable state:
+    <code>needs_init</code>, <code>needs_profile</code>,
+    <code>profile_review_ready</code>,
+    <code>profile_change_review_ready</code>, or <code>ready</code>.
   </p>
 
   <p>
-    Adapt it to your project — remove sections that don't apply, add project-specific context.
-    The haft-specific sections (FPF Mode, Commands, Glossary) are the important parts.
-  </p>
-
-  <h2>Start from the current question</h2>
-
-  <h3>Quick mode: /h-reason</h3>
-
-  <p>
-    The fastest way. Describe your problem, the agent handles the rest:
-  </p>
-
-  <pre><code>/h-reason we need to add caching to our API.
-Latency matters, team is 3 people, we're on AWS.</code></pre>
-
-  <p>
-    The agent recovers the current object and question, consults FPF source when pattern choice is
-    material, and uses only the capabilities needed for the smallest useful result. It does not
-    create a chain of project artifacts unless a receiving use requires them.
+    <code>haft init</code> installs default project memory automatically. A
+    complete supported singleton profile may be admitted as
+    <code>detector_default</code>. Ambiguous or reviewed bases remain an
+    operator choice prepared through the onboarding surface.
   </p>
 
   <div class="callout-warn">
     <p>
-      <strong>Honest trade-off:</strong> a broad <code>/h-reason</code> request can still accumulate
-      too much context. When the current need is already clear, invoke the narrower capability
-      directly so its question, evidence, and result boundary stay explicit.
+      <strong>Ready is not a global green light.</strong> It means only that the
+      canonical profile and structured project memory are available. Check
+      specification health, evidence, drift, and release readiness separately.
     </p>
   </div>
 
-  <h3>Direct capability use</h3>
+  <h2>4. Start from the current question</h2>
+
+  <pre><code>/h-reason We need to change the API cache. What is the actual
+problem, and which FPF source is relevant?</code></pre>
 
   <p>
-    For work that is hard to reverse, invoke each capability only when its own condition becomes
-    current. The list below is a palette, not an execution order:
+    Use <code>h-reason</code> when the question is ambiguous or crosses several
+    capabilities. When the result type is already known, use the narrower
+    skill directly:
   </p>
-
-  <pre><code>/h-frame
-/h-explore
-/h-compare
-/h-decide
-/h-verify</code></pre>
-
-  <p>
-    Each command loads focused guidance for one capability. It may consume an inline question or
-    an existing project-memory relation; completion of one command never makes another mandatory.
-  </p>
-
-  <p>
-    See the <a href="/docs/five-modes">capability walkthrough</a> for the condition and result of
-    each entry point.
-  </p>
-
-  <h2>What happens after a decision?</h2>
-
-  <p>This is the part most people ask about. After the agent records a decision:</p>
 
   <ul>
-    <li><strong>A markdown file appears</strong> in <code>.haft/decisions/</code> — commit it with your code</li>
-    <li><strong>The decision carries claims</strong> — verifiable statements with <code>verify_after</code> dates that can be checked against reality</li>
-    <li><strong>The decision tracks affected files</strong> — if those files change later, drift detection flags it</li>
-    <li><strong>Evidence can be attached</strong> — test results, benchmarks, user feedback. Evidence has an expiry date.</li>
-    <li><strong>R_eff (trust score) is computed</strong> — based on evidence quality and claim status. Expired evidence and failed claims degrade the score.</li>
-    <li><strong>Stale decisions surface</strong> — <code>/h-status</code> and <code>haft check</code> show what needs review</li>
+    <li><code>/h-frame</code> for an under-articulated problem;</li>
+    <li><code>/h-diagnose</code> for a concrete failure with rival causes;</li>
+    <li><code>/h-explore</code> for distinct approaches;</li>
+    <li><code>/h-compare</code> for a parity-based comparison;</li>
+    <li><code>/h-verify</code> for a recorded claim against current evidence;</li>
+    <li><code>/h-spec</code> for specification carriers and lifecycle;</li>
+    <li><code>/h-status</code> for the read-only project cockpit.</li>
   </ul>
 
   <p>
-    Read-only status can surface stale evidence, drift, and exact code links. These are attention
-    cues, not proof and not authorization to interrupt unrelated Work. Verification or reframing
-    happens only when that question becomes current.
+    This list is not a required order. A simple reversible edit with clear
+    acceptance can proceed without an FPF query or durable artifacts.
   </p>
 
-  <h2>See your project state</h2>
+  <h2>5. Persist only what later work needs</h2>
 
   <p>
-    Run <code>/h-status</code> inside the host agent for a read-only project state
-    dashboard. Run <code>haft check</code> in the terminal when you need a
-    deterministic pass/fail gate for CI or local preflight.
+    Reasoning can remain in the conversation. Use <code>/h-note</code> when you
+    explicitly want one non-binding observation saved. A binding choice needs
+    one exact operator request routed through <code>h-decide</code>. Execution
+    authority needs the manual-only <code>h-commission</code> boundary.
   </p>
 
-  <h2>Add a CI gate</h2>
-
-  <p>
-    When the repo already tracks <code>.haft/</code> artifacts, add a lightweight CI step:
-  </p>
-
-  <pre><code>./haft sync
-./haft check</code></pre>
-
-  <p>
-    <code>haft sync</code> imports the tracked markdown projections into the local SQLite state.
-    <code>haft check</code> then fails the build on stale, drifted, unassessed, or coverage-gap
-    findings. Use <code>--json</code> if you need machine-readable output.
-  </p>
-
-  <h2>Team workflow</h2>
-
-  <p>
-    Working with other engineers? The <code>.haft/</code> directory is git-tracked — commit it
-    with your code. When teammates pull, they run <code>haft sync</code> to import the latest
-    markdown projections into their local database. No shared database, no merge conflicts on
-    binary files. Each person has a local copy that stays in sync through your normal git workflow.
-  </p>
-
-  <h2>Day-to-day usage</h2>
+  <h2>6. Use the right read surface</h2>
 
   <table>
     <thead>
       <tr>
-        <th>Situation</th>
-        <th>What to do</th>
+        <th>Question</th>
+        <th>Surface</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>Big feature, architectural choice</td>
-        <td><code>/h-reason [describe the problem]</code></td>
-      </tr>
-      <tr>
-        <td>Quick tech choice during coding</td>
-        <td>The agent auto-records notes when it notices decisions</td>
-      </tr>
-      <tr>
-        <td>Start of a work session</td>
-        <td><code>/h-status</code></td>
-      </tr>
-      <tr>
-        <td>"Why did we do it this way?"</td>
-        <td><code>/h-search [topic]</code></td>
-      </tr>
-      <tr>
-        <td>Reviewing a PR with decisions</td>
-        <td>Read the <code>.haft/decisions/</code> markdown files in the diff</td>
-      </tr>
-      <tr>
-        <td>Decision feels outdated</td>
-        <td><code>/h-verify</code> — check claims, waive, reopen, or supersede</td>
-      </tr>
-      <tr>
-        <td>New teammate joins</td>
-        <td><code>haft sync</code> — imports all decisions into their local DB</td>
-      </tr>
+      <tr><td>What needs attention?</td><td><code>/h-status</code></td></tr>
+      <tr><td>Which FPF source unit is relevant?</td><td><code>haft fpf query|lookup|inspect</code></td></tr>
+      <tr><td>Where is this behavior implemented?</td><td><code>haft graph explore</code></td></tr>
+      <tr><td>What is known around this project object?</td><td><code>haft memory resolve|neighborhood|recall</code></td></tr>
+      <tr><td>Are specification carriers structurally healthy?</td><td><code>haft spec check</code></td></tr>
+      <tr><td>Should CI fail on current governance findings?</td><td><code>haft check</code></td></tr>
     </tbody>
   </table>
 
-  <h2>Next steps</h2>
+  <h2>7. Share carriers through git</h2>
+
+  <p>
+    Commit reviewable <code>.haft/*.md</code> carriers with the code they
+    explain. After pulling, teammates run <code>haft sync</code> to import those
+    carriers into their local SQLite store. Markdown is the exchange carrier;
+    SQLite remains the runtime structured store.
+  </p>
+
+  <h2>Next</h2>
 
   <ul>
-    <li><a href="/docs/reasoning">How /h-reason works</a> — the source-first umbrella entry point</li>
-    <li><a href="/docs/five-modes">Independent capabilities</a> — when frame, explore, compare, decide, or verify is current</li>
-    <li><a href="/docs/commands">All commands</a> — reference for every slash command</li>
+    <li><a href="/docs/reasoning">Reasoning and FPF Query</a></li>
+    <li><a href="/docs/concepts">Typed project memory</a></li>
+    <li><a href="/docs/commands">Skills, CLI, and MCP reference</a></li>
   </ul>
 </DocsLayout>

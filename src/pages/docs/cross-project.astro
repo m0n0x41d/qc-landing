@@ -2,98 +2,79 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Cross-Project Recall" description="How decisions from one project surface when framing problems in another.">
-  <h1>Cross-Project Recall</h1>
+<DocsLayout title="Cross-project recall in Haft v9" description="The bounded local decision-summary index, its evidence boundary, and its separation from v9 typed project memory.">
+  <h1>Cross-project recall</h1>
 
   <p>
-    When you frame a new problem in project B, haft automatically searches for related decisions
-    from all your other projects. If you solved a similar problem six months ago in project A,
-    that decision surfaces — with a congruence level tag indicating how transferable the context is.
+    Haft retains a user-local cross-project index at
+    <code>~/.haft/index.db</code>. It contains decision summaries from local
+    Haft projects. When a new ProblemCard is framed, matching decisions from
+    other projects may appear as <strong>Cross-Project History</strong>.
   </p>
 
-  <h2>How it works</h2>
+  <h2>What is indexed</h2>
 
   <p>
-    Every time you record a decision (<code>/h-decide</code>), a summary is written to a shared
-    index at <code>~/.haft/index.db</code>. This index contains: project name, decision title,
-    selected variant, rationale, weakest link, and primary language.
+    After a DecisionRecord is created, Haft can index its project identity,
+    decision identity, title, selected option, rationale summary, weakest link,
+    primary language, and creation time. The index does not copy the entire
+    project graph.
   </p>
 
   <p>
-    When you frame a new problem (<code>/h-frame</code>), haft searches this index using FTS5
-    (full-text search). Matching decisions from <strong>other projects</strong> appear in a
-    "Cross-Project History" section:
+    The baseline path uses local FTS5 over summaries. Results exclude the
+    current project and carry a context label: CL2 for the same detected primary
+    language or CL1 for a different one. That label is an evidence congruence
+    cue, not proof that the old decision applies here.
   </p>
 
-  <pre><code>## Cross-Project History
+  <h2>How to use a recalled decision</h2>
 
-- [dec-20260319-001] Tokio-based parallel executor with semaphore-bounded concurrency
-  — Tokio is already the standard async runtime in the Rust ecosystem...
-  (CL1 (different context), from test-rust)</code></pre>
-
-  <h2>Congruence levels</h2>
+  <ol>
+    <li>Treat the result as related history, not a recommendation.</li>
+    <li>Open the source project's exact decision before relying on its rationale.</li>
+    <li>Compare the old and current constraints, evidence, scope, and weakest link.</li>
+    <li>Frame or decide the current project object through its own authority path.</li>
+  </ol>
 
   <p>
-    Not all cross-project knowledge transfers equally. A caching decision from another Go project
-    is more relevant than one from a Python project with completely different constraints.
+    Retrieval rank never selects an option, merges an identity, or transfers
+    authority from one project to another.
   </p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>CL</th>
-        <th>When</th>
-        <th>R_eff penalty</th>
-        <th>Meaning</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>CL2</td>
-        <td>Same primary language</td>
-        <td>0.1</td>
-        <td>Similar context — likely applicable with minor adjustments</td>
-      </tr>
-      <tr>
-        <td>CL1</td>
-        <td>Different primary language</td>
-        <td>0.4</td>
-        <td>Different context — the rationale may apply but implementation differs</td>
-      </tr>
-    </tbody>
-  </table>
+  <h2>Not typed project memory</h2>
 
   <p>
-    Primary language is auto-detected from your codebase modules. A Go project recalling a
-    decision from another Go project gets CL2. Recalling from a Rust project gets CL1.
+    Cross-project recall and v9 typed memory are separate systems. Typed memory
+    resolves an exact <code>EntityOfConcern</code> inside one pinned project
+    snapshot and reads a bounded neighborhood around it. A cross-project
+    summary cannot substitute for that exact identity or be admitted as a
+    project relation by rank.
   </p>
 
-  <h2>What gets shared</h2>
+  <h2>Optional embedding compatibility</h2>
 
-  <p>The index stores <strong>summaries only</strong> — not the full decision body:</p>
+  <p>
+    The retained <code>haft-embed</code> sidecar may augment older semantic
+    recall paths and degrades to FTS when unavailable. This compatibility path
+    is outside the v9 contract and P14 acceptance basis. Haft makes no v9 claim
+    that dense or hybrid retrieval is better than FTS, <code>rg</code>, a pinned
+    source file, or host RAG.
+  </p>
+
+  <h2>Local boundary</h2>
 
   <ul>
-    <li>Decision title and selected variant name</li>
-    <li>Why it was selected (rationale)</li>
-    <li>Weakest link</li>
-    <li>Primary language of the source project</li>
-    <li>Project name (for display)</li>
+    <li>The index stays on the user's machine.</li>
+    <li>It is not shared automatically through git.</li>
+    <li>Different engineers can have different indexed projects and freshness.</li>
+    <li>Missing results do not prove that no related decision exists.</li>
   </ul>
 
-  <p>
-    The index is a <strong>projection</strong> — a read-optimized copy. If it's corrupted or deleted,
-    it can be rebuilt from per-project databases.
-  </p>
+  <h2>Related pages</h2>
 
-  <h2>Privacy</h2>
-
-  <p>
-    Everything is local. The index lives at <code>~/.haft/index.db</code> on your machine.
-    No data leaves your computer. No cloud. No analytics. No telemetry.
-  </p>
-
-  <p>
-    In future server mode, decisions will flow through a central server that you host yourself.
-    See the <a href="/docs/roadmap">roadmap</a> for what's planned.
-  </p>
+  <ul>
+    <li><a href="/docs/concepts">Exact EntityOfConcern memory</a></li>
+    <li><a href="/docs/reasoning">Retrieval versus application</a></li>
+  </ul>
 </DocsLayout>

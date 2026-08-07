@@ -2,8 +2,8 @@
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Install Haft v9" description="Install the v9 governance substrate without a bundled execution runtime.">
-  <h1>Install &amp; init (v9 contract)</h1>
+<DocsLayout title="Install Haft v9" description="Install the published v9 governance substrate without a bundled execution runtime.">
+  <h1>Install &amp; init (v9.0)</h1>
 
   <pre><code>curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/install.sh | bash
 
@@ -22,7 +22,7 @@ haft init --claude   # or --codex
   <ol>
     <li>Stop every host process that can run <code>haft serve</code>.</li>
     <li>Back up the project <code>.haft/</code> directory and its global project ledger.</li>
-    <li>Install the exact candidate and record <code>haft version</code> plus its checksum.</li>
+    <li>Install v9.0.0 and record <code>haft version</code> plus its checksum.</li>
     <li>Re-run init for only the host targets you use, then fully restart them.</li>
   </ol>
 

@@ -2,249 +2,149 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Decision Lifecycle" description="How decisions age, go stale, and get verified.">
-  <h1>Decision Lifecycle</h1>
+<DocsLayout title="Specifications and evidence in Haft v9" description="Typed SpecSection lifecycle, source-currentness, evidence decay, drift, and the human gates that keep carriers separate from authority.">
+  <h1>Specifications &amp; evidence</h1>
 
   <p>
-    Decisions are not permanent. Requirements shift, load increases, teams grow,
-    dependencies update. haft treats every decision as having a shelf life — and provides
-    the machinery to detect when that shelf life has expired.
+    Haft v9 keeps specification structure, lifecycle authority, FPF source
+    compatibility, implementation evidence, and release status as separate
+    results. A green carrier check cannot stand in for the others.
   </p>
 
-  <h2>The lifecycle</h2>
+  <h2>Typed specification carriers</h2>
+
+  <p>
+    Project specifications are typed <code>SpecSection</code> editions. The
+    standard project carriers describe the target system, the software system
+    that realizes it, and the local term map. These labels are Haft
+    local-practice carriers; their names do not make them FPF Core kinds.
+  </p>
+
+  <p>
+    Markdown under <code>.haft/specs/</code> is a reviewable publication
+    carrier. The SQL edition store remains the runtime source of truth. Use the
+    public spec surfaces to draft, validate, sync, export, approve, rebaseline,
+    or reopen a section; do not edit lifecycle state in SQLite by hand.
+  </p>
+
+  <h2>Read status without collapsing it</h2>
+
+  <pre><code>haft spec status
+haft spec status --json
+haft spec check
+haft spec check --json</code></pre>
+
+  <p>
+    <code>haft spec status</code> returns two distinct views:
+    <code>workflow.state</code> reports the next onboarding or lifecycle action,
+    while <code>health</code> reports structural, baseline, drift, and staleness
+    findings. Workflow <code>ready</code> does not erase health findings and is
+    not release evidence.
+  </p>
+
+  <h2>Draft and validate</h2>
+
+  <pre><code>haft spec draft-contract
+haft spec validate
+haft spec review
+haft spec sync
+haft spec export ...</code></pre>
+
+  <p>
+    The drafting contract is profile-independent. Validation checks authored
+    draft and active carriers without admitting them into a lifecycle state.
+    Read-only semantic review is advisory. Sync imports carriers into typed SQL
+    editions; export renders a deterministic markdown projection from a current
+    edition.
+  </p>
+
+  <p>
+    <code>haft spec check</code> is deterministic L0/L1/L1.5 structural work. It
+    parses typed blocks and known carrier shapes. It does not perform L2 human
+    semantic judgment or prove L3 runtime behavior.
+  </p>
+
+  <h2>Human-gated lifecycle acts</h2>
+
+  <p>
+    Approving a baseline, rebaselining after intentional semantic change, and
+    reopening a section are lifecycle effects. Before asking, the agent must
+    present a self-contained Human Gate Brief with the readable subject,
+    affected operation, real options, immediate consequences, weakest links,
+    and advisory recommendation.
+  </p>
+
+  <pre><code>haft spec approve ...
+haft spec rebaseline ...
+haft spec reopen ...</code></pre>
+
+  <p>
+    Preparation and explanation are not approval. A natural-language operator
+    answer is sufficient only when one current brief makes the exact effect,
+    subject, selection, and scope unambiguous.
+  </p>
+
+  <h2>FPF source-currentness is separate</h2>
+
+  <p>
+    When the governing FPF source changes, <code>h-spec</code> recovers the
+    exact current pattern and classifies semantic fanout before editing a
+    carrier. Three results remain distinct:
+  </p>
 
   <ul>
-    <li><strong>Pending</strong> — decision recorded, not yet implemented (no measurement)</li>
-    <li><strong>Shipped</strong> — implemented and measured (verdict: accepted/partial/failed)</li>
-    <li><strong>Active</strong> — shipped, R_eff &ge; 0.5, not expired</li>
-    <li><strong>Stale</strong> — R_eff &lt; 0.5, or valid_until expired, or code drift detected</li>
-    <li><strong>Superseded</strong> — replaced by a newer decision</li>
-    <li><strong>Deprecated</strong> — no longer relevant (archived)</li>
+    <li>compatibility with the current FPF source;</li>
+    <li>current typed carrier and lifecycle state;</li>
+    <li>implementation or runtime evidence for the specification's claims.</li>
   </ul>
 
-  <pre><code>Pending → Shipped → Active → Stale
-                                ↓
-                      Superseded / Deprecated</code></pre>
+  <p>
+    Passing one result does not promote the others. Historical binding choices
+    are not rewritten merely to match current implementation prose.
+  </p>
 
-  <h2>Evidence and R_eff</h2>
+  <h2>Evidence and verification</h2>
 
   <p>
-    Every decision can have evidence attached — test results, benchmarks, user feedback,
-    measurements. Each evidence item has:
+    Decisions and claims may carry evidence with formality, congruence, and
+    freshness coordinates. Evidence can support, weaken, or fail to establish
+    a claim. Expiry means the evidence is no longer current enough for the
+    declared use; it does not silently make the historical observation false.
   </p>
+
+  <p>
+    Use <code>h-verify</code> when the question is whether a recorded decision
+    or claim still holds. The capability compares the recorded baseline and
+    predictions with current code, tests, measurements, incidents, or other
+    admissible observations.
+  </p>
+
+  <pre><code>haft_refresh(action="scan")
+haft_refresh(action="scan", verbose=true)
+haft_query(action="evidence_path", artifact_ref="dec-...",
+  evidence_ref="evid-...", attempted_use="verification reliance")</code></pre>
+
+  <p>
+    Drift, stale evidence, missing bindings, and refresh debt are attention
+    signals. They do not authorize a lifecycle mutation and do not interrupt
+    unrelated work already inside the accepted scope.
+  </p>
+
+  <h2>Specifications do not absorb execution policy</h2>
+
+  <p>
+    A <code>SoftwareSystemSpec</code> describes the software realization:
+    responsibility allocation, behavior, interfaces, constraints, and selected
+    structure. Agent policy, team policy, external-runner policy, delivery
+    authority, and release policy stay outside that carrier unless their own
+    exact governing object is current.
+  </p>
+
+  <h2>Related pages</h2>
 
   <ul>
-    <li><strong>Verdict</strong> — supports, weakens, or refutes the decision</li>
-    <li><strong>Congruence Level (CL)</strong> — how relevant is this evidence to this context?
-      <ul>
-        <li>CL3: Same project, same context — full weight</li>
-        <li>CL2: Similar project, similar stack — 0.1 penalty</li>
-        <li>CL1: Different context — 0.4 penalty</li>
-        <li>CL0: Opposed context — 0.9 penalty</li>
-      </ul>
-    </li>
-    <li><strong>Expiry date (<code>valid_until</code>)</strong> — when this evidence is no longer trustworthy.
-      Expired evidence scores 0.1 (weak, not absent).</li>
-  </ul>
-
-  <p>
-    <strong>R_eff</strong> (effective reliability) is computed as the minimum across all evidence
-    scores, with CL penalties applied. This is the weakest link principle: the chain is as strong
-    as its weakest link. Never averaged — always <code>min()</code>.
-  </p>
-
-  <ul>
-    <li>R_eff &ge; 0.5 — healthy, decision is trustworthy</li>
-    <li>R_eff &lt; 0.5 — degraded, needs review</li>
-    <li>R_eff &lt; 0.3 — AT RISK, needs immediate attention</li>
-  </ul>
-
-  <h2>Claims with verify_after</h2>
-
-  <p>
-    Decisions can include claims — testable assertions about expected outcomes.
-    Each claim has a <code>verify_after</code> date: the point at which the claim
-    should be measured against reality.
-  </p>
-
-  <pre><code>Claim: "P95 latency stays under 100ms"
-verify_after: 2026-05-01</code></pre>
-
-  <p>
-    When the date passes and the claim remains unverified, <code>/h-verify scan</code>
-    surfaces it. You then either measure it (attach evidence) or waive it (extend with
-    justification). Unverified claims degrade R_eff over time.
-  </p>
-
-  <h2>Evidence supersession</h2>
-
-  <p>
-    When you run a new measurement for a claim or acceptance criterion, the new evidence
-    automatically marks the old evidence for the same claim as superseded. R_eff reflects
-    the current state, not historical measurements. This prevents stale evidence from
-    artificially propping up a decision.
-  </p>
-
-  <h2>Code drift detection</h2>
-
-  <p>
-    After a decision is implemented, haft snapshots affected file hashes as a baseline.
-    On every <code>/h-verify scan</code>, it recomputes hashes and detects changes:
-  </p>
-
-  <ul>
-    <li><strong>MODIFIED</strong> — file changed since baseline (may or may not invalidate the decision)</li>
-    <li><strong>FILE MISSING</strong> — file was deleted or moved (likely needs decision update)</li>
-    <li><strong>No drift</strong> — file unchanged</li>
-  </ul>
-
-  <p>
-    Drift is a signal, not an automatic invalidation. The agent reads the diff and judges whether
-    the change is material (broke an invariant) or cosmetic (comments, formatting, unrelated edits).
-  </p>
-
-  <h2>Module coverage</h2>
-
-  <p>
-    <code>/h-status</code> shows module coverage — which parts of your codebase are governed by
-    decisions and which are blind spots:
-  </p>
-
-  <pre><code>## Module Coverage (9 modules, 77% governed)
-  governed  src/internal/artifact — 3 decisions
-  governed  src/internal/codebase — 2 decisions
-  partial   src/cmd/serve         — 1 decision (stale)
-  blind     src/assurance         — no decisions
-  blind     src/cmd/indexer       — no decisions</code></pre>
-
-  <p>
-    Three states: <strong>governed</strong> (active decisions), <strong>partial</strong>
-    (only stale or expired decisions), <strong>blind</strong> (no decisions at all).
-    Blind modules are parts of your architecture with no formal engineering decisions — not
-    necessarily bad, but worth knowing about.
-  </p>
-
-  <h2>Verifying decisions</h2>
-
-  <pre><code>/h-verify</code></pre>
-
-  <p>Actions:</p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Action</th>
-        <th>What it does</th>
-        <th>When to use</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><code>scan</code></td>
-        <td>Find stale artifacts + code drift + pending verify_after claims</td>
-        <td>Routine health check</td>
-      </tr>
-      <tr>
-        <td><code>measure</code></td>
-        <td>Record evidence for a claim or acceptance criteria</td>
-        <td>Verifying outcomes after implementation</td>
-      </tr>
-      <tr>
-        <td><code>waive</code></td>
-        <td>Extend validity with justification</td>
-        <td>Decision still valid, just expired</td>
-      </tr>
-      <tr>
-        <td><code>reopen</code></td>
-        <td>Start new problem cycle from old decision</td>
-        <td>Conditions changed, need to reconsider</td>
-      </tr>
-      <tr>
-        <td><code>supersede</code></td>
-        <td>Replace with a different artifact</td>
-        <td>New decision replaces old one</td>
-      </tr>
-      <tr>
-        <td><code>deprecate</code></td>
-        <td>Archive as no longer relevant</td>
-        <td>Decision obsolete, nothing replaces it</td>
-      </tr>
-      <tr>
-        <td><code>reconcile</code></td>
-        <td>Find notes that overlap with decisions</td>
-        <td>Clean up duplicate knowledge</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>The two FPF cycles</h2>
-
-  <p>
-    The systems engineering methodology behind haft describes two interconnected cycles
-    that feed into each other:
-  </p>
-
-  <h3>The observation cycle</h3>
-
-  <p>
-    Notice what changed → characterize the situation → measure → identify problems →
-    pick the right problem to work on.
-  </p>
-
-  <p>haft supports this with:</p>
-
-  <ul>
-    <li><strong>Drift detection</strong> — watches for code changes under existing decisions</li>
-    <li><strong>R_eff degradation</strong> — evidence expires, trust scores drop, stale decisions surface</li>
-    <li><strong>Claim verification</strong> — <code>verify_after</code> dates trigger measurement prompts</li>
-    <li><strong>Module coverage</strong> — shows which parts of the architecture have no decisions (blind spots)</li>
-    <li><strong>Cross-project recall</strong> — surfaces related decisions from other projects when framing new problems</li>
-  </ul>
-
-  <h3>The decision cycle</h3>
-
-  <p>
-    Define comparison criteria → generate variants → fair comparison → select → implement →
-    measure impact → feed results back into the observation cycle.
-  </p>
-
-  <p>haft supports this with:</p>
-
-  <ul>
-    <li><strong>Understand → Explore → Choose → Execute → Verify</strong> — the <a href="/docs/five-modes">five modes</a> with focused prompts at each step</li>
-    <li><strong>Adversarial verification</strong> — challenges decisions before recording</li>
-    <li><strong>Baseline + Measure</strong> — snapshots implementation, records whether acceptance criteria were met</li>
-    <li><strong>Evidence supersession</strong> — newer measurements replace older ones, R_eff reflects current state</li>
-    <li><strong>Failed measurement → reopen</strong> — when implementation doesn't meet criteria, the system suggests reopening the problem</li>
-  </ul>
-
-  <h3>Closing the loop</h3>
-
-  <p>
-    The two cycles connect: results of implementing a decision (measurements, evidence,
-    drift) become inputs to the observation cycle. Stale decisions trigger re-evaluation. Failed
-    implementations create new problems. The goal is that this happens naturally — you don't need to
-    remember to check, the system surfaces what needs attention.
-  </p>
-
-  <h2>Team workflow</h2>
-
-  <p>
-    Decision lifecycle is not solo-only. With <code>haft sync</code>, decisions are
-    shared across the team via git-tracked <code>.haft/*.md</code> files. Every team member
-    sees the same decisions in <code>/h-status</code> after syncing, and
-    <code>haft check</code> gives the shared pass/fail gate.
-  </p>
-
-  <p>
-    See <a href="/docs/team-sync">Team Sync</a> for the full workflow.
-  </p>
-
-  <h2>Next</h2>
-
-  <ul>
-    <li><a href="/docs/team-sync">Team sync</a> — sharing decisions across the team</li>
-    <li><a href="/docs/commands">All commands</a> — complete reference</li>
-    <li><a href="/docs/concepts">Key concepts</a> — R_eff, CL, WLNK explained</li>
+    <li><a href="/docs/decision-integrity">Authority and Human Gate Briefs</a></li>
+    <li><a href="/docs/concepts">Typed project memory</a></li>
+    <li><a href="/docs/commands">Current skills and command surfaces</a></li>
   </ul>
 </DocsLayout>

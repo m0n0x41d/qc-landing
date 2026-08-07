@@ -2,132 +2,154 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="FAQ" description="Common questions about haft.">
+<DocsLayout title="Haft v9 FAQ" description="Current-release answers about FPF Query, typed memory, hosts, authority, execution, storage, and migration.">
   <h1>FAQ</h1>
 
-  <h2>Is this just ADRs with extra steps?</h2>
+  <h2>What is the current release?</h2>
 
   <p>
-    ADRs are static markdown files. Nobody checks if they're still valid. Nobody knows when
-    reality diverged from the decision. Haft adds: computed trust scores (R_eff), evidence
-    decay, code drift detection, module coverage, cross-project recall, claim verification,
-    and an adversarial gate that challenges decisions before recording. ADRs are the starting
-    point; haft makes them live.
+    <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.0" target="_blank" rel="noopener">v9.0.0</a>
+    is the current published release. v8.1.0 is its published predecessor; no
+    v8.2 release was published.
   </p>
 
-  <h2>What happens to decisions after they're recorded?</h2>
+  <h2>What is Haft v9?</h2>
 
   <p>
-    A markdown file appears in <code>.haft/decisions/</code> — commit it with your code. The
-    decision tracks affected files: if those files change, drift detection flags it. Evidence can
-    be attached over time (test results, benchmarks). R_eff is computed from evidence quality.
-    When R_eff drops below 0.5, the decision surfaces as stale in <code>/h-status</code>.
-    You review and either waive (still valid), reopen (needs reconsideration), or supersede
-    (replace with new decision).
+    Haft is a source-native FPF delivery and reliance-bearing project-memory
+    substrate for principal-led engineering work. It exposes one project graph
+    through host-agent skills, a CLI, and MCP.
   </p>
 
-  <h2>Can I use this on an existing project?</h2>
+  <h2>Is Haft a coding agent?</h2>
 
   <p>
-    Yes. Run <code>haft init</code> then <code>/h-onboard</code>. The agent scans your
-    codebase for READMEs, ADRs, architecture docs, and captures what it finds as notes. It also
-    runs module coverage to show which parts of your architecture have no decisions.
+    No. v8 removed the standalone agent, TUI, and desktop wrappers. v9 also
+    removed <code>haft run</code>, <code>haft harness</code>, and the bundled
+    Open-Sleigh runtime. Use Haft through an existing coding agent or an
+    independently operated runner.
   </p>
 
-  <h2>Does this work with Cursor?</h2>
+  <h2>Do I need to learn all of FPF first?</h2>
 
   <p>
-    Yes. Run <code>haft init --cursor</code>. This creates <code>.cursor/mcp.json</code>
-    and installs commands in <code>~/.cursor/commands/</code>. After init, enable the MCP server
-    in Cursor Settings, find <code>haft</code>, and toggle on.
+    No. <code>h-reason</code> can retrieve the pinned FPF source for the current
+    concern. The agent still has to check applicability and boundaries;
+    retrieval output is not a selected method or work order.
   </p>
 
-  <h2>Is this useful for solo developers?</h2>
+  <h2>Does v9 prescribe a workflow?</h2>
 
   <p>
-    Yes — you'll thank yourself in 3 months when you can search "why did I pick PostgreSQL over
-    SQLite?" and find the full reasoning, not a vague memory. Decisions accumulate across projects
-    too: when you frame a similar problem in a new project, decisions from old projects surface
-    automatically via <a href="/docs/cross-project">cross-project recall</a>.
+    No. The 12 skills are independent capabilities. Use the one whose condition
+    is current. Explicit WorkPlans and ordered MethodDescriptions remain valid,
+    but order is not inferred from the skill catalog.
   </p>
 
-  <h2>Is this useful for teams?</h2>
+  <h2>Can I use Haft on an existing project?</h2>
 
   <p>
-    Yes. Decision records commit to git — team members see them in PRs. Reviewers can challenge
-    decisions alongside code. Module coverage shows the team which parts of the architecture
-    are governed and which are blind spots.
+    Yes. Run <code>haft init</code> for the exact host, restart it, and inspect
+    onboarding status. Init installs default project memory automatically and
+    may admit only a complete supported singleton profile as
+    <code>detector_default</code>. Ambiguous or reviewed bases stay
+    operator-mediated.
   </p>
 
+  <h2>What does onboarding ready mean?</h2>
+
   <p>
-    In v8, <code>haft sync</code> keeps the git-tracked markdown projections in
-    <code>.haft/</code> aligned with each engineer's local database. Decisions are
-    reviewable in PRs, searchable locally, and checked by <code>haft check</code>.
+    Only that the canonical project profile and structured project memory are
+    available. It does not establish specification applicability, health,
+    lifecycle state, evidence truth, or release readiness.
   </p>
 
-  <h2>What if I just want quick decisions?</h2>
+  <h2>When does Haft write project memory?</h2>
 
   <p>
-    Use <code>/h-reason</code> — the agent picks tactical mode (frame, explore, decide — no
-    characterization or comparison). Or use <code>/h-note</code> to capture a micro-decision
-    with rationale validation. You don't have to use the full cycle for every choice.
+    On an explicit operator request to save or bind, or when current work has a
+    concrete receiving use such as handoff, replay, audit, automation, delayed
+    evidence, or costly reversal. Empty memory and generic future usefulness
+    are not enough.
   </p>
 
-  <h2>What's the overhead?</h2>
+  <h2>Where is data stored?</h2>
 
   <p>
-    A tactical decision takes 30-60 seconds. A standard decision takes 3-5 minutes. The time
-    investment pays back when someone (including future you) asks "why?" and the answer is
-    there, with rationale, alternatives, and evidence.
+    Runtime structured state lives in local SQLite under
+    <code>~/.haft/projects/&lt;project-id&gt;/</code>. Reviewable project carriers
+    live under <code>.haft/</code>. The local cross-project decision-summary
+    index lives at <code>~/.haft/index.db</code>.
   </p>
 
-  <h2>What's FPF?</h2>
+  <h2>How do teams share records?</h2>
 
   <p>
-    First Principles Framework — a formal specification for engineering reasoning by
-    <a href="https://ailev.livejournal.com" target="_blank" rel="noopener">Anatoly Levenchuk</a>.
-    The <a href="https://github.com/ailev/FPF" target="_blank" rel="noopener">FPF spec is public on GitHub</a>.
-    Haft implements the practical parts: the ADI reasoning
-    cycle (Abduction-Deduction-Induction), evidence-based trust scoring (R_eff), weakest link
-    aggregation (WLNK), and the decide-measure-reframe loop. You don't need to
-    read the spec to use haft.
+    Commit supported <code>.haft/*.md</code> carriers through git. Teammates run
+    <code>haft sync</code> after pulling to import them into local SQLite.
+    Markdown is the exchange carrier; it is not the acting runtime object.
   </p>
 
-  <h2>Where's the data stored?</h2>
+  <h2>How do I search in v9?</h2>
 
   <p>
-    Database: <code>~/.haft/projects/&lt;project-id&gt;/haft.db</code> (SQLite, local,
-    never leaves your machine). Markdown projections: <code>.haft/</code> in your project
-    (git-tracked, for code review). Cross-project index: <code>~/.haft/index.db</code>
-    (for cross-project recall).
+    There is no <code>/h-search</code> skill. Use the query that matches the
+    object: <code>haft fpf query|lookup|inspect</code> for FPF source,
+    <code>haft graph explore</code> for code, typed-memory
+    <code>resolve|neighborhood|recall</code> for one EntityOfConcern, or an exact
+    <code>haft_query</code> project-record action.
   </p>
 
-  <h2>Is haft good for vibe coding?</h2>
+  <h2>Can the agent bind a decision automatically?</h2>
 
   <p>
-    Vibe coding is coding without thinking about structure. Haft is a tool for thinking about
-    structure. They solve different problems. That said, you can vibe-code all day and use
-    <code>/h-note</code> to capture the interesting choices along the way — no ceremony needed.
-    When you hit a real decision (database choice, auth strategy, deployment model), switch to
-    <code>/h-reason</code> for 60 seconds of structured thought. Then go back to vibing.
+    A supported host may route one direct, unambiguous operator request through
+    <code>h-decide</code>. The skill token, a recommendation, quoted text, or
+    tool payload is not approval. Ambiguity requires a Human Gate Brief and an
+    operator answer.
+  </p>
+
+  <h2>Can Haft execute commissioned work?</h2>
+
+  <p>
+    Haft records runner-neutral WorkCommission and RuntimeRun lifecycle data.
+    It does not execute or apply the work. <code>h-commission</code> is
+    manual-only because commission creation grants bounded execution authority.
+  </p>
+
+  <h2>Does Haft support Cursor and other hosts?</h2>
+
+  <p>
+    Claude Code and Codex are stable v9 hosts. Cursor, Grok, Pi, Hermes, Zed,
+    Antigravity, OpenCode, Gemini CLI, and Air have explicit experimental or
+    legacy adapter flags. Run <code>haft init --help</code> for the current
+    installed surface.
+  </p>
+
+  <h2>What is haft-embed in v9?</h2>
+
+  <p>
+    <code>haft-embed</code> is an optional compatibility sidecar for older
+    semantic-recall paths. It is outside the v9 contract and P14 acceptance
+    basis. Its presence does not support a v9 dense/hybrid retrieval-quality
+    claim.
+  </p>
+
+  <h2>How do I know the host loaded v9?</h2>
+
+  <p>
+    Restart the host, record <code>haft version</code> and the binary checksum,
+    and inspect the actual MCP process and interface. Source code,
+    documentation, or a local test run cannot prove the identity of an already
+    running host process.
   </p>
 
   <h2>What happened to quint-code?</h2>
 
   <p>
-    Haft is quint-code, rebranded in v6.0. Same project, new name. The
-    <a href="https://github.com/m0n0x41d/haft" target="_blank" rel="noopener">GitHub repository</a>
-    now lives under the haft name. Internal directories changed from <code>.quint/</code> to
-    <code>.haft/</code> and commands from <code>/q-*</code> to <code>/h-*</code>. If you're
-    upgrading from v5, see the <a href="/docs/migration">migration guide</a>.
-  </p>
-
-  <h2>How does haft compare to SDD frameworks?</h2>
-
-  <p>
-    SDD (Specification-Driven Development) frameworks prescribe a methodology. Haft provides
-    structure without prescribing process. You can use as much or as little of the FPF cycle
-    as fits your workflow. The key difference: haft decisions are living artifacts with computed
-    trust scores and drift detection, not static specs that rot in a wiki.
+    The project was renamed to Haft in v6. Older <code>.quint/</code>,
+    <code>~/.quint-code/</code>, and <code>/q-*</code> surfaces belong to the
+    historical migration path. See the <a href="/docs/migration">v8.1 to v9.0 migration guide</a>
+    and the archived versioned pages for earlier upgrades.
   </p>
 </DocsLayout>

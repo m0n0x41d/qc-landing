@@ -2,111 +2,120 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Agent Prompt Setup" description="Add a project-level prompt to get more out of haft.">
-  <h1>Agent Prompt Setup</h1>
+<DocsLayout title="Host integration in Haft v9" description="Let haft init publish the current MCP config, skills, and managed instruction section for each supported coding-agent host.">
+  <h1>Host integration</h1>
 
   <p>
-    haft works out of the box — the MCP tools are always available once you run <code>init</code>.
-    But adding a project-level prompt file makes the agent significantly better at using haft proactively.
+    In v9, do not copy a generic prompt file across hosts. Run
+    <code>haft init</code> for the exact host. Haft publishes that host's MCP
+    configuration, transformed skills, and managed instruction section through
+    one versioned init plan.
   </p>
 
-  <h2>What is a project prompt?</h2>
+  <h2>Stable hosts</h2>
 
-  <p>
-    Each AI tool reads a specific file from your project root at the start of every session.
-    This file contains project-specific instructions that shape the agent's behavior:
-  </p>
+  <pre><code>haft init --claude
+haft init --codex
+haft init --all      # full Claude + Codex integrations</code></pre>
 
   <table>
     <thead>
       <tr>
-        <th>Tool</th>
-        <th>Prompt file</th>
+        <th>Host</th>
+        <th>MCP config</th>
+        <th>Skills</th>
+        <th>Instructions</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>Claude Code</td><td><code>CLAUDE.md</code></td></tr>
-      <tr><td>Cursor</td><td><code>.cursorrules</code></td></tr>
-      <tr><td>Codex CLI</td><td><code>AGENTS.md</code></td></tr>
-      <tr><td>Gemini CLI</td><td><code>GEMINI.md</code></td></tr>
+      <tr>
+        <td>Claude Code</td>
+        <td><code>.mcp.json</code></td>
+        <td><code>~/.claude/skills/</code> or project <code>.claude/skills/</code></td>
+        <td>Managed section in <code>CLAUDE.md</code></td>
+      </tr>
+      <tr>
+        <td>Codex CLI / App</td>
+        <td><code>.codex/config.toml</code></td>
+        <td><code>~/.agents/skills/</code> or project <code>.agents/skills/</code></td>
+        <td>Managed section in <code>AGENTS.md</code></td>
+      </tr>
     </tbody>
   </table>
 
   <p>
-    The haft repository includes a
-    <a href="https://github.com/m0n0x41d/haft/blob/main/CLAUDE.md" target="_blank" rel="noopener">reference CLAUDE.md</a>
-    that teaches the agent:
+    Use <code>--local</code> for project-local skill publication. Use
+    <code>--mcp-only</code> only with an explicit host or <code>--all</code> when
+    you intentionally want MCP config without skills or managed instructions.
+    <code>--no-file-instructions</code> skips the instruction carrier while
+    retaining the other selected host outputs.
   </p>
 
-  <ul>
-    <li><strong>Communication style</strong> — direct, no validation theater, peer-level technical discourse</li>
-    <li><strong>Thinking principles</strong> — weakest link analysis, reversibility checks, separation of concerns</li>
-    <li><strong>When to use haft</strong> — choose the smallest capability that answers the current project question</li>
-    <li><strong>FPF source navigation</strong> — retrieve relevant source cards and full patterns without inventing a project workflow</li>
-    <li><strong>Key concepts</strong> — R_eff, evidence decay, CL penalties, claims, Transformer Mandate</li>
-    <li><strong>Glossary</strong> — quick reference for FPF terminology</li>
-  </ul>
+  <h2>Independent skill publication</h2>
 
-  <h2>Install it</h2>
-
-  <p>Download the reference file and rename it for your tool:</p>
-
-  <pre><code># Claude Code
-curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/CLAUDE.md > CLAUDE.md
-
-# Cursor
-curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/CLAUDE.md > .cursorrules
-
-# Codex CLI
-curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/CLAUDE.md > AGENTS.md
-
-# Gemini CLI
-curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/CLAUDE.md > GEMINI.md</code></pre>
-
-  <div class="callout">
-    <p>
-      <strong>Adapt it to your project.</strong> The reference file is opinionated (no emoji, direct
-      communication, functional core / imperative shell). Keep the haft-specific sections (FPF Mode,
-      Commands, Glossary) and adjust the rest to match your team's style.
-    </p>
-  </div>
-
-  <h2>What it changes</h2>
-
-  <p>Without CLAUDE.md:</p>
-  <ul>
-    <li>Agent uses haft tools when you explicitly call slash commands</li>
-    <li>No proactive decision capture</li>
-    <li>No structured reasoning unless you ask for it</li>
-  </ul>
-
-  <p>With the prompt file:</p>
-  <ul>
-    <li>Agent understands when to suggest <code>/h-reason</code> for complex tasks</li>
-    <li>Agent records micro-decisions as notes when it notices them in conversation</li>
-    <li>Agent checks <code>/h-status</code> proactively to surface stale decisions</li>
-    <li>Agent applies weakest link analysis and reversibility checks naturally</li>
-    <li>Agent follows the recommended FPF protocol for non-trivial decisions</li>
-  </ul>
-
-  <h2>Keeping it up to date</h2>
+  <pre><code>haft init --agents
+haft init --agents --local
+haft init --codex --agents</code></pre>
 
   <p>
-    The reference prompt evolves with haft releases. When you update the binary, check if
-    the reference file has changed:
+    <code>--agents</code> publishes only the shared agent skill bundle. It does
+    not configure MCP or project instructions. When combined with
+    <code>--codex</code>, the identical skill target is coalesced into one write.
   </p>
 
-  <pre><code># Compare your version with the latest
-curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/CLAUDE.md | diff - CLAUDE.md</code></pre>
+  <h2>Experimental and legacy adapters</h2>
 
   <p>
-    The haft-specific sections (FPF Mode, Commands table, Glossary) are the most important to
-    keep current. The general engineering style sections can stay customized.
+    Grok, Pi, Hermes, Zed, Antigravity, OpenCode, Cursor, Gemini CLI, and Air
+    have explicit adapter flags. They do not all receive the same combination
+    of MCP config, skills, and instruction files.
   </p>
 
-  <h2>Next step</h2>
+  <pre><code>haft init --grok
+haft init --pi
+haft init --hermes
+haft init --zed
+haft init --agy
+haft init --opencode
+haft init --cursor
+haft init --gemini
+haft init --air</code></pre>
 
   <p>
-    <a href="/docs/reasoning">How /h-reason works</a> — learn the source-first umbrella entry point.
+    Read <code>haft init --help</code> from the installed release before
+    scripting an adapter. Stable support in v9 is Claude Code and Codex; the
+    other adapters retain their documented experimental or legacy boundaries.
   </p>
+
+  <h2>Managed instruction safety</h2>
+
+  <p>
+    Re-init changes only the content between Haft markers in
+    <code>CLAUDE.md</code> or <code>AGENTS.md</code>. Project text outside those
+    markers remains project-owned. Recognized legacy Haft skills and slash
+    commands are removed. A foreign file at a desired Haft-owned skill path
+    blocks the write instead of being overwritten.
+  </p>
+
+  <p>
+    Do not maintain a second handwritten Haft protocol beside the managed
+    section. Project-specific rules belong outside the markers; FPF and kernel
+    behavior comes from the installed release.
+  </p>
+
+  <h2>Restart after every host change</h2>
+
+  <p>
+    Hosts cache tool schemas and skill manifests. Fully restart the host after
+    init or upgrade, then check <code>haft version</code>, <code>haft doctor</code>,
+    and the host's loaded MCP server. Editing a config file does not restart an
+    already running process.
+  </p>
+
+  <h2>Related pages</h2>
+
+  <ul>
+    <li><a href="/docs/install">Install and init</a></li>
+    <li><a href="/docs/commands">The v9 skill and tool catalog</a></li>
+  </ul>
 </DocsLayout>

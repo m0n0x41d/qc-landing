@@ -5,6 +5,11 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 <DocsLayout title="Install Haft" description="Install the Haft CLI and initialize its governance surfaces for your coding agent.">
   <h1>Install &amp; init</h1>
 
+  <p>
+    <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.0" target="_blank" rel="noopener">v9.0.0</a>
+    is the current published release.
+  </p>
+
   <h2>Install the binary</h2>
 
   <pre><code>curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/install.sh | bash</code></pre>
@@ -55,6 +60,11 @@ haft init --all              # full Claude + Codex integrations</code></pre>
     <code>~/.haft/runtimes/haft-embed/</code>. Migrate scripts that call
     <code>haft run</code> or <code>haft harness</code> to host-agent work or an
     external runner using the WorkCommission lifecycle.
+  </p>
+
+  <p>
+    Follow the complete <a href="/docs/migration">v8.1 to v9.0 migration and rollback guide</a>
+    before opening a working project ledger with v9.
   </p>
 
   <h2>Verify the connection</h2>

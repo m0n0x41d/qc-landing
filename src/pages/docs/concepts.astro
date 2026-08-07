@@ -2,194 +2,146 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Key Concepts" description="R_eff, congruence levels, weakest link, claims, projections, and other core concepts.">
-  <h1>Key Concepts</h1>
-
-  <h2>R_eff (Effective Reliability)</h2>
+<DocsLayout title="Typed project memory in Haft v9" description="EntityOfConcern identity, bounded neighborhoods, project profiles, reliance-gated persistence, and the distinctions that keep memory honest.">
+  <h1>Memory &amp; core concepts</h1>
 
   <p>
-    Every decision has a computed trust score: R_eff. It's calculated from evidence attached to the
-    decision — test results, measurements, benchmarks, user feedback.
+    Haft v9 stores project knowledge as typed relations around an exact
+    <code>EntityOfConcern</code>. It does not treat a transcript, a markdown
+    file, or a ranked search result as project truth by itself.
   </p>
 
-  <p>Formula: <code>R_eff = min(effective_score)</code> across all evidence items.</p>
-
-  <p>
-    This is the <strong>weakest link principle</strong> — the decision is only as trustworthy as its
-    weakest piece of evidence. No averaging, no optimistic roll-ups.
-  </p>
+  <h2>Strict distinctions</h2>
 
   <ul>
-    <li><strong>R_eff >= 0.5</strong> — healthy, decision is trustworthy</li>
-    <li><strong>R_eff &lt; 0.5</strong> — degraded, surfaces in stale scan</li>
-    <li><strong>R_eff &lt; 0.3</strong> — AT RISK, needs immediate attention</li>
-    <li><strong>No evidence</strong> — decision is fresh, not degraded (treated as healthy)</li>
+    <li><strong>Object ≠ description ≠ carrier.</strong> A markdown file can carry a record; it is not the object the record describes.</li>
+    <li><strong>Plan ≠ performed work.</strong> A WorkPlan can order intended actions; it does not execute them.</li>
+    <li><strong>Recommendation ≠ decision.</strong> Binding requires a direct, unambiguous operator choice through the correct effect sink.</li>
+    <li><strong>Claim ≠ evidence.</strong> A test description or expected result is not proof that the test ran or passed.</li>
+    <li><strong>Retrieval ≠ applicability.</strong> Candidate rank never grants identity, authority, or pattern selection.</li>
+    <li><strong>Target system ≠ enabling system.</strong> The product being changed and the engineering arrangement changing it remain separate.</li>
   </ul>
 
-  <h2>Congruence Level (CL)</h2>
+  <h2>EntityOfConcern</h2>
 
   <p>
-    Not all evidence is equally relevant. A benchmark from the same project (CL3) is more
-    trustworthy than a blog post about a similar stack (CL1). CL penalties reduce the effective
-    score of cross-context evidence:
+    An <code>EntityOfConcern</code> is the exact project object around which
+    Haft reads or writes a bounded memory neighborhood. Identity uses a stable
+    reference and bounded context. Similar names, paths, or retrieval scores do
+    not merge two entities.
   </p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>CL</th>
-        <th>Context</th>
-        <th>Penalty</th>
-        <th>Example</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>CL3</td><td>Same context</td><td>0.0</td><td>Internal test result</td></tr>
-      <tr><td>CL2</td><td>Similar context</td><td>0.1</td><td>Decision from a related project (same language)</td></tr>
-      <tr><td>CL1</td><td>Different context</td><td>0.4</td><td>External documentation, blog post</td></tr>
-      <tr><td>CL0</td><td>Opposed context</td><td>0.9</td><td>Evidence from a conflicting methodology</td></tr>
-    </tbody>
-  </table>
+  <p>The task-level read sequence is:</p>
+
+  <ol>
+    <li>Resolve a known name or alias in one pinned project-memory snapshot.</li>
+    <li>Select the exact identity from the current use, not candidate rank.</li>
+    <li>Read the smallest neighborhood needed through a named projection profile and budget.</li>
+    <li>Use bounded recall only inside that exact entity and project snapshot.</li>
+  </ol>
+
+  <pre><code>haft memory resolve --input-file resolve.json
+haft memory neighborhood --input-file neighborhood.json
+haft memory recall --input-file recall.json</code></pre>
 
   <p>
-    CL matters for cross-project recall too. When a decision from another project surfaces during
-    <code>/h-frame</code>, it gets tagged CL2 (same language) or CL1 (different language).
+    The MCP equivalent uses <code>haft_query(action="memory")</code> with one of
+    the closed <code>resolve</code>, <code>neighborhood</code>, or
+    <code>recall</code> request shapes.
   </p>
 
-  <h2>Weakest Link (WLNK)</h2>
+  <h2>When memory is written</h2>
 
-  <p>
-    Every variant in <code>/h-explore</code> must identify its weakest link — the single thing that
-    bounds its quality. This is not a generic "cons" list. It's the specific mechanism that will
-    fail first under stress.
-  </p>
-
-  <p>
-    WLNK applies everywhere in haft: R_eff is min (not average), gate decisions use worst-wins
-    (not voting), evidence chains break at the weakest item.
-  </p>
-
-  <h2>Evidence Decay</h2>
-
-  <p>
-    Evidence has an optional <code>valid_until</code> date. When evidence expires, its score drops
-    to 0.1 regardless of its original verdict. This pulls R_eff down, making the decision surface
-    as stale.
-  </p>
-
-  <p>
-    The intuition: a benchmark from 6 months ago is not as trustworthy as one from last week.
-    Evidence doesn't become false — it becomes weak. 0.1, not 0.0.
-  </p>
-
-  <h2>Indicator Roles</h2>
-
-  <p>
-    When framing and comparing a problem, each comparison dimension gets a role:
-  </p>
+  <p>Persistence has two valid bases:</p>
 
   <ul>
-    <li><strong>constraint</strong> — hard limit, must satisfy. Variants that violate it are eliminated.</li>
-    <li><strong>target</strong> — what you're optimizing. 1-3 targets max.</li>
-    <li><strong>observation</strong> — monitor but do NOT optimize. This is Anti-Goodhart: when a metric
-      becomes a target, it ceases to be a good metric. Mark things as observation to prevent
-      reward hacking.</li>
-  </ul>
-
-  <h2>Pareto Front</h2>
-
-  <p>
-    After comparison (<code>/h-compare</code>), variants are plotted on a Pareto front — the set
-    of options where no option is strictly worse than another on all target dimensions.
-  </p>
-
-  <p>
-    If variant A is better on latency but worse on cost, and variant B is the reverse — both are
-    on the Pareto front. Neither dominates the other. Your job is to make the trade-off
-    explicitly, not pretend one is objectively "best."
-  </p>
-
-  <p>
-    Pareto computation is <strong>constraint-aware</strong>: variants that violate any
-    <code>constraint</code>-role indicator are eliminated before dominance comparison. This
-    prevents infeasible options from cluttering the front.
-  </p>
-
-  <h2>Parity</h2>
-
-  <p>
-    A comparison is junk if the options weren't evaluated fairly. Parity means: same inputs,
-    same scope, same budget, same measurement procedure for all variants. If you benchmarked
-    Redis on production hardware and Memcached on a laptop — that's not a fair comparison.
-  </p>
-
-  <h2>Transformer Mandate</h2>
-
-  <p>
-    From FPF: a system cannot transform itself. The agent that generates options cannot be the
-    sole validator of those options. In practice:
-  </p>
-
-  <ul>
-    <li>The agent generates variants — the human decides</li>
-    <li>The verification gate challenges decisions before recording</li>
-    <li>Measurements without independent verification get CL1 (self-evidence), not CL3</li>
-  </ul>
-
-  <h2>Claims and Predictions</h2>
-
-  <p>
-    A claim is a structured, falsifiable prediction attached to a decision. It has three
-    components:
-  </p>
-
-  <ul>
-    <li><strong>observable</strong> — what to measure ("p99 latency of /api/search")</li>
-    <li><strong>threshold</strong> — what counts as success ("&lt; 200ms")</li>
-    <li><strong>verify_after</strong> — when to check ("2026-05-15")</li>
+    <li>the operator explicitly asks to save, record, bind, approve, commission, or otherwise mutate project memory;</li>
+    <li>current work has a concrete receiving use such as handoff, replay, audit, automation, delayed evidence, or costly reversal.</li>
   </ul>
 
   <p>
-    Claims are falsifiable by design. When <code>verify_after</code> passes and the claim
-    is unverified, <code>/h-verify scan</code> surfaces it. Verification results attach as
-    evidence, pulling R_eff up (claim held) or down (claim falsified). This closes the loop
-    between prediction and reality.
+    The second basis can be inferred from current work. When it requires stable
+    identity and the identity coordinates are recoverable,
+    <code>haft_entity</code> establishes the minimum non-binding
+    <code>EntityOfConcern</code> without a separate permission prompt.
   </p>
-
-  <h2>Projections</h2>
 
   <p>
-    The same artifact graph can be rendered for different audiences. A projection is a
-    deterministic transformation — same input always produces the same output, just
-    filtered and formatted for a specific reader:
+    <code>known_absent</code>, an empty graph, or generic future usefulness is
+    not a persistence basis. Entity establishment cannot bind a decision,
+    approve a specification, commission work, or establish evidence truth.
   </p>
 
+  <h2>Project profile and onboarding</h2>
+
+  <p>
+    <code>haft init</code> installs default project memory automatically. It may
+    admit an initial <code>detector_default</code> profile only from a complete,
+    non-truncated, supported singleton detector result and only when no
+    canonical or human-reviewed profile already exists.
+  </p>
+
+  <p>
+    Mixed, multiple-scope, insufficient, truncated, or previously reviewed
+    bases require one direct operator choice. Preparation creates only a
+    non-binding review carrier. Application uses the readable onboarding
+    effect; the operator never selects an internal memory schema.
+  </p>
+
+  <div class="callout-warn">
+    <p>
+      <strong><code>ready</code> has a narrow meaning.</strong> Onboarding ready
+      means that a canonical profile and structured project memory are
+      available. It does not prove spec applicability, spec health, lifecycle
+      state, evidence truth, or release readiness.
+    </p>
+  </div>
+
+  <h2>Compatible memory successors</h2>
+
+  <p>
+    A mutation-capable init or reconciliation path automatically activates
+    every exact bundled <code>ProjectTypeEnv</code> successor proven compatible
+    with the transaction-current head, graph, profile, assertions, projection
+    profiles, and runtime. This records
+    <code>compatible_successor_policy</code>, not an operator request.
+  </p>
+
+  <p>
+    An incompatible, incomplete, stale, or underdetermined candidate leaves the
+    current head unchanged and returns the blocker. Rollback or selection
+    outside that predicate remains a separate operator effect.
+  </p>
+
+  <h2>Identity changes in v9</h2>
+
+  <p>
+    Public identity change is alias-only:
+    <code>admit_alias</code> adds a context-bound alias and
+    <code>supersede_alias</code> replaces one while retaining provenance.
+    Reviewed entity merge and split are deferred to a later v9.x contract.
+  </p>
+
+  <h2>Memory, code, and carriers</h2>
+
   <ul>
-    <li><strong>engineer</strong> — invariants, affected files, drift status, WLNK</li>
-    <li><strong>manager</strong> — decision titles, health summary, stale count, coverage</li>
-    <li><strong>audit</strong> — full evidence chain, CL tags, dates, supersession history</li>
-    <li><strong>compare</strong> — side-by-side variant comparison with Pareto front</li>
+    <li>Typed memory orients around one exact project entity.</li>
+    <li>The fused code graph orients around files, symbols, calls, and governing records.</li>
+    <li>SQLite is the runtime structured store.</li>
+    <li><code>.haft/*.md</code> files are reviewable exchange and publication carriers imported through explicit <code>haft sync</code>.</li>
   </ul>
 
   <p>
-    Projections are computed, not stored. There's one source of truth (the artifact graph);
-    projections are views. Use <code>/h-view</code> to select a projection.
+    These surfaces can refer to one another, but none silently becomes the
+    other. A carrier does not act, and a nearby code record does not establish
+    an EntityOfConcern identity.
   </p>
 
-  <h2>Relations without a universal cycle</h2>
-
-  <p>
-    A recorded choice may later be related to drift, decayed evidence, verification, a revised
-    problem statement, or another comparison. Those relations preserve the local project story;
-    they do not prescribe one order of Work. Invoke the capability required by the current
-    question and persist only a result that a named later use needs. See
-    <a href="/docs/lifecycle">Decision Lifecycle</a> for the lifecycle local to a recorded choice.
-  </p>
-
-  <h2>Next</h2>
+  <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/faq">FAQ</a> — common questions about haft</li>
-    <li><a href="/docs/lifecycle">Decision lifecycle</a> — how decisions age and refresh</li>
+    <li><a href="/docs/codebase-awareness">Code orientation</a></li>
+    <li><a href="/docs/lifecycle">Specifications and evidence</a></li>
+    <li><a href="/docs/team-sync">Team exchange through git</a></li>
   </ul>
 </DocsLayout>

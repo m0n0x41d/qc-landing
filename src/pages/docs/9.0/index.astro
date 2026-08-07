@@ -2,8 +2,8 @@
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Haft v9" description="The v9 source-native governance contract and its deliberately smaller product boundary.">
-  <h1>Haft v9 contract</h1>
+<DocsLayout title="Haft v9" description="The published v9 source-native governance product and its deliberately smaller execution boundary.">
+  <h1>Haft v9.0</h1>
 
   <p>
     v9 completes the governance-substrate pivot: Haft delivers versioned FPF
@@ -13,9 +13,11 @@ import DocsLayout from '../../../layouts/DocsLayout.astro';
 
   <div class="callout">
     <p>
-      <strong>Truth boundary:</strong> this page describes the v9 contract.
-      The published current product remains v8.1 until one exact v9 candidate
-      passes the separate qualification and publication gates.
+      <strong>Release status:</strong>
+      <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.0" target="_blank" rel="noopener">v9.0.0</a>
+      is published and is the current product. Source presence, documentation,
+      or a passing local test still does not prove that a running host loaded
+      that exact release.
     </p>
   </div>
 
@@ -26,7 +28,7 @@ import DocsLayout from '../../../layouts/DocsLayout.astro';
     <li>12 independent host-agent skills with <code>h-reason</code> as the source-first umbrella;</li>
     <li>fused code-graph orientation and typed, reliance-gated project memory;</li>
     <li>project-profile onboarding, typed specification lifecycle, evidence currentness, and drift checks;</li>
-    <li>runner-neutral WorkCommission and RuntimeRun lifecycle records.</li>
+    <li>runner-neutral WorkCommission and RuntimeRunRecord lifecycle records.</li>
   </ul>
 
   <h2>What v9 removes</h2>
@@ -47,8 +49,12 @@ import DocsLayout from '../../../layouts/DocsLayout.astro';
   <h2>Next</h2>
 
   <ul>
-    <li><a href="/docs/9.0/install">Install and initialize the v9 contract</a></li>
+    <li><a href="/docs/9.0/install">Install and initialize v9.0</a></li>
     <li><a href="/docs/reasoning">Reasoning and FPF</a></li>
     <li><a href="/docs/codebase-awareness">Code orientation</a></li>
+    <li><a href="/docs/concepts">Typed project memory</a></li>
+    <li><a href="/docs/lifecycle">Specifications and evidence</a></li>
+    <li><a href="/docs/decision-integrity">Authority and commissions</a></li>
+    <li><a href="/docs/commands">Skills, CLI, and MCP reference</a></li>
   </ul>
 </DocsLayout>

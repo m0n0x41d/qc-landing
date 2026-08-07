@@ -2,258 +2,124 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Codebase Awareness" description="How haft understands your project structure — modules, dependencies, knowledge graph, and invariant verification.">
-  <h1>Codebase Awareness</h1>
+<DocsLayout title="Code orientation in Haft v9" description="How the fused code and reasoning graph supports bounded orientation without turning rank or traversal into authority.">
+  <h1>Code orientation</h1>
 
   <p>
-    Haft doesn't just track decisions — it understands your codebase. It knows which modules
-    exist, how they depend on each other, which parts of your architecture are governed by
-    decisions, and which invariants apply to every file you touch.
+    Haft v9 fuses code symbols, calls, files, modules, decisions, invariants,
+    notes, and other reasoning records into one query surface. The graph helps
+    an agent find the relevant area before editing. It does not decide what the
+    code means or which record governs it.
   </p>
 
-  <h2>Module detection</h2>
+  <h2>Explore an exact symbol or a concern</h2>
+
+  <pre><code>haft graph explore --symbol PublishIndexEpoch --view working --json
+haft graph explore --query "where is the index epoch published?" --view working --json</code></pre>
 
   <p>
-    When you run <code>/h-status</code> or <code>haft_query(action="coverage")</code>, haft scans
-    your project and detects modules using language-specific conventions:
+    <code>explore</code> accepts one input shape at a time: an exact symbol or a
+    bounded concern. The concern route returns advisory candidates. The caller
+    must select an exact code identity from the current use, not from rank
+    alone.
   </p>
+
+  <p>The equivalent MCP calls are:</p>
+
+  <pre><code>haft_query(action="explore", symbol="PublishIndexEpoch")
+haft_query(action="explore", query="where is the index epoch published?")</code></pre>
+
+  <h2>Use the actual target before editing</h2>
+
+  <p>
+    Area exploration is not an edit preflight. Before a non-mechanical change
+    where recorded governance may matter, query the actual file or symbol:
+  </p>
+
+  <pre><code>haft_query(action="code_context", file="internal/index/epoch.go")
+haft_query(action="impact", symbol="PublishIndexEpoch")
+haft_query(action="governing_set", source_refs=["symbol:PublishIndexEpoch"])</code></pre>
+
+  <p>
+    <code>code_context</code> and <code>impact</code> are relevance surfaces. A
+    displayed invariant, a nearby decision, or module proximity is not by
+    itself proof of active authority. Inspect the exact record's scope, status,
+    coverage, and limiting reasons before relying on it.
+  </p>
+
+  <h2>Views and replay</h2>
 
   <table>
     <thead>
       <tr>
-        <th>Language</th>
-        <th>What counts as a module</th>
-        <th>How it's detected</th>
+        <th>View</th>
+        <th>Use</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>Go</td>
-        <td>Every directory with <code>.go</code> files</td>
-        <td>Uses Go's stdlib <code>go/parser</code></td>
+        <td><code>working</code></td>
+        <td>Bounded, score-free orientation without retrieval internals</td>
       </tr>
       <tr>
-        <td>JS/TS</td>
-        <td><code>package.json</code> boundaries + directories with <code>index.ts</code></td>
-        <td>Monorepo workspaces + barrel file detection</td>
+        <td><code>trace</code></td>
+        <td>Bounded provenance plus an opaque replay basis</td>
       </tr>
       <tr>
-        <td>Python</td>
-        <td>Directories with <code>__init__.py</code></td>
-        <td>Package marker detection</td>
-      </tr>
-      <tr>
-        <td>Rust</td>
-        <td><code>Cargo.toml</code> crates + <code>mod.rs</code> modules</td>
-        <td>Crate boundary + module tree detection</td>
-      </tr>
-      <tr>
-        <td>C/C++</td>
-        <td>Directories with <code>.c</code>, <code>.cpp</code>, <code>.h</code>, <code>.hpp</code> files</td>
-        <td><code>compile_commands.json</code> (CMake, Bazel, Meson) with directory-based fallback</td>
+        <td><code>diagnostic</code></td>
+        <td>Retrieval and traversal internals for debugging the query</td>
       </tr>
     </tbody>
   </table>
 
   <p>
-    Module scanning respects <code>.gitignore</code> (local and global) and an optional
-    <code>.haftignore</code> file for project-specific exclusions.
+    Replay is tied to the same request and source snapshot. If the index,
+    request, or canonical result changes, Haft returns
+    <code>replay_mismatch</code> instead of pretending the old trace still
+    proves the new result.
   </p>
 
-  <h2>Decision coverage</h2>
+  <h2>Freshness under concurrent hosts</h2>
 
   <p>
-    Coverage answers: "which parts of my architecture have engineering decisions, and which are
-    blind spots?"
+    Code indexing is automatic and shared by concurrent <code>haft serve</code>
+    processes for the same project. One process publishes a changed epoch;
+    followers recheck the completed publication. A bounded request that cannot
+    establish freshness reports a retained complete epoch as degraded, or
+    reports the index unavailable when no complete epoch exists.
   </p>
 
-  <pre><code>## Module Coverage (9 modules, 77% governed)
-  ✓ src/internal/artifact   — 3 decisions
-  ✓ src/internal/codebase   — 2 decisions
-  ✗ src/assurance            — no decisions (blind)
-  ✗ src/cmd/indexer          — no decisions (blind)</code></pre>
+  <p>
+    Several running project servers are not a defect by count alone. Freshness
+    and exact project binding matter more than process count.
+  </p>
 
-  <p>Coverage uses three states:</p>
+  <h2>Boundaries that prevent false confidence</h2>
 
   <ul>
-    <li><strong>Covered</strong> — at least one active decision with R_eff >= 0.5 covers files in this module</li>
-    <li><strong>Partial</strong> — has decisions, but all evidence is degraded (R_eff &lt; 0.5)</li>
-    <li><strong>Blind</strong> — no decisions reference any file in this module</li>
+    <li>An empty caller or callee list is not proof that no dependency exists.</li>
+    <li>Incomplete traversal is not a safety claim.</li>
+    <li>A coverage cue is not proof that every file is governed.</li>
+    <li>A missing exact link is not proof that the file is unconstrained.</li>
+    <li>FPF identifiers, Haft record IDs, project-memory identities, and code symbols remain separate namespaces.</li>
   </ul>
-
-  <p>
-    Only <code>DecisionRecord</code> artifacts count as governance. Notes are observations, not
-    architectural contracts — they don't inflate coverage.
-  </p>
-
-  <h2>Dependency graph</h2>
-
-  <p>
-    Haft parses import statements to build a module dependency graph. For Go, it uses
-    the stdlib <code>go/parser</code>. JS/TS, Python, Rust, and C/C++ use regex-based import detection.
-    C/C++ resolves <code>#include "..."</code> paths using <code>-I</code> flags from
-    <code>compile_commands.json</code> when available.
-  </p>
-
-  <p>
-    The dependency graph powers <strong>impact propagation</strong>: when drift is detected in
-    module A, haft checks which modules depend on A and flags their decisions too.
-  </p>
-
-  <pre><code>Drift detected in auth/:
-  auth/middleware.go — MODIFIED (+8 -2)
-
-Impact propagation:
-  → api/ depends on auth/ — governed by dec-003 "API rate limiting"
-  → payments/ depends on auth/ — governed by dec-007 "Payment auth flow"
-  ⚠ billing/ depends on auth/ — no decisions (blind, potential unmonitored impact)</code></pre>
-
-  <h2>Drift detection</h2>
-
-  <p>
-    After a decision is implemented, the agent snapshots the SHA-256 hashes of affected files
-    (the baseline). On every <code>/h-verify scan</code>, haft recomputes hashes and detects:
-  </p>
-
-  <ul>
-    <li><strong>MODIFIED</strong> — file changed since baseline</li>
-    <li><strong>FILE MISSING</strong> — file deleted or moved</li>
-    <li><strong>No drift</strong> — file unchanged</li>
-  </ul>
-
-  <p>
-    Drift is a signal, not automatic invalidation. The agent reads the actual diff and judges
-    whether the change is material (broke an invariant) or cosmetic (comments, formatting).
-  </p>
-
-  <h2>Knowledge graph</h2>
-
-  <p>
-    Beyond flat module detection, haft maintains a knowledge graph that connects files,
-    modules, decisions, and invariants. This graph powers several queries that agents and
-    CLI commands use internally:
-  </p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Query</th>
-        <th>What it returns</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><code>FindDecisionsForFile</code></td>
-        <td>All active decisions whose affected files include the given path</td>
-      </tr>
-      <tr>
-        <td><code>FindInvariantsForFile</code></td>
-        <td>All invariants from all decisions governing a file — collected transitively through the dependency graph</td>
-      </tr>
-      <tr>
-        <td><code>FindModuleForFile</code></td>
-        <td>The module boundary a file belongs to</td>
-      </tr>
-      <tr>
-        <td><code>TransitiveDependents</code></td>
-        <td>All modules that depend on a given module, directly or transitively</td>
-      </tr>
-      <tr>
-        <td><code>ComputeImpactSet</code></td>
-        <td>Given a set of changed files, returns all decisions and invariants that may be affected — the union of direct governance and transitive dependency impact</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <p>
-    <code>ComputeImpactSet</code> is what <code>/h-verify scan</code> uses under the hood. It's
-    also available to any agent through MCP, so custom workflows can query impact before
-    making changes.
-  </p>
-
-  <h2>Invariant injection</h2>
-
-  <p>
-    When an agent begins implementing a decision, haft collects invariants from
-    <strong>all</strong> decisions governing the affected files — not just the decision being
-    implemented. The agent receives these as constraints in its prompt.
-  </p>
-
-  <pre><code>Implementing dec-012 "Payment retry logic"
-Affected files: payments/retry.go, payments/circuit.go
-
-Injected invariants (from all governing decisions):
-  [dec-007] "Payment auth flow"
-    — auth token must be refreshed before retry, not reused from failed attempt
-    — max 3 retries with exponential backoff
-  [dec-003] "API rate limiting"
-    — retry requests count against rate limit budget
-    — no bypass of rate limiter for internal retries</code></pre>
-
-  <p>
-    This prevents the classic problem: implementing one decision while accidentally violating
-    invariants from another decision that governs the same files.
-  </p>
-
-  <h2>Invariant verification</h2>
-
-  <p>
-    Some invariants are structural — they describe relationships between modules, not runtime
-    behavior. Haft can verify these against the live dependency graph:
-  </p>
-
-  <ul>
-    <li><strong>"no dependency from X to Y"</strong> — verified by checking that the dependency graph has no path from module X to module Y</li>
-    <li><strong>"no circular dependencies"</strong> — verified by checking the dependency graph for cycles</li>
-  </ul>
-
-  <p>
-    These checks run during <code>/h-verify scan</code>. When a structural invariant is violated,
-    the decision is flagged with the specific dependency chain that breaks it.
-  </p>
-
-  <pre><code>Invariant violation: dec-005 "Layered architecture"
-  Invariant: "no dependency from domain/ to infrastructure/"
-  Violation: domain/user.go imports infrastructure/postgres/conn.go
-  Chain: domain/ → infrastructure/postgres/</code></pre>
 
   <div class="callout">
     <p>
-      Structural invariant verification is deterministic — it checks the actual import graph,
-      not heuristics. If the graph says there's a dependency, there is one.
+      <strong>Two orientation systems:</strong> the code graph answers where
+      code and governing records may be related. Typed project memory answers
+      what is known around one exact EntityOfConcern. Neither substitutes for
+      the other.
     </p>
   </div>
 
-  <h2>Using it in practice</h2>
+  <h2>Practical sequence</h2>
 
-  <table>
-    <thead>
-      <tr>
-        <th>When</th>
-        <th>What to do</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>After <code>/h-onboard</code></td>
-        <td>Check coverage — which modules are blind? Prioritize the critical ones.</td>
-      </tr>
-      <tr>
-        <td>During code review</td>
-        <td>If a PR touches files under a decision, the drift report will flag it.</td>
-      </tr>
-      <tr>
-        <td>Before a release</td>
-        <td><code>/h-verify scan</code> — see all stale decisions, code drift, and invariant violations in one view.</td>
-      </tr>
-      <tr>
-        <td>New team member</td>
-        <td><code>/h-status</code> shows the full architecture decision landscape at a glance.</td>
-      </tr>
-      <tr>
-        <td>Before implementing</td>
-        <td>Invariant injection ensures the agent knows all constraints on affected files.</td>
-      </tr>
-    </tbody>
-  </table>
+  <ol>
+    <li>Use <code>explore</code> when you do not yet know the exact symbol.</li>
+    <li>Select the code identity from the current task, not candidate rank.</li>
+    <li>Run <code>code_context</code> or <code>impact</code> on the actual target.</li>
+    <li>Recover the exact governing set before relying on a governance claim.</li>
+    <li>Record <code>not_applicable</code> for a purely mechanical edit instead of inventing ceremony.</li>
+  </ol>
 </DocsLayout>

@@ -2,195 +2,138 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Reasoning with /h-reason" description="The all-in-one entry point for structured engineering reasoning.">
-  <h1>Reasoning with /h-reason</h1>
+<DocsLayout title="Reasoning and FPF in Haft v9" description="Source-native FPF Query, independent skills, and the boundary between retrieval, application, authority, and work.">
+  <h1>Reasoning &amp; FPF</h1>
 
   <p>
-    <code>/h-reason</code> is the single entry point for structured engineering reasoning.
-    Describe your problem in plain language. The agent reads your intent from context and
-    picks the right behavior — most questions don't need a full decision cycle.
+    Haft v9 does not impose a five-stage reasoning workflow. Start from the
+    project object and the current question. Use the smallest capability that
+    can return the needed result.
   </p>
-
-  <h2>Three interaction modes</h2>
 
   <p>
-    The agent assesses what you actually want before doing anything. How much it drives
-    depends on the mode:
+    <code>h-reason</code> is the source-first umbrella for an ambiguous or
+    cross-cutting question. If the need is already clear, use the exact skill:
+    <code>h-frame</code>, <code>h-diagnose</code>, <code>h-explore</code>,
+    <code>h-compare</code>, <code>h-decide</code>, <code>h-verify</code>,
+    <code>h-status</code>, <code>h-onboard</code>, <code>h-spec</code>,
+    <code>h-note</code>, or the manual-only <code>h-commission</code>.
   </p>
 
-  <h3>1. Direct response</h3>
+  <h2>When Haft queries FPF</h2>
 
   <p>
-    You want structured thinking, not artifacts. The agent reasons through the problem using
-    FPF principles and responds. Nothing is persisted — no tool calls, no decision records.
+    Mechanical edits, exact project lookups, and status-only work do not need
+    an FPF query. When pattern applicability is material or uncertain, the
+    agent retrieves the pinned FPF publication before applying a pattern.
   </p>
 
-  <pre><code>/h-reason what are the trade-offs of gRPC vs REST
-for our internal services?</code></pre>
+  <pre><code>haft fpf query "How should I frame this concern?" --json
+haft fpf lookup "E.11.PUA" --json
+haft fpf inspect "E.11.PUA" --role pattern_body --json</code></pre>
 
-  <pre><code>/h-reason is our current auth approach sound?
-what's the weakest link?</code></pre>
-
-  <h3>2. Research / prepare-and-wait</h3>
-
-  <p>
-    You want to drive the decision yourself. The agent gathers context — reads relevant code,
-    searches existing decisions, researches the topic — and presents findings. Then it stops.
-    You call <code>/h-frame</code>, <code>/h-explore</code>, <code>/h-compare</code>,
-    or <code>/h-decide</code> when ready.
-  </p>
-
-  <pre><code>/h-reason I want to think through our caching
-strategy. Gather context and prepare for framing.</code></pre>
-
-  <pre><code>/h-reason let's reason about the database
-migration before deciding anything</code></pre>
-
-  <p>
-    This is the default when intent is ambiguous. The agent never assumes you want
-    it to drive the full cycle.
-  </p>
-
-  <h3>3. Delegated reasoning</h3>
-
-  <p>
-    You explicitly delegate. The agent runs through the
-    <a href="/docs/five-modes">five modes</a> — Understand, Explore, Choose — and
-    stops at Choose for the human decision. The agent generates options and compares
-    them, but you pick. This is the Transformer Mandate: agents document, humans decide.
-  </p>
-
-  <pre><code>/h-reason figure out the best caching approach
-for our API. Run the full cycle, I'll decide.</code></pre>
-
-  <pre><code>/h-reason analyze the auth architecture problem,
-go through frame/explore/compare</code></pre>
-
-  <p>
-    The agent asks for confirmation at the Choose step. After you select a variant,
-    it records the decision and proceeds to Execute.
-  </p>
-
-  <div class="callout">
-    <p>
-      <strong>Why three modes:</strong> If the agent always drove the whole cycle, you'd end up
-      rubber-stamping outputs instead of thinking. Direct response augments your reasoning.
-      Prepare-and-wait gives you the research without the autopilot. Delegated reasoning
-      handles the mechanical parts while preserving human judgment at the decision point.
-    </p>
-  </div>
-
-  <h2>Depth modes</h2>
-
-  <p>
-    When the agent enters the decision cycle (modes 2 or 3), it auto-selects a depth:
-  </p>
+  <p>The three commands have different return boundaries:</p>
 
   <table>
     <thead>
       <tr>
-        <th>Depth</th>
-        <th>When</th>
-        <th>What happens</th>
+        <th>Command</th>
+        <th>Result</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Tactical</strong></td>
-        <td>Reversible, low risk, obvious approach</td>
-        <td>Understand → Explore → Execute (skip characterization, skip formal comparison)</td>
+        <td><code>query</code></td>
+        <td>Compact source-derived candidates for a concern</td>
       </tr>
       <tr>
-        <td><strong>Standard</strong></td>
-        <td>Multiple viable approaches, moderate blast radius</td>
-        <td>Full 5-mode cycle: Understand → Explore → Choose → Execute → Verify</td>
+        <td><code>lookup</code></td>
+        <td>Exact identifier first; compact candidates when no exact unit resolves</td>
       </tr>
       <tr>
-        <td><strong>Deep</strong></td>
-        <td>Hard to reverse, security implications, cross-team impact</td>
-        <td>Full cycle + rich parity rules, rollback runbook, refresh triggers</td>
+        <td><code>inspect</code></td>
+        <td>One exact source unit or an explicit abstention</td>
       </tr>
     </tbody>
   </table>
 
   <p>
-    Override the depth explicitly: <code>/h-reason deep: should we change our database?</code>
+    Every route returns the closed
+    <code>exact_hit | candidate_set | abstained</code> union. Candidate order is
+    retrieval output. It is not applicability, recommendation, precedence,
+    authority, or work order.
   </p>
 
-  <h2>The diagnostic conversation</h2>
+  <h2>Progressive disclosure</h2>
 
   <p>
-    Before generating options, the agent drives a diagnostic conversation in the Understand mode.
-    Problem quality determines solution quality. The agent asks:
+    Concern retrieval starts from compact source roles such as practical-use
+    cards and table-of-contents rows. After selecting a candidate by the
+    current condition and required result, the agent recovers the full pattern
+    body and reads its problem, forces, solution, boundaries, worked slices,
+    and checklist.
   </p>
-
-  <ol>
-    <li><strong>"What observation doesn't fit?"</strong> — the signal, not the assumed cause</li>
-    <li><strong>"What have you already tried?"</strong> — avoids re-treading dead ends</li>
-    <li><strong>"What would solved look like?"</strong> — measurable acceptance criteria</li>
-    <li><strong>"What constraints are non-negotiable?"</strong> — hard limits</li>
-    <li><strong>"How reversible is this?"</strong> — determines depth mode</li>
-    <li><strong>"What should we watch but NOT optimize?"</strong> — Anti-Goodhart indicators</li>
-  </ol>
 
   <p>
-    Answer these honestly. The better the framing, the better the variants. If you skip
-    the diagnostic, you get generic options.
+    Use <code>--view working</code> for the bounded default response,
+    <code>--view trace</code> for provenance and replay coordinates, and
+    <code>--view diagnostic</code> for retrieval internals. These are views of
+    one canonical result, not different reasoning methods.
   </p>
 
-  <h2>Decision record structure</h2>
+  <div class="callout">
+    <p>
+      <strong>Non-English concerns:</strong> keep the operator's original query.
+      Add precise English or FPF terms through the current object's context
+      fields; do not replace the request with a hidden translation or a
+      Haft-owned route catalog.
+    </p>
+  </div>
 
-  <p>A decision record (<code>.haft/decisions/dec-XXXXXXXX-XXX.md</code>) has four sections:</p>
-
-  <ol>
-    <li><strong>Problem Frame</strong> — what triggered the decision, signal, constraints, acceptance criteria</li>
-    <li><strong>Decision</strong> — selected variant, invariants (what must always be true), pre/post conditions, DO/DON'T rules</li>
-    <li><strong>Rationale</strong> — why this and not the alternatives, comparison table, weakest link identification</li>
-    <li><strong>Consequences</strong> — rollback plan, refresh triggers, affected files, claims with <code>verify_after</code> dates</li>
-  </ol>
+  <h2>Retrieval is not application</h2>
 
   <p>
-    This file is designed for code review. Commit it alongside the code it governs.
-    Full-cycle decisions contain enough structure to serve as
-    <a href="/docs/five-modes">test specifications</a> — any agent can generate
-    property-based tests from the invariants and post-conditions.
+    FPF Query returns source. The agent still has to compare relevant
+    candidates, recover the exact full pattern, check its ordinary boundary,
+    and decide whether it applies. When the basis is insufficient, it keeps
+    several candidates live or abstains.
   </p>
-
-  <h2>After the decision</h2>
 
   <p>
-    After implementing a decision, the agent:
+    A retrieved pattern does not approve a specification, bind a decision,
+    authorize execution, prove a claim, or perform work. Those effects use
+    separate records and authority boundaries.
   </p>
 
-  <ol>
-    <li>Snapshots affected file hashes (baseline) — so drift detection can track changes later</li>
-    <li>Records claims with <code>verify_after</code> dates — "latency stays under 100ms" verified in 2 weeks</li>
-    <li>Runs measurement — records whether acceptance criteria were met</li>
-  </ol>
+  <h2>Persistence is conditional</h2>
 
   <p>
-    Without measurement, the decision stays in "Pending Implementation" on <code>/h-status</code>
-    and on the <a href="/docs/commands">board</a>. Claims with passed <code>verify_after</code>
-    dates surface in <code>/h-verify scan</code> until they're measured or waived.
+    Ordinary bounded reasoning can remain in the conversation. Haft writes a
+    project record when the operator explicitly asks to save or bind it, or
+    when current work has a concrete receiving use such as handoff, replay,
+    audit, automation, delayed evidence, or costly reversal.
   </p>
 
-  <h2>When not to use it</h2>
+  <p>
+    An empty graph or a failed memory lookup is not a reason to persist. When
+    persistence is justified, Haft writes only the records needed by that
+    receiving use.
+  </p>
+
+  <h2>Authority remains separate</h2>
 
   <ul>
-    <li>Obvious bug fixes with clear solutions</li>
-    <li>Formatting, import ordering, variable naming</li>
-    <li>Anything that takes less than 5 minutes and is trivially reversible</li>
+    <li><code>h-decide</code> may route one direct, unambiguous operator request for one bounded DecisionRecord effect.</li>
+    <li>A recommendation, quotation, schema, or tool argument is not an operator request.</li>
+    <li><code>h-commission</code> stays manual-only because it grants bounded execution authority.</li>
+    <li>A WorkPlan describes intended work; it does not perform or authorize that work.</li>
   </ul>
 
-  <p>
-    For these, just code. If the agent notices a decision worth recording during conversation,
-    it'll create a <a href="/docs/notes">note</a> automatically.
-  </p>
-
-  <h2>Next</h2>
+  <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/five-modes">The five modes</a> — Understand, Explore, Choose, Execute, Verify</li>
-    <li><a href="/docs/notes">Notes & micro-decisions</a> — lightweight capture</li>
+    <li><a href="/docs/commands">Skills, CLI, and MCP</a></li>
+    <li><a href="/docs/concepts">Typed project memory and core distinctions</a></li>
+    <li><a href="/docs/decision-integrity">Authority and WorkCommissions</a></li>
   </ul>
 </DocsLayout>

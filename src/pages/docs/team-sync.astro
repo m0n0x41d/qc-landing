@@ -2,158 +2,102 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Team Sync" description="Share decisions across the team via git — no server required.">
-  <h1>Team Sync</h1>
+<DocsLayout title="Team sync in Haft v9" description="Use git-tracked markdown as an exchange carrier and explicit sync into each engineer's local SQLite runtime store.">
+  <h1>Team sync</h1>
 
   <p>
-    In v5, decisions were solo-only. The SQLite database lived on your machine, invisible
-    to everyone else. You could commit the <code>.haft/</code> markdown files, but there was
-    no way to get them back into a teammate's database. Team members were making decisions
-    in parallel with no shared awareness.
+    Haft is local-first. Each engineer has a project SQLite store under
+    <code>~/.haft/projects/&lt;project-id&gt;/</code>. Reviewable
+    <code>.haft/*.md</code> projections travel through git.
   </p>
-
-  <h2>The solution</h2>
-
-  <p>
-    <code>haft sync</code> bridges git-tracked <code>.haft/*.md</code> files and local
-    SQLite databases. The markdown files are the shared source of truth. Each engineer's
-    local database is a projection of those files.
-  </p>
-
-  <pre><code>$ haft sync</code></pre>
-
-  <h2>How it works</h2>
-
-  <p>The workflow is straightforward:</p>
-
-  <ol>
-    <li>Engineer A creates a decision (<code>/h-decide</code>). haft writes
-      <code>.haft/decisions/dec-001.md</code> automatically.</li>
-    <li>A commits and pushes the <code>.haft/</code> directory to git — alongside the code the decision governs.</li>
-    <li>Engineer B does <code>git pull</code>.</li>
-    <li>B runs <code>haft sync</code>.</li>
-    <li>B's local SQLite database is updated with A's decisions.</li>
-    <li>Both engineers now see the same decisions in <code>/h-status</code>, and CI can enforce them with <code>haft check</code>.</li>
-  </ol>
-
-  <pre><code># Engineer A
-$ /h-decide
-# ... decision recorded, .haft/decisions/dec-001.md created
-$ git add .haft/
-$ git commit -m "dec: caching strategy for product API"
-$ git push
-
-# Engineer B
-$ git pull
-$ haft sync
-# dec-001 now in B's local database</code></pre>
-
-  <h2>Key design</h2>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Aspect</th>
-        <th>How it works</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Source of truth</strong></td>
-        <td><code>.haft/*.md</code> files in git — human-readable, reviewable in PRs</td>
-      </tr>
-      <tr>
-        <td><strong>Local state</strong></td>
-        <td>Each engineer has their own SQLite database (<code>~/.haft/projects/{'{'}id{'}'}/</code>)</td>
-      </tr>
-      <tr>
-        <td><strong>Sync direction</strong></td>
-        <td>Markdown → SQLite (sync reads files, updates database)</td>
-      </tr>
-      <tr>
-        <td><strong>Idempotency</strong></td>
-        <td>Running <code>haft sync</code> multiple times is safe — same result every time</td>
-      </tr>
-      <tr>
-        <td><strong>Race safety</strong></td>
-        <td>No coordination needed — each engineer syncs independently</td>
-      </tr>
-      <tr>
-        <td><strong>Server</strong></td>
-        <td>None. Purely git-based. Works with any git hosting.</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>PR review workflow</h2>
-
-  <p>
-    Because decisions live in <code>.haft/</code> as markdown files, they show up in git diffs
-    and pull requests. Reviewers can read the rationale, check the invariants, and evaluate the
-    weakest link — all in the same PR that contains the code change.
-  </p>
-
-  <p>
-    This turns "why did we do it this way?" into a reviewable artifact instead of a Slack
-    conversation that disappears in 3 weeks.
-  </p>
-
-  <pre><code>$ git diff main...feature-branch -- .haft/
-# Shows new/changed decisions in this PR</code></pre>
 
   <div class="callout">
     <p>
-      <strong>Tip:</strong> Include <code>.haft/</code> diffs in your PR template or review
-      checklist. When a PR includes both code changes and a decision record, reviewers
-      can verify that the code actually implements what the decision describes.
+      <strong>One distinction matters:</strong> SQLite is the local runtime
+      structured store. Markdown is the publication and exchange carrier. The
+      file transports a record; it does not act, validate itself, or become
+      another engineer's runtime state until explicit sync.
     </p>
   </div>
 
-  <h2>What's shared</h2>
+  <h2>Exchange workflow</h2>
 
-  <ul>
-    <li>Decision records (<code>.haft/decisions/*.md</code>)</li>
-    <li>Problem frames (<code>.haft/problems/*.md</code>)</li>
-    <li>Notes (<code>.haft/notes/*.md</code>)</li>
-    <li>Evidence and measurements (embedded in decision files)</li>
-    <li>Baseline hashes (for drift detection after sync)</li>
-  </ul>
+  <ol>
+    <li>Engineer A creates or updates a Haft record through its effect sink.</li>
+    <li>Haft writes the corresponding <code>.haft/*.md</code> carrier.</li>
+    <li>A reviews and commits the carrier with the related code.</li>
+    <li>Engineer B pulls the branch.</li>
+    <li>B runs <code>haft sync</code>.</li>
+    <li>B's local SQLite store imports the supported carrier data.</li>
+  </ol>
 
-  <h2>What's NOT shared</h2>
+  <pre><code>git pull
+haft sync
+haft check</code></pre>
 
-  <ul>
-    <li><strong>Local SQLite database</strong> — <code>~/.haft/projects/{'{'}id{'}'}/haft.db</code> stays local</li>
-    <li><strong>Cross-project index</strong> — each engineer's cross-project recall is based on their own projects</li>
-    <li><strong>Personal settings</strong> — depth preferences, default project, etc.</li>
-    <li><strong>Search index</strong> — <code>/h-search</code> queries the local database, not a shared one</li>
-  </ul>
+  <p>
+    Sync is explicit and idempotent for the same supported input. It is not a
+    background replication protocol. Schema mismatch or malformed structured
+    data must remain visible; do not coerce a partial carrier into current
+    semantics.
+  </p>
+
+  <h2>What the carrier preserves</h2>
+
+  <p>
+    Current artifact projections include a hidden structured-data block so the
+    supported typed payload can round-trip into SQLite. Older carriers without
+    that envelope may be imported as legacy with audit warnings. Missing source
+    meaning remains unresolved rather than being upgraded by guesswork.
+  </p>
+
+  <h2>Review in the same change</h2>
+
+  <p>
+    Include the <code>.haft/</code> diff in the pull request that changes the
+    governed code. Reviewers can inspect the readable rationale, scope,
+    invariants, evidence coordinates, and lifecycle metadata next to the
+    implementation.
+  </p>
+
+  <pre><code>git diff main...feature-branch -- .haft/</code></pre>
+
+  <p>
+    The presence of a carrier in a pull request is not proof that the code
+    implements it or that its evidence is current. Use code context, spec
+    checks, and verification for those separate questions.
+  </p>
+
+  <h2>Specification carriers</h2>
+
+  <p>
+    Typed SpecSections use their own lifecycle and SQL edition store. Use
+    <code>haft spec sync</code>, <code>haft spec validate</code>, and
+    <code>haft spec check</code> for specification carriers. Do not infer
+    lifecycle approval from a successful git merge or generic artifact sync.
+  </p>
 
   <h2>Limitations</h2>
 
   <ul>
-    <li><strong>No real-time collaboration</strong> — sync happens when you run it, not continuously.
-      If two engineers are working on the same decision simultaneously, the last commit wins via git.</li>
-    <li><strong>No conflict resolution</strong> — git handles merge conflicts on the markdown files.
-      If two engineers modify the same decision file, it's a standard git merge conflict.</li>
-    <li><strong>No shared search index</strong> — each engineer searches their own local database.
-      Cross-team search isn't available yet.</li>
-    <li><strong>One-way inference</strong> — <code>haft sync</code> reads markdown and updates SQLite.
-      Manual edits to markdown are picked up on next sync, but the database is never the source of truth
-      for other engineers.</li>
+    <li>There is no real-time shared database in the v9 product.</li>
+    <li>Git carries file conflicts; Haft does not silently pick one semantic winner.</li>
+    <li>Each engineer's code index and runtime state can have different freshness until refreshed and synced.</li>
+    <li>Authority provenance travels with the record; importing a carrier does not create a new operator approval.</li>
   </ul>
 
   <div class="callout-warn">
     <p>
-      <strong>Don't edit <code>.haft/*.md</code> files by hand</strong> unless you know what you're doing.
-      The markdown format is designed to be readable, but it's also a structured format that
-      <code>haft sync</code> parses. Malformed files will be skipped during sync with a warning.
+      <strong>Do not hand-edit lifecycle or authority fields.</strong> Use the
+      public effect sink. A readable markdown carrier is not a bypass around
+      kernel validation or human gates.
     </p>
   </div>
 
-  <h2>Next</h2>
+  <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/lifecycle">Decision lifecycle</a> — how decisions age and get verified</li>
-    <li><a href="/docs/commands">All commands</a> — complete reference including <code>haft sync</code></li>
+    <li><a href="/docs/concepts">Memory, carriers, and runtime state</a></li>
+    <li><a href="/docs/lifecycle">Specification lifecycle and evidence</a></li>
   </ul>
 </DocsLayout>
