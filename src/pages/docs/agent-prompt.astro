@@ -2,65 +2,70 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Host integration in Haft v9" description="Let haft init publish the current MCP config, skills, and managed instruction section for each supported coding-agent host.">
-  <h1>Host integration</h1>
+<DocsLayout title="Connect Haft to your coding agent" description="Set up Claude Code or Codex, understand what init changes, and use experimental adapters deliberately.">
+  <h1>Host setup</h1>
 
   <p>
-    In v9, do not copy a generic prompt file across hosts. Run
-    <code>haft init</code> for the exact host. Haft publishes that host's MCP
-    configuration, transformed skills, and managed instruction section through
-    one versioned init plan.
+    Haft is not a standalone coding agent. <code>haft init</code> connects its
+    project memory, MCP server, skills, and managed instructions to the host you
+    already use.
   </p>
 
-  <h2>Stable hosts</h2>
+  <h2>Stable v9 hosts</h2>
 
   <pre><code>haft init --claude
 haft init --codex
-haft init --all      # full Claude + Codex integrations</code></pre>
+haft init --all      # both stable host integrations</code></pre>
 
   <table>
-    <thead>
-      <tr>
-        <th>Host</th>
-        <th>MCP config</th>
-        <th>Skills</th>
-        <th>Instructions</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Host</th><th>MCP config</th><th>Skills</th><th>Project instructions</th></tr></thead>
     <tbody>
-      <tr>
-        <td>Claude Code</td>
-        <td><code>.mcp.json</code></td>
-        <td><code>~/.claude/skills/</code> or project <code>.claude/skills/</code></td>
-        <td>Managed section in <code>CLAUDE.md</code></td>
-      </tr>
-      <tr>
-        <td>Codex CLI / App</td>
-        <td><code>.codex/config.toml</code></td>
-        <td><code>~/.agents/skills/</code> or project <code>.agents/skills/</code></td>
-        <td>Managed section in <code>AGENTS.md</code></td>
-      </tr>
+      <tr><td>Claude Code</td><td><code>.mcp.json</code></td><td><code>~/.claude/skills/</code> or project-local</td><td>Managed section in <code>CLAUDE.md</code></td></tr>
+      <tr><td>Codex CLI / App</td><td><code>.codex/config.toml</code></td><td><code>~/.agents/skills/</code> or project-local</td><td>Managed section in <code>AGENTS.md</code></td></tr>
     </tbody>
   </table>
 
   <p>
-    Use <code>--local</code> for project-local skill publication. Use
-    <code>--mcp-only</code> only with an explicit host or <code>--all</code> when
-    you intentionally want MCP config without skills or managed instructions.
-    <code>--no-file-instructions</code> skips the instruction carrier while
-    retaining the other selected host outputs.
+    Add <code>--local</code> when skills should live in the repository. Add
+    <code>--mcp-only</code> to an explicit host only when you intentionally want
+    the MCP configuration without skills or managed instructions.
   </p>
 
-  <h2>Independent skill publication</h2>
+  <h2>Re-init is bounded</h2>
+
+  <p>
+    Re-running init refreshes recognized Haft-owned files and only the content
+    between Haft markers in <code>CLAUDE.md</code> or <code>AGENTS.md</code>.
+    Project instructions outside those markers remain untouched. A foreign
+    file at a Haft-owned skill path blocks the write instead of being
+    overwritten.
+  </p>
+
+  <p>
+    Put project-specific rules outside the managed markers. Do not maintain a
+    second handwritten copy of the Haft protocol beside the generated section;
+    it will drift from the installed version.
+  </p>
+
+  <h2>Restart after setup or upgrade</h2>
+
+  <p>
+    Hosts cache MCP schemas and skill manifests. Fully restart the host, then
+    run <code>haft version</code> and <code>haft doctor</code> if the connection
+    looks stale. Editing the config does not restart a process that is already
+    running.
+  </p>
+
+  <h2>Advanced: skills without a host integration</h2>
 
   <pre><code>haft init --agents
 haft init --agents --local
 haft init --codex --agents</code></pre>
 
   <p>
-    <code>--agents</code> publishes only the shared agent skill bundle. It does
-    not configure MCP or project instructions. When combined with
-    <code>--codex</code>, the identical skill target is coalesced into one write.
+    <code>--agents</code> publishes the shared skill bundle without configuring
+    MCP or project instructions. Combined with <code>--codex</code>, the identical
+    target is written once.
   </p>
 
   <h2>Experimental and legacy adapters</h2>
@@ -83,39 +88,14 @@ haft init --air</code></pre>
 
   <p>
     Read <code>haft init --help</code> from the installed release before
-    scripting an adapter. Stable support in v9 is Claude Code and Codex; the
-    other adapters retain their documented experimental or legacy boundaries.
-  </p>
-
-  <h2>Managed instruction safety</h2>
-
-  <p>
-    Re-init changes only the content between Haft markers in
-    <code>CLAUDE.md</code> or <code>AGENTS.md</code>. Project text outside those
-    markers remains project-owned. Recognized legacy Haft skills and slash
-    commands are removed. A foreign file at a desired Haft-owned skill path
-    blocks the write instead of being overwritten.
-  </p>
-
-  <p>
-    Do not maintain a second handwritten Haft protocol beside the managed
-    section. Project-specific rules belong outside the markers; FPF and kernel
-    behavior comes from the installed release.
-  </p>
-
-  <h2>Restart after every host change</h2>
-
-  <p>
-    Hosts cache tool schemas and skill manifests. Fully restart the host after
-    init or upgrade, then check <code>haft version</code>, <code>haft doctor</code>,
-    and the host's loaded MCP server. Editing a config file does not restart an
-    already running process.
+    scripting one of these adapters. “Has a flag” is not the same as stable
+    parity with Claude Code or Codex.
   </p>
 
   <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/install">Install and init</a></li>
-    <li><a href="/docs/commands">The v9 skill and tool catalog</a></li>
+    <li><a href="/docs/install">Install and verify Haft</a></li>
+    <li><a href="/docs/commands">Skills, CLI, and MCP reference</a></li>
   </ul>
 </DocsLayout>

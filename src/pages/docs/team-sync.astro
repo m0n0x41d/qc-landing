@@ -2,102 +2,91 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Team sync in Haft v9" description="Use git-tracked markdown as an exchange carrier and explicit sync into each engineer's local SQLite runtime store.">
-  <h1>Team sync</h1>
+<DocsLayout title="Use Haft with a team and git" description="What Haft v9 can safely exchange through git today, and where full team-runtime synchronization is not yet implemented.">
+  <h1>Teams &amp; git</h1>
 
   <p>
-    Haft is local-first. Each engineer has a project SQLite store under
-    <code>~/.haft/projects/&lt;project-id&gt;/</code>. Reviewable
-    <code>.haft/*.md</code> projections travel through git.
+    Haft is local-first. Each project checkout uses a local SQLite database,
+    while readable files under <code>.haft/</code> can be reviewed with the code
+    in git. This is useful for review and partial exchange. It is not a
+    distributed project database.
   </p>
 
-  <div class="callout">
-    <p>
-      <strong>One distinction matters:</strong> SQLite is the local runtime
-      structured store. Markdown is the publication and exchange carrier. The
-      file transports a record; it does not act, validate itself, or become
-      another engineer's runtime state until explicit sync.
-    </p>
-  </div>
+  <h2>What works today</h2>
 
-  <h2>Exchange workflow</h2>
-
-  <ol>
-    <li>Engineer A creates or updates a Haft record through its effect sink.</li>
-    <li>Haft writes the corresponding <code>.haft/*.md</code> carrier.</li>
-    <li>A reviews and commits the carrier with the related code.</li>
-    <li>Engineer B pulls the branch.</li>
-    <li>B runs <code>haft sync</code>.</li>
-    <li>B's local SQLite store imports the supported carrier data.</li>
-  </ol>
+  <ul>
+    <li>Reviewable Haft records and specifications can travel in the same pull request as the code they explain.</li>
+    <li><code>haft sync</code> can import supported artifact projections into the local SQLite store.</li>
+    <li><code>haft spec sync</code> handles the separate specification edition path.</li>
+    <li>Structured blocks preserve supported typed data; older files may import as visibly degraded legacy records.</li>
+  </ul>
 
   <pre><code>git pull
 haft sync
+haft spec sync
 haft check</code></pre>
 
   <p>
-    Sync is explicit and idempotent for the same supported input. It is not a
-    background replication protocol. Schema mismatch or malformed structured
-    data must remain visible; do not coerce a partial carrier into current
-    semantics.
+    Inspect the command output. A partial, malformed, unknown-schema, or
+    conflicting file must remain visible; do not treat a clean subset as proof
+    that every kind of project state replayed.
   </p>
 
-  <h2>What the carrier preserves</h2>
+  <h2>Review records with the code</h2>
 
   <p>
-    Current artifact projections include a hidden structured-data block so the
-    supported typed payload can round-trip into SQLite. Older carriers without
-    that envelope may be imported as legacy with audit warnings. Missing source
-    meaning remains unresolved rather than being upgraded by guesswork.
-  </p>
-
-  <h2>Review in the same change</h2>
-
-  <p>
-    Include the <code>.haft/</code> diff in the pull request that changes the
-    governed code. Reviewers can inspect the readable rationale, scope,
-    invariants, evidence coordinates, and lifecycle metadata next to the
-    implementation.
+    Include relevant <code>.haft/</code> changes in the pull request. Reviewers
+    can inspect the problem, options, decision rationale, scope, invariants,
+    and evidence references beside the implementation.
   </p>
 
   <pre><code>git diff main...feature-branch -- .haft/</code></pre>
 
   <p>
-    The presence of a carrier in a pull request is not proof that the code
-    implements it or that its evidence is current. Use code context, spec
-    checks, and verification for those separate questions.
+    The record being present does not prove that the code implements it or that
+    its evidence is fresh. Those remain separate review questions.
   </p>
 
-  <h2>Specification carriers</h2>
-
-  <p>
-    Typed SpecSections use their own lifecycle and SQL edition store. Use
-    <code>haft spec sync</code>, <code>haft spec validate</code>, and
-    <code>haft spec check</code> for specification carriers. Do not infer
-    lifecycle approval from a successful git merge or generic artifact sync.
-  </p>
-
-  <h2>Limitations</h2>
+  <h2>What v9 does not provide</h2>
 
   <ul>
-    <li>There is no real-time shared database in the v9 product.</li>
-    <li>Git carries file conflicts; Haft does not silently pick one semantic winner.</li>
-    <li>Each engineer's code index and runtime state can have different freshness until refreshed and synced.</li>
-    <li>Authority provenance travels with the record; importing a carrier does not create a new operator approval.</li>
+    <li>No real-time shared database or background replication.</li>
+    <li>No complete replay of every typed-memory, authority, specification, and lifecycle event through generic <code>haft sync</code>.</li>
+    <li>No automatic semantic winner when branches carry conflicting records.</li>
+    <li>No safe assumption that two worktrees can concurrently share one project ledger.</li>
   </ul>
 
-  <div class="callout-warn">
-    <p>
-      <strong>Do not hand-edit lifecycle or authority fields.</strong> Use the
-      public effect sink. A readable markdown carrier is not a bypass around
-      kernel validation or human gates.
-    </p>
-  </div>
+  <p>
+    Current project binding ties one project ID and ledger to one physical
+    checkout root. A second worktree with the same identity can fail exact-root
+    validation. Do not create a new project ID merely to hide that mismatch;
+    it would split the memory instead of solving shared-workspace identity.
+  </p>
+
+  <h2>A safe team posture</h2>
+
+  <ol>
+    <li>Treat git-tracked Haft files as review and supported exchange surfaces, not as a complete replicated database.</li>
+    <li>Keep SQLite, WAL/SHM files, indexes, locks, runtime output, and secrets out of git.</li>
+    <li>Use one canonical local checkout for mutation when the same project identity is involved.</li>
+    <li>Run the exact sync command for the record family and inspect partial failures.</li>
+    <li>Recheck current specifications, decisions, and evidence before consequential reliance.</li>
+  </ol>
+
+  <h2>The trade-off</h2>
+
+  <p>
+    Local-first storage avoids a required server and keeps project data under
+    the user's control. In v9, that simplicity comes at the cost of incomplete
+    multi-worktree and team-runtime collaboration. Git review is useful today;
+    authoritative distributed replay remains future work.
+  </p>
 
   <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/concepts">Memory, carriers, and runtime state</a></li>
-    <li><a href="/docs/lifecycle">Specification lifecycle and evidence</a></li>
+    <li><a href="/docs/concepts">Local project memory and storage</a></li>
+    <li><a href="/docs/lifecycle">Specification and evidence boundaries</a></li>
+    <li><a href="/docs/roadmap">Current boundary and future work</a></li>
   </ul>
 </DocsLayout>

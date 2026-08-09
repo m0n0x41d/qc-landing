@@ -2,63 +2,104 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Haft documentation" description="Source-native FPF delivery and reliance-bearing project memory for AI-assisted engineering.">
-  <h1>Haft documentation</h1>
+<DocsLayout title="Why Haft" description="Keep important engineering questions, decisions, evidence, and code links from disappearing into AI chat history.">
+  <h1>Keep AI-assisted engineering from turning into chat history</h1>
 
   <p>
-    Haft is a governance substrate used from an existing coding agent. It
-    delivers versioned FPF source into the current question and preserves typed
-    project memory when later work must rely on the result.
+    Coding agents can produce plans, code, and convincing explanations very
+    quickly. The expensive failure is doing the wrong work quickly—or opening
+    the repository a month later and being unable to answer what was decided,
+    why it was decided, where it is implemented, and whether the evidence still
+    holds.
+  </p>
+
+  <p>
+    Haft is a local project-memory and reasoning layer for the coding agent you
+    already use. It helps the agent slow down on expensive questions, preserve
+    the results that later work will depend on, and reconnect those results to
+    the code as the project changes.
+  </p>
+
+  <h2>What Haft changes</h2>
+
+  <ul>
+    <li><strong>Better questions before more code.</strong> Haft helps distinguish a symptom from the problem, expose alternatives, and make the weakest link visible.</li>
+    <li><strong>Project memory with different kinds of records.</strong> A suggestion, a human decision, a plan, performed work, and evidence do not collapse into one transcript.</li>
+    <li><strong>Context that survives a session.</strong> Important decisions, specifications, evidence, and code links remain inspectable after the chat is gone.</li>
+    <li><strong>Signals when reality moves.</strong> Haft can surface stale evidence, changed code, missing links, and specification drift without pretending those signals are verdicts.</li>
+  </ul>
+
+  <h2>The shortest path to value</h2>
+
+  <ol>
+    <li><a href="/docs/install">Install Haft</a> into a small real project and restart your coding agent.</li>
+    <li>Choose one question whose answer would be painful to lose or expensive to get wrong.</li>
+    <li>Ask the agent normally. Add <code>/h-reason</code> when the problem, scope, trade-offs, or architecture are unclear.</li>
+    <li>Keep the result in conversation if it is local and reversible. Let Haft record it only when another session, person, audit, or costly decision will rely on it.</li>
+  </ol>
+
+  <p>
+    You do not need to learn FPF, the Haft CLI, or the MCP tool catalog before
+    trying this. The normal interface is still a conversation with your agent.
+  </p>
+
+  <h2>When Haft is worth the cost</h2>
+
+  <p>Haft starts paying for itself when one or more of these are true:</p>
+
+  <ul>
+    <li>the project will outlive the current chat;</li>
+    <li>several people or agents need the same rationale;</li>
+    <li>an architectural or product choice is expensive to reverse;</li>
+    <li>you need to know which evidence supported a claim and whether it is still fresh;</li>
+    <li>the link between specifications, decisions, and code matters.</li>
+  </ul>
+
+  <p>
+    For a throwaway script, a mechanical rename, or an obvious fix with a good
+    test, a coding agent and the test may be enough. Haft should add less
+    ceremony than the mistake it helps prevent.
+  </p>
+
+  <h2>The trade-offs</h2>
+
+  <ul>
+    <li><strong>Typed does not mean true.</strong> Haft can catch category mistakes and missing links; it cannot guarantee that the problem framing or evidence is good.</li>
+    <li><strong>Useful links require maintenance.</strong> Decision-to-code and spec-to-code links cost attention, and coarse links can create noise.</li>
+    <li><strong>Ceremony is easy to overdo.</strong> Not every task deserves a saved problem, comparison, decision, and verification record.</li>
+    <li><strong>The human still owns value choices.</strong> Haft can expose options and consequences. It does not know your budget, politics, taste, or acceptable risk.</li>
+  </ul>
+
+  <h2>Where FPF fits</h2>
+
+  <p>
+    Haft is built on the
+    <a href="https://github.com/ailev/FPF" target="_blank" rel="noopener">First Principles Framework (FPF)</a>
+    by <a href="https://www.linkedin.com/in/ailev/" target="_blank" rel="noopener">Anatoly Levenchuk</a>.
+    FPF gives agents rigorous distinctions and reusable patterns for working
+    with systems. It is large and formal. Haft is the practical handle: it
+    retrieves the relevant, versioned source for the current question and
+    brings the resulting discipline into project memory and code work.
+  </p>
+
+  <p>
+    Haft does not make an agent magically correct. It makes important
+    assumptions, choices, boundaries, and evidence easier to inspect and less
+    likely to disappear into fluent prose.
   </p>
 
   <div class="callout">
     <p>
-      <strong>This documentation covers v9.0.0, the current release.</strong>
-      To check which version a host is using, inspect the loaded binary and
-      host process.
+      <strong>Current release:</strong>
+      <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.2" target="_blank" rel="noopener">v9.0.2</a>.
+      Read <a href="/docs/9.0">what changed in v9</a>, or continue with the
+      <a href="/docs/first-steps">first useful task</a>.
     </p>
   </div>
 
-  <h2>The v9 product boundary</h2>
-
-  <p>One local <code>.haft/</code> graph is available through three surfaces:</p>
+  <h2>Older documentation</h2>
 
   <ul>
-    <li>independent host-agent skills, including <code>h-reason</code> for source-first FPF reasoning;</li>
-    <li>the manual governance CLI;</li>
-    <li>the <code>haft serve</code> MCP server.</li>
-  </ul>
-
-  <p>
-    v9 does not ship a coding-agent executor. <code>haft run</code>,
-    <code>haft harness</code>, Open-Sleigh, and the Elixir/OTP/BEAM runtime were
-    removed. WorkCommission and RuntimeRunRecord lifecycle records remain
-    runner-neutral for host-agent work or separately operated integrations.
-  </p>
-
-  <h2>Start here</h2>
-
-  <ol>
-    <li><a href="/docs/9.0/install">Install and initialize Haft</a> for the host you use.</li>
-    <li>Restart the host so it loads the installed MCP server and skills.</li>
-    <li>Ask the agent your current engineering question; use <code>/h-reason</code> when you want an explicit FPF-supported pass.</li>
-    <li>Use <code>/h-status</code> when live project state, drift, coverage, or readiness is the question.</li>
-  </ol>
-
-  <h2>Authority stays explicit</h2>
-
-  <p>
-    A recommendation is not a decision, a plan is not performed work, and a
-    lifecycle result is not automatically evidence truth. <code>h-decide</code>
-    can route one direct, unambiguous operator choice. <code>h-commission</code>
-    stays manual-only because a WorkCommission grants bounded execution
-    authority.
-  </p>
-
-  <h2>Versioned documentation</h2>
-
-  <ul>
-    <li><a href="/docs/9.0">v9.0 current-release overview</a></li>
     <li><a href="/docs/8.0">v8.1 release history</a></li>
     <li><a href="/docs/7.0">v7 historical documentation</a></li>
   </ul>

@@ -2,124 +2,97 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Code orientation in Haft v9" description="How the fused code and reasoning graph supports bounded orientation without turning rank or traversal into authority.">
-  <h1>Code orientation</h1>
+<DocsLayout title="Find the code and decisions that matter" description="Use Haft to narrow a code change from a concern to the relevant symbols, specifications, decisions, and invariants.">
+  <h1>Find the relevant code</h1>
 
   <p>
-    Haft v9 fuses code symbols, calls, files, modules, decisions, invariants,
-    notes, and other reasoning records into one query surface. The graph helps
-    an agent find the relevant area before editing. It does not decide what the
-    code means or which record governs it.
+    A repository search can find matching text. It usually cannot tell the
+    agent why a symbol exists, which decision selected its behavior, which
+    specification it is meant to satisfy, or whether that rationale has gone
+    stale.
   </p>
-
-  <h2>Explore an exact symbol or a concern</h2>
-
-  <pre><code>haft graph explore --symbol PublishIndexEpoch --view working --json
-haft graph explore --query "where is the index epoch published?" --view working --json</code></pre>
 
   <p>
-    <code>explore</code> accepts one input shape at a time: an exact symbol or a
-    bounded concern. The concern route returns advisory candidates. The caller
-    must select an exact code identity from the current use, not from rank
-    alone.
+    Haft combines a code index with project records so the agent can move from
+    a concern to likely files and symbols, then to related decisions,
+    specifications, invariants, and notes.
   </p>
 
-  <p>The equivalent MCP calls are:</p>
+  <h2>The practical route</h2>
 
-  <pre><code>haft_query(action="explore", symbol="PublishIndexEpoch")
-haft_query(action="explore", query="where is the index epoch published?")</code></pre>
+  <ol>
+    <li>Start with the concern when you do not know the exact code identity.</li>
+    <li>Select the relevant file or symbol from the actual task, not from search rank alone.</li>
+    <li>Ask for context or impact on that exact target before a non-mechanical edit.</li>
+    <li>Open the exact decision or specification before relying on its claim.</li>
+    <li>Skip this route for an obvious mechanical edit when governance context cannot affect it.</li>
+  </ol>
 
-  <h2>Use the actual target before editing</h2>
+  <pre><code>haft graph explore --query "where is the index epoch published?" --json
+haft graph explore --symbol PublishIndexEpoch --json</code></pre>
+
+  <p>The same reads are available to the host agent:</p>
+
+  <pre><code>haft_query(action="explore", query="where is the index epoch published?")
+haft_query(action="code_context", file="internal/index/epoch.go")
+haft_query(action="impact", symbol="PublishIndexEpoch")</code></pre>
+
+  <h2>What the result can and cannot say</h2>
 
   <p>
-    Area exploration is not an edit preflight. Before a non-mechanical change
-    where recorded governance may matter, query the actual file or symbol:
+    The graph is an orientation surface. It can show a nearby decision or an
+    invariant linked to a module. Nearness is not proof that the record is
+    active or governing. The agent must still inspect its scope, status,
+    limiting conditions, and exact links.
   </p>
 
-  <pre><code>haft_query(action="code_context", file="internal/index/epoch.go")
-haft_query(action="impact", symbol="PublishIndexEpoch")
-haft_query(action="governing_set", source_refs=["symbol:PublishIndexEpoch"])</code></pre>
+  <ul>
+    <li>An empty caller list does not prove that no dependency exists.</li>
+    <li>An incomplete traversal is not a safety claim.</li>
+    <li>A missing decision-to-file link does not prove the file is unconstrained.</li>
+    <li>A broad file link may create noisy drift even when the relevant symbol did not change.</li>
+  </ul>
+
+  <h2>Freshness and concurrent agents</h2>
 
   <p>
-    <code>code_context</code> and <code>impact</code> are relevance surfaces. A
-    displayed invariant, a nearby decision, or module proximity is not by
-    itself proof of active authority. Inspect the exact record's scope, status,
-    coverage, and limiting reasons before relying on it.
+    Code indexing is automatic. Several <code>haft serve</code> processes for
+    the same project share published index epochs instead of repeating all
+    parser work. If a request cannot establish freshness in time, Haft returns
+    the last complete index as degraded, or says the index is unavailable. It
+    should not turn an uncertain refresh into a confident empty result.
   </p>
 
-  <h2>Views and replay</h2>
+  <h2>Advanced: result views and replay</h2>
 
   <table>
-    <thead>
-      <tr>
-        <th>View</th>
-        <th>Use</th>
-      </tr>
-    </thead>
+    <thead><tr><th>View</th><th>Use</th></tr></thead>
     <tbody>
-      <tr>
-        <td><code>working</code></td>
-        <td>Bounded, score-free orientation without retrieval internals</td>
-      </tr>
-      <tr>
-        <td><code>trace</code></td>
-        <td>Bounded provenance plus an opaque replay basis</td>
-      </tr>
-      <tr>
-        <td><code>diagnostic</code></td>
-        <td>Retrieval and traversal internals for debugging the query</td>
-      </tr>
+      <tr><td><code>working</code></td><td>Compact orientation for ordinary work</td></tr>
+      <tr><td><code>trace</code></td><td>Provenance and replay coordinates</td></tr>
+      <tr><td><code>diagnostic</code></td><td>Retrieval internals for debugging the query</td></tr>
     </tbody>
   </table>
 
   <p>
-    Replay is tied to the same request and source snapshot. If the index,
-    request, or canonical result changes, Haft returns
-    <code>replay_mismatch</code> instead of pretending the old trace still
-    proves the new result.
+    Replay is tied to the same request and source snapshot. When either changes,
+    Haft reports a mismatch instead of pretending the old trace proves the new
+    result.
   </p>
 
-  <h2>Freshness under concurrent hosts</h2>
+  <h2>The trade-off</h2>
 
   <p>
-    Code indexing is automatic and shared by concurrent <code>haft serve</code>
-    processes for the same project. One process publishes a changed epoch;
-    followers recheck the completed publication. A bounded request that cannot
-    establish freshness reports a retained complete epoch as degraded, or
-    reports the index unavailable when no complete epoch exists.
+    Code context becomes more useful as decisions and specifications carry
+    precise code links. Creating and maintaining those links costs attention.
+    Too few links produce gaps; links that are too broad produce noise. Haft
+    exposes both problems instead of guessing certainty.
   </p>
 
-  <p>
-    Several running project servers are not a defect by count alone. Freshness
-    and exact project binding matter more than process count.
-  </p>
-
-  <h2>Boundaries that prevent false confidence</h2>
+  <h2>Related pages</h2>
 
   <ul>
-    <li>An empty caller or callee list is not proof that no dependency exists.</li>
-    <li>Incomplete traversal is not a safety claim.</li>
-    <li>A coverage cue is not proof that every file is governed.</li>
-    <li>A missing exact link is not proof that the file is unconstrained.</li>
-    <li>FPF identifiers, Haft record IDs, project-memory identities, and code symbols remain separate namespaces.</li>
+    <li><a href="/docs/concepts">How project memory is organized</a></li>
+    <li><a href="/docs/lifecycle">How drift and evidence are read</a></li>
   </ul>
-
-  <div class="callout">
-    <p>
-      <strong>Two orientation systems:</strong> the code graph answers where
-      code and governing records may be related. Typed project memory answers
-      what is known around one exact EntityOfConcern. Neither substitutes for
-      the other.
-    </p>
-  </div>
-
-  <h2>Practical sequence</h2>
-
-  <ol>
-    <li>Use <code>explore</code> when you do not yet know the exact symbol.</li>
-    <li>Select the code identity from the current task, not candidate rank.</li>
-    <li>Run <code>code_context</code> or <code>impact</code> on the actual target.</li>
-    <li>Recover the exact governing set before relying on a governance claim.</li>
-    <li>Record <code>not_applicable</code> for a purely mechanical edit instead of inventing ceremony.</li>
-  </ol>
 </DocsLayout>

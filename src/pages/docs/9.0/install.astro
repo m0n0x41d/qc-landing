@@ -2,19 +2,20 @@
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Install Haft v9" description="Install the current v9 governance substrate without a bundled execution runtime.">
-  <h1>Install &amp; init (v9.0)</h1>
+<DocsLayout title="Install Haft v9" description="The short installation path for the current Haft v9 release.">
+  <h1>Install Haft v9</h1>
 
   <pre><code>curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/install.sh | bash
 
 cd /path/to/project
-haft init --claude   # or --codex
-# restart the host after init</code></pre>
+haft init --claude   # or: haft init --codex
+# fully restart the coding agent</code></pre>
 
   <p>
-    The v9 archive contains the Haft CLI and may contain the independent
-    optional <code>haft-embed</code> compatibility sidecar. It contains no
-    Open-Sleigh, ERTS, Elixir, or BEAM payload.
+    The current release is
+    <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.2" target="_blank" rel="noopener">v9.0.2</a>.
+    The v9 archive contains the Haft CLI and no Open-Sleigh, ERTS, Elixir, or
+    BEAM runtime.
   </p>
 
   <h2>Upgrade safety</h2>
@@ -22,7 +23,7 @@ haft init --claude   # or --codex
   <ol>
     <li>Stop every host process that can run <code>haft serve</code>.</li>
     <li>Back up the project <code>.haft/</code> directory and its global project ledger.</li>
-    <li>Install v9.0.0 and record <code>haft version</code> plus its checksum.</li>
+    <li>Install v9.0.2 and record <code>haft version</code>.</li>
     <li>Re-run init for only the host targets you use, then fully restart them.</li>
   </ol>
 
@@ -37,11 +38,10 @@ haft init --claude   # or --codex
 
   <p>
     Replace <code>haft run</code> and <code>haft harness</code> automation with
-    direct host-agent work or a separately operated runner. The surviving
-    integration boundary is <code>haft commission</code> plus the typed
-    <code>haft_commission</code> claim, preflight, start, event, and terminal
-    lifecycle operations.
+    direct host-agent work or a separately operated runner. Haft can still keep
+    runner-neutral commission and run records, but it no longer executes the
+    coding work itself.
   </p>
 
-  <p><a href="/docs/install">Read the full install and rollback notes</a>.</p>
+  <p><a href="/docs/install">Read the complete install, verification, and upgrade notes</a>.</p>
 </DocsLayout>

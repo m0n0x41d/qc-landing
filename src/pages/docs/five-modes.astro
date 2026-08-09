@@ -2,74 +2,56 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Independent capabilities in Haft v9" description="The former five-modes page now explains why v9 skills are independent capabilities rather than a project workflow.">
-  <h1>Independent capabilities</h1>
+<DocsLayout title="Haft v9 uses independent capabilities" description="This compatibility page explains why the old five-stage workflow is not the v9 product model.">
+  <h1>The old five modes are gone</h1>
 
   <div class="callout-warn">
     <p>
-      <strong>The five-mode workflow is not the v9 contract.</strong> This URL is
-      retained so old links reach the correction instead of teaching a removed
-      product model.
+      <strong>This URL is kept for old links.</strong> v9 does not require
+      <code>Understand → Explore → Choose → Execute → Verify</code>.
     </p>
   </div>
 
   <p>
-    v9 does not require
-    <code>Understand → Explore → Choose → Execute → Verify</code>. Skills are
-    independent <code>MethodDescription</code> carriers with their own entry
-    conditions and result boundaries. Completion of one skill does not make the
-    next skill mandatory.
+    Real engineering questions do not always begin at the same stage or need
+    the same result. Haft v9 exposes independent capabilities and chooses by
+    the situation in front of the agent.
   </p>
 
-  <h2>Select by the current condition</h2>
-
   <table>
-    <thead>
-      <tr>
-        <th>Condition</th>
-        <th>Capability</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Situation</th><th>Capability</th></tr></thead>
     <tbody>
-      <tr><td>The question is ambiguous and FPF pattern choice may matter</td><td><code>h-reason</code></td></tr>
-      <tr><td>The problem is under-articulated</td><td><code>h-frame</code></td></tr>
-      <tr><td>A concrete failure has rival explanations</td><td><code>h-diagnose</code></td></tr>
-      <tr><td>Distinct approaches are needed</td><td><code>h-explore</code></td></tr>
-      <tr><td>Existing candidates need fair comparison</td><td><code>h-compare</code></td></tr>
-      <tr><td>The operator directly binds one exact choice</td><td><code>h-decide</code></td></tr>
-      <tr><td>A recorded claim must be checked against reality</td><td><code>h-verify</code></td></tr>
-      <tr><td>Project state or readiness is the question</td><td><code>h-status</code></td></tr>
-      <tr><td>Setup or project profile is incomplete</td><td><code>h-onboard</code></td></tr>
-      <tr><td>A typed specification or lifecycle act is current</td><td><code>h-spec</code></td></tr>
-      <tr><td>The operator asks to save one non-binding observation</td><td><code>h-note</code></td></tr>
-      <tr><td>The operator grants bounded execution authority</td><td><code>h-commission</code> (manual only)</td></tr>
+      <tr><td>The right route is unclear</td><td><code>h-reason</code></td></tr>
+      <tr><td>The problem is unclear</td><td><code>h-frame</code></td></tr>
+      <tr><td>A failure has rival causes</td><td><code>h-diagnose</code></td></tr>
+      <tr><td>Different approaches are needed</td><td><code>h-explore</code></td></tr>
+      <tr><td>Existing options need a fair comparison</td><td><code>h-compare</code></td></tr>
+      <tr><td>The human directly chooses an option</td><td><code>h-decide</code></td></tr>
+      <tr><td>An old claim must meet current evidence</td><td><code>h-verify</code></td></tr>
+      <tr><td>Current project attention is the question</td><td><code>h-status</code></td></tr>
+      <tr><td>Setup needs attention</td><td><code>h-onboard</code></td></tr>
+      <tr><td>The product or software contract is current</td><td><code>h-spec</code></td></tr>
+      <tr><td>One observation should be remembered</td><td><code>h-note</code></td></tr>
+      <tr><td>A runner needs durable execution authority</td><td><code>h-commission</code></td></tr>
     </tbody>
   </table>
 
-  <h2>Ordered work still exists</h2>
-
   <p>
-    Removing a universal skill sequence does not make FPF acausal or forbid
-    planning. An explicit causal claim, ordered <code>MethodDescription</code>,
-    <code>WorkPlan</code>, or performed-work relation may carry order when that
-    order is current. It is not inferred from a documentation page, skill list,
-    or graph layout.
+    Ordered plans and methods still exist when the work itself has an order.
+    The documentation menu and skill list do not invent that order for every
+    project.
   </p>
 
-  <h2>Persistence and authority</h2>
-
   <p>
-    Most bounded reasoning may stay in conversation. Durable records are
-    created only for an explicit save/bind request or a concrete receiving use.
-    A plan is not performed work, a recommendation is not a decision, and a
-    DecisionRecord is not a WorkCommission.
+    Most local reasoning can stay in the conversation. A plan is not performed
+    work, a recommendation is not a human decision, and a decision is not
+    execution authority.
   </p>
 
   <h2>Next</h2>
 
   <ul>
-    <li><a href="/docs/reasoning">Source-native FPF reasoning</a></li>
-    <li><a href="/docs/commands">The complete v9 skill catalog</a></li>
-    <li><a href="/docs/decision-integrity">Authority and commissions</a></li>
+    <li><a href="/docs/reasoning">Choose by the current question</a></li>
+    <li><a href="/docs/commands">See the complete v9 capability list</a></li>
   </ul>
 </DocsLayout>

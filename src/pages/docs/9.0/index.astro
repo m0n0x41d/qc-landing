@@ -2,36 +2,95 @@
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Haft v9" description="The current v9 source-native governance product and its deliberately smaller execution boundary.">
-  <h1>Haft v9.0</h1>
+<DocsLayout title="What changed in Haft v9" description="Why v9 became a smaller, clearer project-memory and reasoning layer for existing coding agents.">
+  <h1>What changed in v9</h1>
 
   <p>
-    v9 completes the governance-substrate pivot: Haft delivers versioned FPF
-    source, provides bounded code and project-memory orientation, and records
-    reliance-bearing project state through skills, CLI, and MCP.
+    v9 makes Haft narrower on the outside and stronger underneath. You keep
+    working in Claude Code, Codex, or another host. Haft supplies the FPF
+    source, project memory, code context, validation, and explicit human
+    decision boundaries around that work.
   </p>
 
   <div class="callout">
     <p>
       <strong>Release status:</strong>
-      <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.0" target="_blank" rel="noopener">v9.0.0</a>
-      is the current release. Source presence, documentation,
-      or a passing local test still does not prove that a running host loaded
-      that exact release.
+      <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.2" target="_blank" rel="noopener">v9.0.2</a>
+      is current. It includes the v9.0.1 project-path migration repair and fixes
+      conventional monorepo scope detection without changing the v9 capability
+      or authority boundary. Projects upgrading from v9.0.0 should run
+      <code>haft init</code> once so migration 58 can clean pre-v9 invalid
+      <code>affected_files</code> rows.
     </p>
   </div>
 
-  <h2>What v9 includes</h2>
+  <h2>1. FPF is retrieved from its source</h2>
+
+  <p>
+    Older Haft versions relied more heavily on Haft-owned routing concepts.
+    v9 starts with the current engineering concern, retrieves candidates from
+    the pinned FPF publication, and then opens the exact full pattern when it
+    applies. The source remains the authority for FPF meaning; Haft does not
+    maintain a second miniature FPF beside it.
+  </p>
+
+  <h2>2. Skills are capabilities, not a mandatory workflow</h2>
+
+  <p>
+    Use <code>h-frame</code> when the problem is unclear,
+    <code>h-diagnose</code> when a failure has rival causes,
+    <code>h-compare</code> when existing options need a fair comparison, and
+    <code>h-verify</code> when an old claim must meet current evidence.
+    <code>h-reason</code> is the umbrella when you do not yet know which kind of
+    help the question needs. You do not march through all 12 skills in order.
+  </p>
+
+  <h2>3. Project memory is typed and conditional</h2>
+
+  <p>
+    Haft can keep problems, options, human decisions, specifications, evidence,
+    and their relations as different project records. It writes durable memory
+    when later work has a concrete reason to rely on it—handoff, another
+    session, audit, automation, delayed evidence, or costly reversal. Small,
+    reversible reasoning can stay in chat.
+  </p>
+
+  <p>
+    v9 organizes memory around the exact project thing currently in question,
+    called an <code>EntityOfConcern</code> in the advanced model. Default memory
+    is installed automatically. Compatible bundled memory-model upgrades are
+    activated automatically; users are not asked to choose internal schemas.
+  </p>
+
+  <h2>4. Code and reasoning context meet in one graph</h2>
+
+  <p>
+    The agent can enter through a concern, file, or symbol and recover nearby
+    decisions, specifications, invariants, and notes. This reduces the search
+    space before an edit. Candidate rank and proximity remain orientation—not
+    proof that a record governs the code.
+  </p>
+
+  <h2>5. Setup is explicit, but ordinary use stays simple</h2>
+
+  <p>
+    <code>haft init --claude</code> and <code>haft init --codex</code> publish the
+    correct MCP configuration, skills, and managed instructions for that host.
+    Re-init replaces recognized Haft-owned files without overwriting project
+    instructions outside the managed markers. After setup, the normal
+    interface is still conversation with the agent.
+  </p>
+
+  <h2>What v9 keeps</h2>
 
   <ul>
-    <li>source-native FPF concern query, exact lookup, and full-pattern inspection with provenance;</li>
-    <li>12 independent host-agent skills with <code>h-reason</code> as the source-first umbrella;</li>
-    <li>fused code-graph orientation and typed, reliance-gated project memory;</li>
-    <li>project-profile onboarding, typed specification lifecycle, evidence currentness, and drift checks;</li>
-    <li>runner-neutral WorkCommission and RuntimeRunRecord lifecycle records.</li>
+    <li>local-first storage with reviewable <code>.haft/</code> files;</li>
+    <li>explicit human decisions, specifications, evidence freshness, and drift checks;</li>
+    <li>CLI, skills, and MCP surfaces over the same project state;</li>
+    <li>runner-neutral commission and run records for external integrations.</li>
   </ul>
 
-  <h2>What v9 removes</h2>
+  <h2>What v9 deliberately removes</h2>
 
   <ul>
     <li><code>haft run</code> and <code>haft harness</code>;</li>
@@ -40,21 +99,27 @@ import DocsLayout from '../../../layouts/DocsLayout.astro';
   </ul>
 
   <p>
-    There are no compatibility command stubs. Haft still governs commissioned
-    work, but does not spawn an agent, manage its workspace, apply a patch, or
-    publish a result. A separately operated runner may consume the typed
-    lifecycle without becoming part of Haft Core.
+    Haft no longer tries to be a second coding agent or execution runtime.
+    There are no compatibility stubs for the removed commands. The existing
+    host performs the work; Haft keeps the project model and boundaries around
+    it. An independently operated runner can still consume commission records.
+  </p>
+
+  <h2>The v9 trade-off</h2>
+
+  <p>
+    v9 trades an all-in-one runtime for a smaller integration surface. That
+    reduces packaging and execution complexity and lets people keep their
+    preferred coding agent. It also means Haft itself will not create a
+    worktree, run an agent, apply a patch, merge, push, deploy, or publish.
   </p>
 
   <h2>Next</h2>
 
   <ul>
-    <li><a href="/docs/9.0/install">Install and initialize v9.0</a></li>
-    <li><a href="/docs/reasoning">Reasoning and FPF</a></li>
-    <li><a href="/docs/codebase-awareness">Code orientation</a></li>
-    <li><a href="/docs/concepts">Typed project memory</a></li>
-    <li><a href="/docs/lifecycle">Specifications and evidence</a></li>
-    <li><a href="/docs/decision-integrity">Authority and commissions</a></li>
-    <li><a href="/docs/commands">Skills, CLI, and MCP reference</a></li>
+    <li><a href="/docs/install">Install and initialize Haft</a></li>
+    <li><a href="/docs/first-steps">Try one useful task</a></li>
+    <li><a href="/docs/migration">Migrate safely from v8.1</a></li>
+    <li><a href="/docs/commands">Open the complete reference</a></li>
   </ul>
 </DocsLayout>

@@ -2,79 +2,75 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Cross-project recall in Haft v9" description="The bounded local decision-summary index, its evidence boundary, and its separation from v9 typed project memory.">
-  <h1>Cross-project recall</h1>
+<DocsLayout title="Recall related decisions from other Haft projects" description="Use local cross-project history as a lead without copying an old decision, identity, or authority into the current project.">
+  <h1>Cross-project history</h1>
 
   <p>
-    Haft retains a user-local cross-project index at
-    <code>~/.haft/index.db</code>. It contains decision summaries from local
-    Haft projects. When a new ProblemCard is framed, matching decisions from
-    other projects may appear as <strong>Cross-Project History</strong>.
+    Sometimes another local project already faced a similar problem. Haft keeps
+    a small user-local index of decision summaries at
+    <code>~/.haft/index.db</code>. Related history may appear when a new problem
+    is framed.
   </p>
 
-  <h2>What is indexed</h2>
+  <h2>What the index contains</h2>
 
   <p>
-    After a DecisionRecord is created, Haft can index its project identity,
-    decision identity, title, selected option, rationale summary, weakest link,
-    primary language, and creation time. The index does not copy the entire
-    project graph.
+    It can store the project and decision identity, title, selected option,
+    short rationale, weakest link, primary language, and creation time. It does
+    not copy the other project's complete graph.
   </p>
 
   <p>
-    The baseline path uses local FTS5 over summaries. Results exclude the
-    current project and carry a context label: CL2 for the same detected primary
-    language or CL1 for a different one. That label is an evidence congruence
-    cue, not proof that the old decision applies here.
+    The default path uses local FTS5 over summaries. Same-language and
+    different-language labels are relevance cues, not proof that the old
+    decision applies in the new context.
   </p>
 
-  <h2>How to use a recalled decision</h2>
+  <h2>Use a result safely</h2>
 
   <ol>
-    <li>Treat the result as related history, not a recommendation.</li>
-    <li>Open the source project's exact decision before relying on its rationale.</li>
-    <li>Compare the old and current constraints, evidence, scope, and weakest link.</li>
-    <li>Frame or decide the current project object through its own authority path.</li>
+    <li>Treat it as a lead, not a recommendation.</li>
+    <li>Open the exact source decision before relying on its rationale.</li>
+    <li>Compare the old and current scope, constraints, evidence, and weakest link.</li>
+    <li>Frame and decide the current project through its own path.</li>
   </ol>
 
   <p>
-    Retrieval rank never selects an option, merges an identity, or transfers
-    authority from one project to another.
+    Search rank cannot select an option, merge project identities, or transfer
+    a human decision from one project to another.
   </p>
 
-  <h2>Not typed project memory</h2>
+  <h2>Why this is separate from project memory</h2>
 
   <p>
-    Cross-project recall and v9 typed memory are separate systems. Typed memory
-    resolves an exact <code>EntityOfConcern</code> inside one pinned project
-    snapshot and reads a bounded neighborhood around it. A cross-project
-    summary cannot substitute for that exact identity or be admitted as a
-    project relation by rank.
+    Project memory reads what is known about one exact thing inside one project
+    snapshot. Cross-project history searches summaries across several local
+    projects. A similar summary cannot substitute for exact identity or become
+    a current project fact merely because it ranked highly.
   </p>
 
   <h2>Optional embedding compatibility</h2>
 
   <p>
-    The retained <code>haft-embed</code> sidecar may augment older semantic
-    recall paths and degrades to FTS when unavailable. This compatibility path
-    is outside the v9 contract and P14 acceptance basis. Haft makes no v9 claim
-    that dense or hybrid retrieval is better than FTS, <code>rg</code>, a pinned
-    source file, or host RAG.
+    The optional <code>haft-embed</code> sidecar can support older semantic
+    recall paths and falls back to FTS when unavailable. It is not required for
+    the main v9 path. Haft makes no claim that dense or hybrid recall is better
+    than FTS, <code>rg</code>, a pinned source file, or host search.
   </p>
 
-  <h2>Local boundary</h2>
+  <h2>Local limits</h2>
 
   <ul>
     <li>The index stays on the user's machine.</li>
-    <li>It is not shared automatically through git.</li>
-    <li>Different engineers can have different indexed projects and freshness.</li>
-    <li>Missing results do not prove that no related decision exists.</li>
+    <li>It is not synchronized through git.</li>
+    <li>Different engineers can have different projects and freshness in the index.</li>
+    <li>No result does not prove that no related decision exists.</li>
   </ul>
 
   <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/concepts">Exact EntityOfConcern memory</a></li>
+    <li><a href="/docs/concepts">Exact project memory</a></li>
     <li><a href="/docs/reasoning">Retrieval versus application</a></li>
   </ul>
 </DocsLayout>

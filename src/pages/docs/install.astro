@@ -2,12 +2,14 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Install Haft" description="Install the Haft CLI and initialize its governance surfaces for your coding agent.">
+<DocsLayout title="Install Haft v9" description="Install Haft, connect it to Claude Code or Codex, and verify that the host loaded the current release.">
   <h1>Install &amp; init</h1>
 
   <p>
-    <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.0" target="_blank" rel="noopener">v9.0.0</a>
-    is the current release.
+    The current release is
+    <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.2" target="_blank" rel="noopener">v9.0.2</a>.
+    Haft runs locally and plugs into an existing coding agent. Claude Code and
+    Codex are the stable v9 hosts.
   </p>
 
   <h2>Install the binary</h2>
@@ -16,10 +18,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 
   <p>
     The installer places <code>haft</code> in a writable binary directory,
-    normally <code>~/.local/bin</code>. v9 requires no Elixir, OTP, or BEAM
-    toolchain and ships no Open-Sleigh runtime. The optional
-    <code>haft-embed</code> compatibility sidecar is independent of the core
-    governance product.
+    normally <code>~/.local/bin</code>. v9 has no Elixir, OTP, BEAM, or bundled
+    agent-runtime requirement.
   </p>
 
   <h2>Initialize one project</h2>
@@ -28,14 +28,14 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 haft init                    # interactive host selection in a terminal
 haft init --claude           # Claude MCP, skills, and CLAUDE.md section
 haft init --codex            # Codex MCP, skills, and AGENTS.md section
-haft init --core-only        # project core only
-haft init --all              # full Claude + Codex integrations</code></pre>
+haft init --core-only        # project memory only; no host setup
+haft init --all              # both stable host integrations</code></pre>
 
   <p>
-    Bare non-interactive <code>haft init</code> fails before writing instead of
-    guessing a host. Scripts and CI must pass an explicit flag. Use
-    <code>--local</code> when you want supported skill carriers inside the
-    repository, and <code>--mcp-only</code> only with an explicit host target.
+    In a terminal, bare <code>haft init</code> opens a host picker with nothing
+    preselected. Scripts and CI must pass an explicit flag; Haft fails before
+    writing rather than guessing. See <a href="/docs/agent-prompt">host setup</a>
+    for project-local skills and experimental adapters.
   </p>
 
   <div class="callout-warn">
@@ -45,7 +45,29 @@ haft init --all              # full Claude + Codex integrations</code></pre>
     </p>
   </div>
 
-  <h2>Upgrade from v8.1</h2>
+  <h2>Verify the connection</h2>
+
+  <pre><code>haft version
+haft doctor</code></pre>
+
+  <p>
+    Fully restart the coding agent, open the project again, and ask for
+    <code>/h-status</code>. Restart matters: an already running MCP process keeps
+    the old binary and skill catalog in memory even after the files on disk
+    change.
+  </p>
+
+  <h2>Already on v9.0.0 or v9.0.1?</h2>
+
+  <p>
+    Upgrade to v9.0.2 and run <code>haft init</code> once for the host you use.
+    From v9.0.0, this also applies database migration 58, which removes legacy
+    <code>affected_files</code> rows that v9's project-relative path rule cannot
+    represent. v9.0.2 also fixes conventional monorepo scope detection; the v9
+    capability and authority boundaries are unchanged.
+  </p>
+
+  <h2>Upgrading from v8.1?</h2>
 
   <p>
     Stop Haft writers and back up both the project <code>.haft/</code> directory
@@ -58,8 +80,8 @@ haft init --all              # full Claude + Codex integrations</code></pre>
     <code>~/.haft/runtimes/open-sleigh/current</code>. It preserves
     <code>~/.open-sleigh/</code> user data and
     <code>~/.haft/runtimes/haft-embed/</code>. Migrate scripts that call
-    <code>haft run</code> or <code>haft harness</code> to host-agent work or an
-    external runner using the WorkCommission lifecycle.
+    <code>haft run</code> or <code>haft harness</code> to work performed by the
+    host agent or by a separately operated runner.
   </p>
 
   <p>
@@ -67,15 +89,7 @@ haft init --all              # full Claude + Codex integrations</code></pre>
     before opening a working project ledger with v9.
   </p>
 
-  <h2>Verify the connection</h2>
-
-  <pre><code>haft version
-haft doctor</code></pre>
-
   <p>
-    Then restart the coding agent in the project and request
-    <code>/h-status</code>. A source-level check confirms only the checkout; an
-    installed-runtime readiness claim needs evidence from the exact installed
-    candidate.
+    Next: <a href="/docs/first-steps">use Haft on one real question</a>.
   </p>
 </DocsLayout>

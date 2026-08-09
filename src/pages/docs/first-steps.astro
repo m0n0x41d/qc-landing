@@ -2,96 +2,102 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="First steps with Haft v9" description="Initialize one host, restart it onto the v9 binary, check onboarding, and start from the current engineering question.">
-  <h1>First steps</h1>
+<DocsLayout title="Your first useful task with Haft" description="Try Haft on one real engineering question without learning FPF, the CLI, or every project record first.">
+  <h1>Your first useful task</h1>
 
-  <h2>1. Initialize the host you use</h2>
+  <p>
+    Do not begin by formalizing the whole repository. Pick one question whose
+    answer would be expensive to get wrong or annoying to reconstruct next
+    month. That is enough to find out whether Haft helps you.
+  </p>
+
+  <h2>1. Connect Haft to your agent</h2>
 
   <pre><code>cd /path/to/project
-haft init                    # interactive host selection, TTY only
-haft init --claude           # Claude MCP, skills, and managed CLAUDE.md section
-haft init --codex            # Codex MCP, skills, and managed AGENTS.md section
-haft init --core-only        # project core without host publication</code></pre>
+haft init --claude           # or: haft init --codex</code></pre>
 
   <p>
-    Scripts and CI must pass explicit flags. Bare non-interactive
-    <code>haft init</code> fails before writing instead of guessing a host.
-    Re-init replaces recognized legacy Haft skills and changes only the marked
-    Haft section of a project instruction file.
+    Bare <code>haft init</code> opens a host picker in a terminal. Then fully
+    restart the coding agent. Run <code>haft version</code> and
+    <code>haft doctor</code> if the host does not show the Haft skills or MCP
+    tools. The <a href="/docs/install">install page</a> covers core-only and
+    advanced host options.
   </p>
 
-  <h2>2. Restart and verify the loaded runtime</h2>
+  <h2>2. Bring one costly question</h2>
 
-  <pre><code>haft version
-haft doctor</code></pre>
+  <p>Good first questions have uncertainty, trade-offs, or memory value:</p>
 
-  <p>
-    Restart the coding agent after init or upgrade. A running MCP process keeps
-    the binary and skill catalog it loaded at startup. Command output from the
-    source checkout does not prove which binary the host process is using.
-  </p>
+  <ul>
+    <li>“We keep patching cache invalidation. What problem are we actually solving?”</li>
+    <li>“Compare keeping the monolith with splitting this service. Make the weakest link of each option visible.”</li>
+    <li>“We decided to keep this API synchronous. Does that decision still hold after the queue migration?”</li>
+    <li>“Where is the retry policy specified, why was it chosen, and which code implements it?”</li>
+  </ul>
 
-  <h2>3. Check onboarding state</h2>
+  <h2>3. Ask normally; use h-reason when the route is unclear</h2>
 
-  <p>
-    Ask the host agent for <code>/h-onboard</code> or <code>/h-status</code> when
-    setup state is the current question. Onboarding reports one readable state:
-    <code>needs_init</code>, <code>needs_profile</code>,
-    <code>profile_review_ready</code>,
-    <code>profile_change_review_ready</code>, or <code>ready</code>.
-  </p>
+  <pre><code>/h-reason We need to replace the cache layer. First work out the
+actual problem, the affected system boundary, and the real options.
+Keep this conversational unless later work has a concrete reason to rely on it.</code></pre>
 
   <p>
-    <code>haft init</code> installs default project memory automatically. A
-    complete supported singleton profile may be admitted as
-    <code>detector_default</code>. Ambiguous or reviewed bases remain an
-    operator choice prepared through the onboarding surface.
-  </p>
-
-  <div class="callout-warn">
-    <p>
-      <strong>Ready is not a global green light.</strong> It means only that the
-      canonical profile and structured project memory are available. Check
-      specification health, evidence, drift, and release readiness separately.
-    </p>
-  </div>
-
-  <h2>4. Start from the current question</h2>
-
-  <pre><code>/h-reason We need to change the API cache. What is the actual
-problem, and which FPF source is relevant?</code></pre>
-
-  <p>
-    Use <code>h-reason</code> when the question is ambiguous or crosses several
-    capabilities. When the result type is already known, use the narrower
-    skill directly:
+    <code>h-reason</code> is useful when the question is ambiguous or may need an
+    FPF pattern. If you already know the shape of the work, use a narrower
+    capability directly:
   </p>
 
   <ul>
-    <li><code>/h-frame</code> for an under-articulated problem;</li>
-    <li><code>/h-diagnose</code> for a concrete failure with rival causes;</li>
-    <li><code>/h-explore</code> for distinct approaches;</li>
-    <li><code>/h-compare</code> for a parity-based comparison;</li>
-    <li><code>/h-verify</code> for a recorded claim against current evidence;</li>
-    <li><code>/h-spec</code> for specification carriers and lifecycle;</li>
-    <li><code>/h-status</code> for the read-only project cockpit.</li>
+    <li><code>/h-frame</code> — the problem itself is unclear;</li>
+    <li><code>/h-diagnose</code> — a concrete failure has several plausible causes;</li>
+    <li><code>/h-explore</code> — you need genuinely different approaches;</li>
+    <li><code>/h-compare</code> — the options already exist and need a fair comparison;</li>
+    <li><code>/h-verify</code> — an old decision or claim must meet current evidence;</li>
+    <li><code>/h-status</code> — you want to know what currently needs attention.</li>
   </ul>
 
   <p>
-    This list is not a required order. A simple reversible edit with clear
-    acceptance can proceed without an FPF query or durable artifacts.
+    These are entry points, not stages. A simple reversible edit with clear
+    acceptance may need none of them.
   </p>
 
-  <h2>5. Persist only what later work needs</h2>
+  <h2>4. Look for a useful result, not a pile of records</h2>
+
+  <p>For a costly question, a good result usually makes four things clearer:</p>
+
+  <ol>
+    <li>the actual problem, object, scope, and constraints;</li>
+    <li>the real alternatives and the weakest link of each;</li>
+    <li>which option the human selected, if a choice was actually made;</li>
+    <li>what evidence would support the result and when it should be revisited.</li>
+  </ol>
 
   <p>
-    Reasoning can remain in the conversation. Use <code>/h-note</code> when you
-    explicitly want one non-binding observation saved. A binding choice needs
-    one exact operator request routed through <code>h-decide</code>. Execution
-    authority needs the manual-only <code>h-commission</code> boundary.
+    Haft does not require all four on every task. A diagnosis can stop at the
+    supported cause. An exploration can stop with several live options. A
+    mechanical fix can stop when the test passes.
   </p>
 
-  <h2>6. Use the right read surface</h2>
+  <h2>5. Save only what later work will use</h2>
+
+  <p>
+    Keep local, reversible reasoning in the conversation. Save a non-binding
+    observation with <code>/h-note</code> when you explicitly want it remembered.
+    Save a human choice as a decision when another session, person, audit, or
+    expensive reversal will rely on it. Haft should not turn every answer into
+    project bureaucracy.
+  </p>
+
+  <h2>6. Ask the project what changed</h2>
+
+  <p>
+    After the project has accumulated useful records, <code>/h-status</code>
+    becomes valuable. It is a short attention view: stale evidence, drifted
+    code links, specification issues, and active work. A warning means “look
+    here,” not “the project is broken.”
+  </p>
+
+  <h2>When you need a precise read</h2>
 
   <table>
     <thead>
@@ -102,28 +108,30 @@ problem, and which FPF source is relevant?</code></pre>
     </thead>
     <tbody>
       <tr><td>What needs attention?</td><td><code>/h-status</code></td></tr>
-      <tr><td>Which FPF source unit is relevant?</td><td><code>haft fpf query|lookup|inspect</code></td></tr>
+      <tr><td>Which FPF source is relevant?</td><td><code>haft fpf query|lookup|inspect</code></td></tr>
       <tr><td>Where is this behavior implemented?</td><td><code>haft graph explore</code></td></tr>
-      <tr><td>What is known around this project object?</td><td><code>haft memory resolve|neighborhood|recall</code></td></tr>
-      <tr><td>Are specification carriers structurally healthy?</td><td><code>haft spec check</code></td></tr>
-      <tr><td>Should CI fail on current governance findings?</td><td><code>haft check</code></td></tr>
+      <tr><td>What is known about this exact project thing?</td><td><code>haft memory resolve|neighborhood|recall</code></td></tr>
+      <tr><td>Are the project specifications structurally healthy?</td><td><code>haft spec check</code></td></tr>
+      <tr><td>Should deterministic governance findings fail CI?</td><td><code>haft check</code></td></tr>
     </tbody>
   </table>
 
-  <h2>7. Share carriers through git</h2>
+  <h2>Advanced: setup status</h2>
 
   <p>
-    Commit reviewable <code>.haft/*.md</code> carriers with the code they
-    explain. After pulling, teammates run <code>haft sync</code> to import those
-    carriers into their local SQLite store. Markdown is the exchange carrier;
-    SQLite remains the runtime structured store.
+    Ask for <code>/h-onboard</code> only when setup is the problem. Haft installs
+    the default project-memory model automatically and can detect a simple
+    single-scope codebase without asking you to choose an internal schema.
+    Ambiguous or multi-scope projects may require you to identify the intended
+    software scope. Onboarding <code>ready</code> means setup is available; it is
+    not a verdict on the specifications, code, or evidence.
   </p>
 
   <h2>Next</h2>
 
   <ul>
-    <li><a href="/docs/reasoning">Reasoning and FPF Query</a></li>
-    <li><a href="/docs/concepts">Typed project memory</a></li>
-    <li><a href="/docs/commands">Skills, CLI, and MCP reference</a></li>
+    <li><a href="/docs/reasoning">How Haft helps the agent reason</a></li>
+    <li><a href="/docs/decision-integrity">How important decisions stay explicit</a></li>
+    <li><a href="/docs/concepts">How project memory works</a></li>
   </ul>
 </DocsLayout>

@@ -2,138 +2,118 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Reasoning and FPF in Haft v9" description="Source-native FPF Query, independent skills, and the boundary between retrieval, application, authority, and work.">
-  <h1>Reasoning &amp; FPF</h1>
+<DocsLayout title="Ask better engineering questions with Haft" description="Use Haft when an AI agent could solve the wrong problem convincingly, and bring in FPF without learning it first.">
+  <h1>Ask better questions</h1>
 
   <p>
-    Haft v9 does not impose a five-stage reasoning workflow. Start from the
-    project object and the current question. Use the smallest capability that
-    can return the needed result.
+    More model effort does not help if the question names the wrong problem,
+    hides a system boundary, or treats one attractive option as inevitable.
+    The agent may produce a better implementation of the wrong thing.
   </p>
 
   <p>
-    <code>h-reason</code> is the source-first umbrella for an ambiguous or
-    cross-cutting question. If the need is already clear, use the exact skill:
-    <code>h-frame</code>, <code>h-diagnose</code>, <code>h-explore</code>,
-    <code>h-compare</code>, <code>h-decide</code>, <code>h-verify</code>,
-    <code>h-status</code>, <code>h-onboard</code>, <code>h-spec</code>,
-    <code>h-note</code>, or the manual-only <code>h-commission</code>.
+    Haft helps the agent identify what kind of result is needed before it
+    generates more work. It does not impose one process on every task.
   </p>
 
-  <h2>When Haft queries FPF</h2>
+  <h2>Start with the situation you recognize</h2>
+
+  <table>
+    <thead>
+      <tr><th>What is happening?</th><th>Useful Haft capability</th><th>First useful result</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Everyone is discussing solutions, but the problem is still fuzzy</td><td><code>h-frame</code></td><td>A bounded problem, constraints, and acceptance</td></tr>
+      <tr><td>A failure has several plausible causes</td><td><code>h-diagnose</code></td><td>Rival hypotheses tested against observations</td></tr>
+      <tr><td>The team needs genuinely different approaches</td><td><code>h-explore</code></td><td>Distinct options with a weakest link each</td></tr>
+      <tr><td>Options exist, but the comparison keeps moving</td><td><code>h-compare</code></td><td>One comparison basis and visible trade-offs</td></tr>
+      <tr><td>An old decision may no longer fit reality</td><td><code>h-verify</code></td><td>Current evidence against the recorded claim</td></tr>
+      <tr><td>You do not yet know which of these situations you have</td><td><code>h-reason</code></td><td>The smallest appropriate route and result</td></tr>
+    </tbody>
+  </table>
 
   <p>
-    Mechanical edits, exact project lookups, and status-only work do not need
-    an FPF query. When pattern applicability is material or uncertain, the
-    agent retrieves the pinned FPF publication before applying a pattern.
+    Completion of one capability does not require the next. Exploration may
+    end with several live options. Diagnosis may end with one supported cause.
+    A clear mechanical edit can proceed without any FPF query at all.
   </p>
+
+  <h2>What h-reason does</h2>
+
+  <ol>
+    <li>Recovers the project thing and the current question about it.</li>
+    <li>Separates known facts, assumptions, constraints, and missing evidence.</li>
+    <li>Retrieves relevant source from the version of FPF bundled with Haft when a pattern choice matters.</li>
+    <li>Uses the smallest capability that can produce the needed result.</li>
+    <li>Stops at that result instead of manufacturing a complete workflow.</li>
+  </ol>
+
+  <pre><code>/h-reason We keep adding retries to checkout. Work out whether the
+current problem is reliability, latency, or an upstream contract failure.
+Show what we know, what we are assuming, and what evidence would separate them.</code></pre>
+
+  <h2>FPF without the entrance exam</h2>
+
+  <p>
+    The First Principles Framework is a large pattern language for systems,
+    reasoning, and engineering work. Haft does not paste the whole framework
+    into every conversation. It searches the pinned source for the current
+    concern, opens the exact pattern when needed, and keeps a return path to the
+    source.
+  </p>
+
+  <p>
+    The important boundary is simple: retrieval gives the agent source
+    material, not a correct answer. The agent still has to check whether the
+    pattern fits this situation. A high-ranked result is not automatically the
+    right method, a recommendation, or a work order.
+  </p>
+
+  <h2>Advanced: inspect the FPF source directly</h2>
 
   <pre><code>haft fpf query "How should I frame this concern?" --json
 haft fpf lookup "E.11.PUA" --json
 haft fpf inspect "E.11.PUA" --role pattern_body --json</code></pre>
 
-  <p>The three commands have different return boundaries:</p>
-
   <table>
     <thead>
-      <tr>
-        <th>Command</th>
-        <th>Result</th>
-      </tr>
+      <tr><th>Command</th><th>What it returns</th></tr>
     </thead>
     <tbody>
-      <tr>
-        <td><code>query</code></td>
-        <td>Compact source-derived candidates for a concern</td>
-      </tr>
-      <tr>
-        <td><code>lookup</code></td>
-        <td>Exact identifier first; compact candidates when no exact unit resolves</td>
-      </tr>
-      <tr>
-        <td><code>inspect</code></td>
-        <td>One exact source unit or an explicit abstention</td>
-      </tr>
+      <tr><td><code>query</code></td><td>Compact source candidates for a concern</td></tr>
+      <tr><td><code>lookup</code></td><td>An exact source identifier when it resolves</td></tr>
+      <tr><td><code>inspect</code></td><td>One exact full source unit, or an honest no-result</td></tr>
     </tbody>
   </table>
 
   <p>
-    Every route returns the closed
-    <code>exact_hit | candidate_set | abstained</code> union. Candidate order is
-    retrieval output. It is not applicability, recommendation, precedence,
-    authority, or work order.
+    For a non-English question, Haft keeps the original wording and adds
+    precise English or FPF terms as retrieval context. It does not silently
+    replace the user's question with a hidden translated route.
   </p>
 
-  <h2>Progressive disclosure</h2>
+  <h2>Reasoning does not have to become memory</h2>
 
   <p>
-    Concern retrieval starts from compact source roles such as practical-use
-    cards and table-of-contents rows. After selecting a candidate by the
-    current condition and required result, the agent recovers the full pattern
-    body and reads its problem, forces, solution, boundaries, worked slices,
-    and checklist.
+    A useful answer can remain in the conversation. Haft saves records when
+    the operator asks, or when later work has a concrete reason to depend on
+    the result: handoff, replay, audit, automation, delayed evidence, or costly
+    reversal. An empty project graph is not a reason to fill it.
   </p>
 
-  <p>
-    Use <code>--view working</code> for the bounded default response,
-    <code>--view trace</code> for provenance and replay coordinates, and
-    <code>--view diagnostic</code> for retrieval internals. These are views of
-    one canonical result, not different reasoning methods.
-  </p>
-
-  <div class="callout">
-    <p>
-      <strong>Non-English concerns:</strong> keep the operator's original query.
-      Add precise English or FPF terms through the current object's context
-      fields; do not replace the request with a hidden translation or a
-      Haft-owned route catalog.
-    </p>
-  </div>
-
-  <h2>Retrieval is not application</h2>
-
-  <p>
-    FPF Query returns source. The agent still has to compare relevant
-    candidates, recover the exact full pattern, check its ordinary boundary,
-    and decide whether it applies. When the basis is insufficient, it keeps
-    several candidates live or abstains.
-  </p>
-
-  <p>
-    A retrieved pattern does not approve a specification, bind a decision,
-    authorize execution, prove a claim, or perform work. Those effects use
-    separate records and authority boundaries.
-  </p>
-
-  <h2>Persistence is conditional</h2>
-
-  <p>
-    Ordinary bounded reasoning can remain in the conversation. Haft writes a
-    project record when the operator explicitly asks to save or bind it, or
-    when current work has a concrete receiving use such as handoff, replay,
-    audit, automation, delayed evidence, or costly reversal.
-  </p>
-
-  <p>
-    An empty graph or a failed memory lookup is not a reason to persist. When
-    persistence is justified, Haft writes only the records needed by that
-    receiving use.
-  </p>
-
-  <h2>Authority remains separate</h2>
+  <h2>What this costs</h2>
 
   <ul>
-    <li><code>h-decide</code> may route one direct, unambiguous operator request for one bounded DecisionRecord effect.</li>
-    <li>A recommendation, quotation, schema, or tool argument is not an operator request.</li>
-    <li><code>h-commission</code> stays manual-only because it grants bounded execution authority.</li>
-    <li>A WorkPlan describes intended work; it does not perform or authorize that work.</li>
+    <li>The agent spends more time clarifying expensive questions before producing code.</li>
+    <li>Someone still has to judge whether the framing and evidence are good.</li>
+    <li>Overusing the method on obvious, reversible work creates ceremony without value.</li>
   </ul>
 
   <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/commands">Skills, CLI, and MCP</a></li>
-    <li><a href="/docs/concepts">Typed project memory and core distinctions</a></li>
-    <li><a href="/docs/decision-integrity">Authority and WorkCommissions</a></li>
+    <li><a href="/docs/decision-integrity">Keep human decisions explicit</a></li>
+    <li><a href="/docs/concepts">Understand project memory</a></li>
+    <li><a href="/docs/commands">Open the complete capability reference</a></li>
   </ul>
 </DocsLayout>

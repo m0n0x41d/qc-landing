@@ -2,146 +2,143 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Typed project memory in Haft v9" description="EntityOfConcern identity, bounded neighborhoods, project profiles, reliance-gated persistence, and the distinctions that keep memory honest.">
-  <h1>Memory &amp; core concepts</h1>
+<DocsLayout title="How Haft project memory works" description="Understand why chat recall is not project state, what Haft remembers, and when its advanced identity model matters.">
+  <h1>Project memory</h1>
 
   <p>
-    Haft v9 stores project knowledge as typed relations around an exact
-    <code>EntityOfConcern</code>. It does not treat a transcript, a markdown
-    file, or a ranked search result as project truth by itself.
+    Chat history is useful context, but it is weak project memory. It mixes
+    questions, guesses, recommendations, decisions, plans, reports, and stale
+    facts in one stream. Semantic search can retrieve a related paragraph; it
+    still does not tell the agent what kind of statement it found or whether
+    the project should rely on it now.
   </p>
 
-  <h2>Strict distinctions</h2>
+  <p>
+    Haft stores the important parts as different, related project records so
+    the memory preserves what each statement is allowed to mean.
+  </p>
+
+  <h2>The minimum grammar</h2>
+
+  <table>
+    <thead><tr><th>Record</th><th>What it preserves</th></tr></thead>
+    <tbody>
+      <tr><td>Problem</td><td>What is wrong or uncertain, the scope, constraints, and acceptance</td></tr>
+      <tr><td>Options</td><td>Distinct approaches, trade-offs, and weakest links</td></tr>
+      <tr><td>Decision</td><td>The human's selected option, rationale, scope, and revisit condition</td></tr>
+      <tr><td>Specification</td><td>The current product or software contract</td></tr>
+      <tr><td>Evidence</td><td>An observation that supports or weakens a claim for a stated use and time</td></tr>
+      <tr><td>Note</td><td>A non-binding fact, caveat, or rationale worth retaining</td></tr>
+      <tr><td>Code link</td><td>Where a decision, specification, or invariant may meet the implementation</td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    These records can refer to one another without becoming interchangeable. A
+    decision does not prove implementation. A specification does not execute
+    code. Evidence does not choose a product direction. A markdown file carries
+    a record; it is not the product or code the record describes.
+  </p>
+
+  <h2>When Haft writes memory</h2>
+
+  <p>
+    Haft keeps ordinary local reasoning in the conversation. Durable memory is
+    justified when you explicitly ask to save or bind something, or when the
+    current work has a concrete later use: handoff, another session, audit,
+    automation, delayed evidence, or an expensive reversal.
+  </p>
+
+  <p>
+    “The graph is empty” and “this might be useful someday” are not enough.
+    When persistence is useful, Haft should create only the records needed by
+    that later use—not an automatic problem-to-plan paperwork bundle.
+  </p>
+
+  <h2>Where the data lives</h2>
 
   <ul>
-    <li><strong>Object ≠ description ≠ carrier.</strong> A markdown file can carry a record; it is not the object the record describes.</li>
-    <li><strong>Plan ≠ performed work.</strong> A WorkPlan can order intended actions; it does not execute them.</li>
-    <li><strong>Recommendation ≠ decision.</strong> Binding requires a direct, unambiguous operator choice through the correct effect sink.</li>
-    <li><strong>Claim ≠ evidence.</strong> A test description or expected result is not proof that the test ran or passed.</li>
-    <li><strong>Retrieval ≠ applicability.</strong> Candidate rank never grants identity, authority, or pattern selection.</li>
-    <li><strong>Target system ≠ enabling system.</strong> The product being changed and the engineering arrangement changing it remain separate.</li>
+    <li>Local structured state lives in SQLite under <code>~/.haft/projects/&lt;project-id&gt;/</code>.</li>
+    <li>Reviewable project files live under <code>.haft/</code>.</li>
+    <li>The code index connects files and symbols to project records.</li>
+    <li>A small user-local cross-project index stores decision summaries for recall.</li>
   </ul>
 
-  <h2>EntityOfConcern</h2>
-
   <p>
-    An <code>EntityOfConcern</code> is the exact project object around which
-    Haft reads or writes a bounded memory neighborhood. Identity uses a stable
-    reference and bounded context. Similar names, paths, or retrieval scores do
-    not merge two entities.
+    The readable files make records inspectable in a repository. SQLite is the
+    local structured store used by the running tools. A file being present in
+    git does not by itself make another engineer's local database current.
   </p>
 
-  <p>The task-level read sequence is:</p>
+  <h2>Advanced: the exact thing currently in question</h2>
 
-  <ol>
-    <li>Resolve a known name or alias in one pinned project-memory snapshot.</li>
-    <li>Select the exact identity from the current use, not candidate rank.</li>
-    <li>Read the smallest neighborhood needed through a named projection profile and budget.</li>
-    <li>Use bounded recall only inside that exact entity and project snapshot.</li>
-  </ol>
+  <p>
+    In the v9 model, an <code>EntityOfConcern</code> is the exact project thing
+    around which Haft gathers memory: for example, a billing policy, API
+    boundary, cache, service responsibility, or decision subject. The awkward
+    name matters mainly to the implementation. As a user, the useful question
+    is: “Which exact thing are we talking about, in which project context?”
+  </p>
+
+  <p>
+    Haft resolves a known name or alias, selects one exact identity for the
+    current use, and reads the smallest relevant neighborhood. Similar names,
+    file paths, or retrieval scores never merge two project things
+    automatically.
+  </p>
 
   <pre><code>haft memory resolve --input-file resolve.json
 haft memory neighborhood --input-file neighborhood.json
 haft memory recall --input-file recall.json</code></pre>
 
-  <p>
-    The MCP equivalent uses <code>haft_query(action="memory")</code> with one of
-    the closed <code>resolve</code>, <code>neighborhood</code>, or
-    <code>recall</code> request shapes.
-  </p>
-
-  <h2>When memory is written</h2>
-
-  <p>Persistence has two valid bases:</p>
-
-  <ul>
-    <li>the operator explicitly asks to save, record, bind, approve, commission, or otherwise mutate project memory;</li>
-    <li>current work has a concrete receiving use such as handoff, replay, audit, automation, delayed evidence, or costly reversal.</li>
-  </ul>
+  <h2>Advanced: project setup and memory models</h2>
 
   <p>
-    The second basis can be inferred from current work. When it requires stable
-    identity and the identity coordinates are recoverable,
-    <code>haft_entity</code> establishes the minimum non-binding
-    <code>EntityOfConcern</code> without a separate permission prompt.
+    <code>haft init</code> installs the default project-memory model
+    automatically. For a simple supported codebase, Haft can detect one stable
+    software scope and bootstrap its profile. Mixed, truncated, or genuinely
+    multi-scope projects may require a human to identify the intended scope.
+    Users are not asked to select an internal schema.
   </p>
 
   <p>
-    <code>known_absent</code>, an empty graph, or generic future usefulness is
-    not a persistence basis. Entity establishment cannot bind a decision,
-    approve a specification, commission work, or establish evidence truth.
-  </p>
-
-  <h2>Project profile and onboarding</h2>
-
-  <p>
-    <code>haft init</code> installs default project memory automatically. It may
-    admit an initial <code>detector_default</code> profile only from a complete,
-    non-truncated, supported singleton detector result and only when no
-    canonical or human-reviewed profile already exists.
+    When Haft ships a newer bundled memory model, every successor proven
+    compatible with the current project state is activated automatically. An
+    incompatible, incomplete, stale, or underdetermined candidate leaves the
+    current model unchanged and reports why. Rollback and selecting an
+    incompatible model remain explicit operations.
   </p>
 
   <p>
-    Mixed, multiple-scope, insufficient, truncated, or previously reviewed
-    bases require one direct operator choice. Preparation creates only a
-    non-binding review carrier. Application uses the readable onboarding
-    effect; the operator never selects an internal memory schema.
+    Public v9 identity changes are alias-only: an alias can be admitted or
+    superseded with provenance. Automatic entity merge and split are not part
+    of the current contract.
   </p>
 
-  <div class="callout-warn">
+  <div class="callout">
     <p>
-      <strong><code>ready</code> has a narrow meaning.</strong> Onboarding ready
-      means that a canonical profile and structured project memory are
-      available. It does not prove spec applicability, spec health, lifecycle
-      state, evidence truth, or release readiness.
+      <strong>Setup ready has a narrow meaning.</strong> It says that the project
+      profile and memory model are available. It does not say that the
+      specifications are healthy, the code is correct, or the evidence is
+      current.
     </p>
   </div>
 
-  <h2>Compatible memory successors</h2>
+  <h2>The trade-off</h2>
 
   <p>
-    A mutation-capable init or reconciliation path automatically activates
-    every exact bundled <code>ProjectTypeEnv</code> successor proven compatible
-    with the transaction-current head, graph, profile, assertions, projection
-    profiles, and runtime. This records
-    <code>compatible_successor_policy</code>, not an operator request.
-  </p>
-
-  <p>
-    An incompatible, incomplete, stale, or underdetermined candidate leaves the
-    current head unchanged and returns the blocker. Rollback or selection
-    outside that predicate remains a separate operator effect.
-  </p>
-
-  <h2>Identity changes in v9</h2>
-
-  <p>
-    Public identity change is alias-only:
-    <code>admit_alias</code> adds a context-bound alias and
-    <code>supersede_alias</code> replaces one while retaining provenance.
-    Reviewed entity merge and split are deferred to a later v9.x contract.
-  </p>
-
-  <h2>Memory, code, and carriers</h2>
-
-  <ul>
-    <li>Typed memory orients around one exact project entity.</li>
-    <li>The fused code graph orients around files, symbols, calls, and governing records.</li>
-    <li>SQLite is the runtime structured store.</li>
-    <li><code>.haft/*.md</code> files are reviewable exchange and publication carriers imported through explicit <code>haft sync</code>.</li>
-  </ul>
-
-  <p>
-    These surfaces can refer to one another, but none silently becomes the
-    other. A carrier does not act, and a nearby code record does not establish
-    an EntityOfConcern identity.
+    Typed memory makes category mistakes, missing context, and stale evidence
+    easier to notice. It also makes missing or ambiguous identity visible
+    instead of letting fuzzy recall smooth it over. The result can feel slower
+    than “find something related,” but it is safer when later work will rely on
+    the distinction.
   </p>
 
   <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/codebase-awareness">Code orientation</a></li>
-    <li><a href="/docs/lifecycle">Specifications and evidence</a></li>
-    <li><a href="/docs/team-sync">Team exchange through git</a></li>
+    <li><a href="/docs/codebase-awareness">Connect memory to code</a></li>
+    <li><a href="/docs/team-sync">Understand the current team and git boundary</a></li>
+    <li><a href="/docs/notes">Save a non-binding note</a></li>
   </ul>
 </DocsLayout>

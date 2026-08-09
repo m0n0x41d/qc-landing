@@ -2,47 +2,63 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Specifications and evidence in Haft v9" description="Typed SpecSection lifecycle, source-currentness, evidence decay, drift, and the human gates that keep carriers separate from authority.">
-  <h1>Specifications &amp; evidence</h1>
+<DocsLayout title="Keep specifications and evidence current" description="Use Haft to separate what the system should do, why it was chosen, what the code does, and what current evidence supports.">
+  <h1>Specs &amp; evidence</h1>
 
   <p>
-    Haft v9 keeps specification structure, lifecycle authority, FPF source
-    compatibility, implementation evidence, and release status as separate
-    results. A green carrier check cannot stand in for the others.
-  </p>
-
-  <h2>Typed specification carriers</h2>
-
-  <p>
-    Project specifications are typed <code>SpecSection</code> editions. The
-    standard project carriers describe the target system, the software system
-    that realizes it, and the local term map. These labels are Haft
-    local-practice carriers; their names do not make them FPF Core kinds.
+    A specification can be beautifully written and wrong about the current
+    system. A passing test can be real and irrelevant to the claim people care
+    about. A merged pull request can change behavior without changing the
+    rationale that future work will read.
   </p>
 
   <p>
-    Markdown under <code>.haft/specs/</code> is a reviewable publication
-    carrier. The SQL edition store remains the runtime source of truth. Use the
-    public spec surfaces to draft, validate, sync, export, approve, rebaseline,
-    or reopen a section; do not edit lifecycle state in SQLite by hand.
+    Haft keeps four questions separate so one green signal cannot answer all
+    of them by accident.
   </p>
 
-  <h2>Read status without collapsing it</h2>
+  <table>
+    <thead><tr><th>Question</th><th>Where the answer belongs</th></tr></thead>
+    <tbody>
+      <tr><td>What should the product or software do?</td><td>Specification</td></tr>
+      <tr><td>Why did we choose this contract?</td><td>Decision and rationale</td></tr>
+      <tr><td>What does the implementation currently do?</td><td>Code and runtime observations</td></tr>
+      <tr><td>What supports or weakens the claim now?</td><td>Evidence with scope and freshness</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Start with the contract, not the storage model</h2>
+
+  <p>
+    Haft normally separates the specification into small sections. The default
+    project specification covers:
+  </p>
+
+  <ul>
+    <li>the <strong>target system</strong>—what the product or service changes for its users and environment;</li>
+    <li>the <strong>software system</strong>—the responsibilities, behavior, interfaces, constraints, and structure that realize it;</li>
+    <li>the <strong>term map</strong>—important local words whose meanings must stay stable.</li>
+  </ul>
+
+  <p>
+    These are Haft's practical project documents, not vocabulary a beginner
+    must learn before using the product. Ask <code>h-spec</code> to draft,
+    inspect, or repair them when the current contract is the thing in question.
+  </p>
+
+  <h2>Read health without turning it into a verdict</h2>
 
   <pre><code>haft spec status
-haft spec status --json
-haft spec check
-haft spec check --json</code></pre>
+haft spec check</code></pre>
 
   <p>
-    <code>haft spec status</code> returns two distinct views:
-    <code>workflow.state</code> reports the next onboarding or lifecycle action,
-    while <code>health</code> reports structural, baseline, drift, and staleness
-    findings. Workflow <code>ready</code> does not erase health findings and is
-    not release evidence.
+    Status answers where the specification workflow currently stands. Health
+    reports structural problems, missing or changed baselines, drift, and
+    staleness. “Ready” in one view does not erase findings in the other, and
+    neither proves that the implementation is correct.
   </p>
 
-  <h2>Draft and validate</h2>
+  <h2>Draft, review, and exchange specifications</h2>
 
   <pre><code>haft spec draft-contract
 haft spec validate
@@ -50,101 +66,101 @@ haft spec review
 haft spec sync
 haft spec export ...</code></pre>
 
-  <p>
-    The drafting contract is profile-independent. Validation checks authored
-    draft and active carriers without admitting them into a lifecycle state.
-    Read-only semantic review is advisory. Sync imports carriers into typed SQL
-    editions; export renders a deterministic markdown projection from a current
-    edition.
-  </p>
-
-  <p>
-    <code>haft spec check</code> is deterministic L0/L1/L1.5 structural work. It
-    parses typed blocks and known carrier shapes. It does not perform L2 human
-    semantic judgment or prove L3 runtime behavior.
-  </p>
-
-  <h2>Human-gated lifecycle acts</h2>
-
-  <p>
-    Approving a baseline, rebaselining after intentional semantic change, and
-    reopening a section are lifecycle effects. Before asking, the agent must
-    present a self-contained Human Gate Brief with the readable subject,
-    affected operation, real options, immediate consequences, weakest links,
-    and advisory recommendation.
-  </p>
-
-  <pre><code>haft spec approve ...
-haft spec rebaseline ...
-haft spec reopen ...</code></pre>
-
-  <p>
-    Preparation and explanation are not approval. A natural-language operator
-    answer is sufficient only when one current brief makes the exact effect,
-    subject, selection, and scope unambiguous.
-  </p>
-
-  <h2>FPF source-currentness is separate</h2>
-
-  <p>
-    When the governing FPF source changes, <code>h-spec</code> recovers the
-    exact current pattern and classifies semantic fanout before editing a
-    carrier. Three results remain distinct:
-  </p>
-
   <ul>
-    <li>compatibility with the current FPF source;</li>
-    <li>current typed carrier and lifecycle state;</li>
-    <li>implementation or runtime evidence for the specification's claims.</li>
+    <li><code>draft-contract</code> prepares the expected project shape.</li>
+    <li><code>validate</code> checks authored structure without approving its meaning.</li>
+    <li><code>review</code> provides advisory semantic findings.</li>
+    <li><code>sync</code> imports supported specification files into the local edition store.</li>
+    <li><code>export</code> renders a deterministic readable projection.</li>
   </ul>
 
   <p>
-    Passing one result does not promote the others. Historical binding choices
-    are not rewritten merely to match current implementation prose.
+    A clean structural check cannot judge whether the product boundary is good
+    or whether a load-bearing claim is true. That still needs engineering
+    judgment and relevant evidence.
   </p>
 
-  <h2>Evidence and verification</h2>
+  <h2>When the FPF source changes</h2>
 
   <p>
-    Decisions and claims may carry evidence with formality, congruence, and
-    freshness coordinates. Evidence can support, weaken, or fail to establish
-    a claim. Expiry means the evidence is no longer current enough for the
-    declared use; it does not silently make the historical observation false.
+    <code>h-spec</code> can retrieve the current governing FPF pattern and review
+    which specification meanings may be affected. Compatibility with current
+    FPF, the current project specification, and implementation evidence remain
+    three separate results. Passing one does not promote the others.
+  </p>
+
+  <h2>Evidence ages</h2>
+
+  <p>
+    Evidence supports or weakens a particular claim for a particular use. It
+    can also expire. Expiry does not rewrite history and say the old
+    observation never happened; it says the observation is no longer fresh
+    enough for the current reliance.
   </p>
 
   <p>
-    Use <code>h-verify</code> when the question is whether a recorded decision
-    or claim still holds. The capability compares the recorded baseline and
+    Use <code>h-verify</code> when the live question is whether a recorded
+    decision or claim still holds. Haft compares the recorded baseline and
     predictions with current code, tests, measurements, incidents, or other
     admissible observations.
   </p>
 
   <pre><code>haft_refresh(action="scan")
-haft_refresh(action="scan", verbose=true)
-haft_query(action="evidence_path", artifact_ref="dec-...",
-  evidence_ref="evid-...", attempted_use="verification reliance")</code></pre>
+haft_refresh(action="scan", verbose=true)</code></pre>
 
   <p>
-    Drift, stale evidence, missing bindings, and refresh debt are attention
-    signals. They do not authorize a lifecycle mutation and do not interrupt
-    unrelated work already inside the accepted scope.
+    Drift, stale evidence, and missing links are attention signals. They do not
+    automatically invalidate a decision or stop unrelated work.
   </p>
 
-  <h2>Specifications do not absorb execution policy</h2>
+  <h2>Advanced: specification baselines</h2>
 
   <p>
-    A <code>SoftwareSystemSpec</code> describes the software realization:
-    responsibility allocation, behavior, interfaces, constraints, and selected
-    structure. Agent policy, team policy, external-runner policy, delivery
-    authority, and release policy stay outside that carrier unless their own
-    exact governing object is current.
+    v9.0.2 still exposes three explicit baseline commands. They change the
+    recorded state of one specification section and are never inferred from a
+    successful review, sync, test, or git merge.
+  </p>
+
+  <pre><code>haft spec approve SECTION_ID
+haft spec rebaseline SECTION_ID --reason "..."
+haft spec reopen SECTION_ID --reason "..."</code></pre>
+
+  <ul>
+    <li><code>approve</code> records the reviewed active section as the baseline.</li>
+    <li><code>rebaseline</code> replaces that baseline after an intentional semantic change.</li>
+    <li><code>reopen</code> removes the baseline so the section returns to review.</li>
+  </ul>
+
+  <p>
+    These commands remain operator-controlled in the current runtime. The
+    separate human-reviewed profile-link repair proposed during v9 development
+    was removed; compatible memory-model successors are activated
+    automatically. Those are different mechanisms.
+  </p>
+
+  <h2>Keep execution policy out of the product contract</h2>
+
+  <p>
+    A software specification describes the software realization. Agent rules,
+    team policy, external-runner policy, delivery permission, and release
+    policy have their own objects and should not be smuggled into it merely to
+    make one document contain everything.
+  </p>
+
+  <h2>The trade-off</h2>
+
+  <p>
+    Separate specification, rationale, implementation, and evidence produce a
+    more honest picture. They also require links and periodic review. Use this
+    depth for contracts whose drift matters; do not baseline prose that nobody
+    will rely on.
   </p>
 
   <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/decision-integrity">Authority and Human Gate Briefs</a></li>
-    <li><a href="/docs/concepts">Typed project memory</a></li>
-    <li><a href="/docs/commands">Current skills and command surfaces</a></li>
+    <li><a href="/docs/decision-integrity">Decisions and execution authority</a></li>
+    <li><a href="/docs/codebase-awareness">Code context and drift</a></li>
+    <li><a href="/docs/commands">Specification command reference</a></li>
   </ul>
 </DocsLayout>

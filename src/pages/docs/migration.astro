@@ -2,14 +2,14 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Migrate from Haft v8.1 to v9.0" description="The supported backup, upgrade, host restart, removed-surface migration, verification, and downgrade boundary.">
-  <h1>Migrate v8.1 → v9.0</h1>
+<DocsLayout title="Migrate from Haft v8.1 to v9" description="Back up both Haft state locations, move execution out of Haft, upgrade to v9.0.2, restart the host, and preserve a real rollback path.">
+  <h1>Migrate v8.1 → v9</h1>
 
   <p>
-    v9.0.0 succeeds v8.1.0. There was no v8.2 release. This guide states the
-    supported migration boundary; successful
-    command exit alone is not evidence that a particular project upgraded
-    correctly.
+    v9.0.0 succeeded v8.1.0; there was no v8.2 release. Install the current
+    patch, <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.2" target="_blank" rel="noopener">v9.0.2</a>.
+    This migration changes the database and removes built-in execution, so keep
+    a restorable copy instead of relying on a successful exit code.
   </p>
 
   <h2>Breaking change: built-in execution is gone</h2>
@@ -49,7 +49,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
     checksum.
   </p>
 
-  <h2>2. Install and identify v9.0.0</h2>
+  <h2>2. Install and identify v9.0.2</h2>
 
   <pre><code>curl -fsSL https://raw.githubusercontent.com/m0n0x41d/haft/main/install.sh | bash
 haft version</code></pre>
@@ -84,12 +84,12 @@ haft init --codex</code></pre>
   </p>
 
   <p>
-    During the core mutation, Haft automatically activates an exact bundled
-    <code>ProjectTypeEnv</code> successor only when transaction-current
-    compatibility checks pass. That branch records
-    <code>compatible_successor_policy</code>. A stale, incomplete,
-    incompatible, or underdetermined candidate leaves the current head
-    unchanged and reports the blocker.
+    Re-init also applies database migration 58. This removes old
+    <code>affected_files</code> rows with absolute or traversing paths that v9
+    cannot represent. Haft automatically advances the bundled project-memory
+    model only when it is compatible with the current project. Otherwise it
+    keeps the current model and reports the blocker instead of asking you to
+    choose an internal schema.
   </p>
 
   <h2>4. Remove stale command references</h2>
@@ -102,20 +102,19 @@ haft init --codex</code></pre>
       </tr>
     </thead>
     <tbody>
-      <tr><td><code>haft run</code>, <code>haft harness</code></td><td>Host-agent work or an external runner using the WorkCommission lifecycle</td></tr>
-      <tr><td><code>/h-search</code></td><td>Focused <code>haft_query</code> search, exact record lookup, FPF Query, or typed-memory read</td></tr>
+      <tr><td><code>haft run</code>, <code>haft harness</code></td><td>Work in the host agent or a separately operated runner</td></tr>
+      <tr><td><code>/h-search</code></td><td>Use FPF search, code exploration, project-memory read, or an exact record query</td></tr>
       <tr><td><code>/h-problems</code></td><td><code>/h-status</code> and its explicit drill-downs</td></tr>
       <tr><td><code>/h-view</code></td><td>Typed projection and query actions for the exact object</td></tr>
       <tr><td><code>haft fpf search</code></td><td><code>haft fpf query|lookup|inspect</code></td></tr>
-      <tr><td>five-mode workflow instructions</td><td>12 independent skills selected by the current condition</td></tr>
+      <tr><td>five-mode workflow instructions</td><td>Use the capability that matches the current situation</td></tr>
     </tbody>
   </table>
 
   <p>
-    Fresh v9 init does not create project-local <code>.haft/config.yaml</code>
-    as an authority-policy carrier. Recognized historical authority-only bytes
-    may be removed; modified or unrecognized files are preserved, ignored, and
-    reported as legacy.
+    Fresh v9 init does not create <code>.haft/config.yaml</code>. Recognized
+    obsolete Haft-owned files may be removed; modified or unrecognized files
+    are preserved and reported instead of being silently overwritten.
   </p>
 
   <h2>5. Restart and verify</h2>

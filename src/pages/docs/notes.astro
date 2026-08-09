@@ -2,67 +2,60 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Notes in Haft v9" description="Persist one explicit non-binding fact, observation, caveat, or rationale without turning it into a decision.">
+<DocsLayout title="Save a non-binding note in Haft" description="Keep one fact, observation, caveat, or rationale without turning it into a human decision or a claim of truth.">
   <h1>Notes</h1>
 
   <p>
-    A Haft note records a non-binding fact, observation, caveat, or small
-    rationale. Use <code>h-note</code> when the operator explicitly asks to save
-    that material. Ordinary reasoning is not auto-captured.
+    Use a Haft note for one fact, observation, caveat, or small piece of
+    rationale that later work should remember. Ordinary reasoning is not
+    captured automatically.
   </p>
 
-  <h2>Notes are not decisions</h2>
+  <pre><code>/h-note Remember that the billing sandbox rate limit is a vendor
+observation from 2026-08-08, not a contractual production limit.</code></pre>
+
+  <h2>A note is not a decision</h2>
 
   <p>
-    A note can describe a choice or a condition. It cannot bind a choice among
-    alternatives, authorize work, approve a specification, or establish that a
-    claim is true. Use <code>h-decide</code> for a direct binding choice and
-    <code>h-commission</code> for execution authority.
+    A note can describe a choice or condition. It cannot make the choice,
+    authorize work, approve a specification, or prove that a claim is true. If
+    you later choose an option, record that choice through <code>h-decide</code>
+    instead of treating old note text as approval.
   </p>
 
-  <h2>Record through the typed contract</h2>
+  <h2>What a note can carry</h2>
+
+  <p>
+    A note requires a title and can include observations, rationale, source or
+    evidence references, affected files, search terms, context, and a
+    <code>valid_until</code> date. Use a freshness date when the note should not
+    support later work indefinitely.
+  </p>
+
+  <p>
+    Expiry is an attention signal. It does not delete the note or claim that
+    the historical observation never happened.
+  </p>
+
+  <h2>Advanced: direct interfaces</h2>
 
   <pre><code>haft interface note.record --json
 haft artifact create note.record --input-file input.json --json</code></pre>
 
-  <p>
-    The input requires a title. It may carry observations, evidence, rationale,
-    anchors, affected files, context, <code>valid_until</code>, search keywords,
-    and exact EntityOfConcern coordinates. The kernel validates the payload.
-  </p>
-
-  <p>The MCP surface is:</p>
+  <p>The MCP form is:</p>
 
   <pre><code>haft_note(title="...", observations=[...])</code></pre>
 
-  <h2>Typed projection is conditional</h2>
-
   <p>
-    A note may persist without becoming an exact typed
-    <code>NoteAtConcern</code> projection. That projection requires both an exact
-    <code>entity_ref</code> and its <code>bounded_context_ref</code>. Missing
-    coordinates remain visible as underdetermined; Haft does not infer identity
-    from names or rank.
-  </p>
-
-  <h2>Freshness and later use</h2>
-
-  <p>
-    Use <code>valid_until</code> when a receiving use needs a freshness boundary.
-    Expiry is an attention signal, not automatic deletion or a claim that the
-    historical observation became false.
-  </p>
-
-  <p>
-    If later work needs a binding choice, create that DecisionRecord through
-    its own authority path. Do not "promote" a note by treating its existing
-    text as operator approval.
+    A note can exist without an exact project-entity link. When that exact link
+    matters, provide the identity and project context explicitly; Haft does not
+    infer them from a similar name or search rank.
   </p>
 
   <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/concepts">EntityOfConcern and typed project memory</a></li>
-    <li><a href="/docs/decision-integrity">Decision and commission authority</a></li>
+    <li><a href="/docs/concepts">How project memory works</a></li>
+    <li><a href="/docs/decision-integrity">How a real decision differs</a></li>
   </ul>
 </DocsLayout>

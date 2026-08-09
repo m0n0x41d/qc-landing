@@ -2,154 +2,171 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Haft v9 FAQ" description="Current-release answers about FPF Query, typed memory, hosts, authority, execution, storage, and migration.">
+<DocsLayout title="Haft v9 FAQ" description="Plain answers about Haft's value, FPF, project memory, decisions, execution, storage, hosts, and current limits.">
   <h1>FAQ</h1>
+
+  <h2>What is Haft?</h2>
+
+  <p>
+    Haft is a local project-memory and reasoning layer for AI-assisted
+    engineering. It helps a coding agent distinguish problems, options, human
+    decisions, specifications, work, and evidence—and reconnect them to code
+    later.
+  </p>
 
   <h2>What is the current release?</h2>
 
   <p>
-    <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.0" target="_blank" rel="noopener">v9.0.0</a>
-    is the current release. v8.1.0 is its predecessor; there was no v8.2
-    release.
+    <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.2" target="_blank" rel="noopener">v9.0.2</a>
+    is current. It includes the v9.0.1 migration repair and fixes conventional
+    monorepo scope detection without changing the v9 capability or authority
+    boundary. v8.1.0 is the published predecessor; there was no v8.2 release.
   </p>
 
-  <h2>What is Haft v9?</h2>
+  <h2>When is Haft useful?</h2>
 
   <p>
-    Haft is a source-native FPF delivery and reliance-bearing project-memory
-    substrate for principal-led engineering work. It exposes one project graph
-    through host-agent skills, a CLI, and MCP.
+    When the project outlives one session, several people or agents need the
+    same rationale, a decision is expensive to reverse, evidence freshness
+    matters, or specifications and code need durable links.
+  </p>
+
+  <h2>When is Haft probably unnecessary?</h2>
+
+  <p>
+    For throwaway scripts, obvious mechanical changes, and low-cost fixes with
+    clear tests. Haft should not create more ceremony than the mistake it helps
+    prevent.
+  </p>
+
+  <h2>Do I need to learn FPF first?</h2>
+
+  <p>
+    No. Ask the agent normally and use <code>h-reason</code> on a costly or
+    ambiguous question. Haft retrieves the relevant source from the bundled
+    FPF version. Learning FPF later helps you inspect and steer the agent more
+    deeply, but it is not an installation prerequisite.
   </p>
 
   <h2>Is Haft a coding agent?</h2>
 
   <p>
-    No. v8 removed the standalone agent, TUI, and desktop wrappers. v9 also
-    removed <code>haft run</code>, <code>haft harness</code>, and the bundled
-    Open-Sleigh runtime. Use Haft through an existing coding agent or an
-    independently operated runner.
+    No. It plugs into an existing host. v8 removed the standalone agent, TUI,
+    and desktop wrappers. v9 also removed <code>haft run</code>,
+    <code>haft harness</code>, and bundled Open-Sleigh execution.
   </p>
 
-  <h2>Do I need to learn all of FPF first?</h2>
+  <h2>Does Haft prescribe a workflow?</h2>
 
   <p>
-    No. <code>h-reason</code> can retrieve the pinned FPF source for the current
-    concern. The agent still has to check applicability and boundaries;
-    retrieval output is not a selected method or work order.
+    No. Its 12 skills are independent entry points for different situations.
+    A plan can still contain ordered work, but the skill list is not a process
+    that every task must follow.
   </p>
 
-  <h2>Does v9 prescribe a workflow?</h2>
+  <h2>Can I use it on an existing project?</h2>
 
   <p>
-    No. The 12 skills are independent capabilities. Use the one whose condition
-    is current. Explicit WorkPlans and ordered MethodDescriptions remain valid,
-    but order is not inferred from the skill catalog.
-  </p>
-
-  <h2>Can I use Haft on an existing project?</h2>
-
-  <p>
-    Yes. Run <code>haft init</code> for the exact host, restart it, and inspect
-    onboarding status. Init installs default project memory automatically and
-    may admit only a complete supported singleton profile as
-    <code>detector_default</code>. Ambiguous or reviewed bases stay
-    operator-mediated.
+    Yes. Run <code>haft init</code> for the host you use and restart it. Haft
+    installs the default memory model automatically. A simple single-scope
+    codebase can be detected automatically; a genuinely ambiguous or
+    multi-scope project may need you to identify the intended scope.
   </p>
 
   <h2>What does onboarding ready mean?</h2>
 
   <p>
-    Only that the canonical project profile and structured project memory are
-    available. It does not establish specification applicability, health,
-    lifecycle state, evidence truth, or release readiness.
+    Only that the project profile and memory model are available. It does not
+    say the specifications are healthy, the code is correct, or the evidence
+    is current.
   </p>
 
-  <h2>When does Haft write project memory?</h2>
+  <h2>When does Haft save project memory?</h2>
 
   <p>
-    On an explicit operator request to save or bind, or when current work has a
-    concrete receiving use such as handoff, replay, audit, automation, delayed
-    evidence, or costly reversal. Empty memory and generic future usefulness
-    are not enough.
+    When you explicitly ask to save or bind something, or when current work
+    has a concrete later use such as handoff, replay, audit, automation,
+    delayed evidence, or costly reversal. Empty memory and generic future
+    usefulness are not enough.
   </p>
 
   <h2>Where is data stored?</h2>
 
   <p>
-    Runtime structured state lives in local SQLite under
-    <code>~/.haft/projects/&lt;project-id&gt;/</code>. Reviewable project carriers
-    live under <code>.haft/</code>. The local cross-project decision-summary
-    index lives at <code>~/.haft/index.db</code>.
+    Structured state lives in local SQLite under
+    <code>~/.haft/projects/&lt;project-id&gt;/</code>. Reviewable project files live
+    under <code>.haft/</code>. A small local decision-summary index lives at
+    <code>~/.haft/index.db</code>.
   </p>
 
-  <h2>How do teams share records?</h2>
+  <h2>Can a team share Haft state through git?</h2>
 
   <p>
-    Commit supported <code>.haft/*.md</code> carriers through git. Teammates run
-    <code>haft sync</code> after pulling to import them into local SQLite.
-    Markdown is the exchange carrier; it is not the acting runtime object.
+    Partly. Readable records can travel with a pull request, and supported
+    subsets can be imported with <code>haft sync</code> or
+    <code>haft spec sync</code>. v9 does not provide a fully replicated team
+    database, complete authority replay, or safe concurrent use of one ledger
+    from several worktrees. See <a href="/docs/team-sync">Teams &amp; git</a>.
   </p>
 
-  <h2>How do I search in v9?</h2>
+  <h2>Can the agent decide for me?</h2>
 
   <p>
-    There is no <code>/h-search</code> skill. Use the query that matches the
-    object: <code>haft fpf query|lookup|inspect</code> for FPF source,
-    <code>haft graph explore</code> for code, typed-memory
-    <code>resolve|neighborhood|recall</code> for one EntityOfConcern, or an exact
-    <code>haft_query</code> project-record action.
+    It can recommend and compare. When you directly choose one clear option
+    for one clear subject and scope, a supported host can record that through
+    <code>h-decide</code>. The agent must not turn its own recommendation,
+    quoted text, or tool fields into your decision.
   </p>
 
-  <h2>Can the agent bind a decision automatically?</h2>
+  <h2>Why do specification approve, rebaseline, and reopen commands still exist?</h2>
 
   <p>
-    A supported host may route one direct, unambiguous operator request through
-    <code>h-decide</code>. The skill token, a recommendation, quoted text, or
-    tool payload is not approval. Ambiguity requires a Human Gate Brief and an
-    operator answer.
+    They manage the reviewed baseline of one specification section in the
+    current v9.0.2 runtime. They are explicit operator-controlled changes and
+    are not inferred from review, sync, tests, or a git merge. The separate
+    human-reviewed profile-link repair explored during v9 development was
+    removed; compatible memory-model upgrades are automatic.
   </p>
 
   <h2>Can Haft execute commissioned work?</h2>
 
   <p>
-    Haft records runner-neutral WorkCommission and RuntimeRun lifecycle data.
-    It does not execute or apply the work. <code>h-commission</code> is
-    manual-only because commission creation grants bounded execution authority.
+    No. It can keep runner-neutral commission and run records for an external
+    integration. Your coding-agent host or a separately operated runner does
+    the work. Haft itself does not apply, merge, push, deploy, or publish it.
   </p>
 
-  <h2>Does Haft support Cursor and other hosts?</h2>
+  <h2>Which hosts are supported?</h2>
 
   <p>
-    Claude Code and Codex are stable v9 hosts. Cursor, Grok, Pi, Hermes, Zed,
-    Antigravity, OpenCode, Gemini CLI, and Air have explicit experimental or
-    legacy adapter flags. Run <code>haft init --help</code> for the current
-    installed surface.
+    Claude Code and Codex are the stable v9 hosts. Cursor, Grok, Pi, Hermes,
+    Zed, Antigravity, OpenCode, Gemini CLI, and Air have experimental or legacy
+    adapters. Run <code>haft init --help</code> for the installed surface.
   </p>
 
-  <h2>What is haft-embed in v9?</h2>
+  <h2>What is haft-embed?</h2>
 
   <p>
     <code>haft-embed</code> is an optional compatibility sidecar for older
-    semantic-recall paths. It is outside the v9 contract and P14 acceptance
-    basis. Its presence does not support a v9 dense/hybrid retrieval-quality
-    claim.
+    semantic-recall paths. It is not required for the v9 project-memory and FPF
+    path, and Haft makes no claim that its dense or hybrid recall is better
+    than FTS, <code>rg</code>, a pinned source file, or host search.
   </p>
 
-  <h2>How do I know the host loaded v9?</h2>
+  <h2>How do I know the host loaded the new version?</h2>
 
   <p>
-    Restart the host, record <code>haft version</code> and the binary checksum,
-    and inspect the actual MCP process and interface. Source code,
-    documentation, or a local test run cannot prove the identity of an already
-    running host process.
+    Fully restart the host, run <code>haft version</code> and
+    <code>haft doctor</code>, and inspect the loaded MCP surface when exact
+    identity matters. Updating files on disk does not replace a process that
+    is already running.
   </p>
 
   <h2>What happened to quint-code?</h2>
 
   <p>
-    The project was renamed to Haft in v6. Older <code>.quint/</code>,
-    <code>~/.quint-code/</code>, and <code>/q-*</code> surfaces belong to the
-    historical migration path. See the <a href="/docs/migration">v8.1 to v9.0 migration guide</a>
-    and the archived versioned pages for earlier upgrades.
+    The project was renamed to Haft in v6. Old <code>.quint/</code>,
+    <code>~/.quint-code/</code>, and <code>/q-*</code> names belong to historical
+    migration paths, not the current product surface.
   </p>
 </DocsLayout>

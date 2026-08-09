@@ -2,69 +2,60 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Haft roadmap after v9.0" description="The v9 release boundary, explicitly deferred research, and where to verify future release work without turning candidates into promises.">
+<DocsLayout title="Haft roadmap after v9" description="What works in the current release, what is deliberately outside it, and which gaps remain open without turning them into promises.">
   <h1>Roadmap</h1>
 
   <p>
-    v9.0.0 is the current release. This page separates it from later candidates
-    and research. A proposal, issue, source branch, or schema is not a product
-    commitment.
+    The current release is
+    <a href="https://github.com/m0n0x41d/haft/releases/tag/v9.0.2" target="_blank" rel="noopener">v9.0.2</a>.
+    This page separates shipped behavior from open work. An issue, branch,
+    design, or experiment is not a product promise.
   </p>
 
-  <h2>Included in v9.0</h2>
+  <h2>Available now</h2>
 
   <ul>
-    <li>source-native FPF concern query, exact lookup, and exact inspection;</li>
-    <li>12 independent host-agent skills;</li>
-    <li>fused code and reasoning graph orientation;</li>
-    <li>project-profile onboarding and default typed project memory;</li>
-    <li>exact EntityOfConcern resolve, neighborhood, and bounded recall;</li>
-    <li>typed SpecSection lifecycle and source-currentness repair;</li>
-    <li>runner-neutral WorkCommission and RuntimeRun records;</li>
-    <li>CLI, skills, and MCP over one project graph.</li>
+    <li>FPF concern search, exact lookup, and full source inspection;</li>
+    <li>12 independent skills, including <code>h-reason</code> as the umbrella entry;</li>
+    <li>local typed project memory written only for a concrete later use;</li>
+    <li>code, decision, specification, invariant, and note orientation in one graph;</li>
+    <li>project setup with automatic default memory and compatible upgrades;</li>
+    <li>specification health, evidence freshness, and drift signals;</li>
+    <li>CLI, skills, and MCP over one local project state;</li>
+    <li>runner-neutral commission records for external integrations.</li>
   </ul>
 
-  <h2>Deliberately outside v9.0</h2>
+  <h2>Deliberately outside v9</h2>
 
   <ul>
     <li>a standalone coding agent, TUI, or desktop wrapper;</li>
     <li><code>haft run</code>, <code>haft harness</code>, and bundled Open-Sleigh execution;</li>
-    <li>a public <code>h-plan</code> skill or universal reasoning workflow;</li>
-    <li>automatic execution, local patch application, merge, push, deploy, or publication authority;</li>
-    <li>reviewed EntityOfConcern merge/split as a public v9 identity change;</li>
-    <li>any claim that dense or hybrid retrieval outperforms FTS, <code>rg</code>, a pinned FPF file, or host RAG.</li>
+    <li>a universal reasoning workflow or public <code>h-plan</code> stage;</li>
+    <li>automatic patch application, merge, push, deploy, or publication;</li>
+    <li>automatic merging or splitting of project identities;</li>
+    <li>a claim that dense or hybrid retrieval outperforms simpler search.</li>
   </ul>
 
-  <p>
-    The optional <code>haft-embed</code> sidecar remains a compatibility
-    component outside the v9 contract and P14 acceptance basis.
-  </p>
-
-  <h2>Deferred work is not release status</h2>
-
-  <p>
-    Later v9.x work may revisit the explicitly deferred identity-reconciliation
-    and retrieval-evaluation boundaries. Until one exact candidate is
-    implemented, qualified, authorized, and released, those remain proposals
-    or research rather than current product behavior.
-  </p>
-
-  <p>
-    The return condition for a stronger claim is the same as for v9.0: current
-    evidence tied to one exact candidate, followed by release authorization.
-  </p>
-
-  <h2>Where to verify current work</h2>
+  <h2>Open product gaps</h2>
 
   <ul>
-    <li><a href="https://github.com/m0n0x41d/haft/releases" target="_blank" rel="noopener">GitHub Releases</a> for current release status;</li>
-    <li><a href="https://github.com/m0n0x41d/haft/blob/main/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG.md</a> for shipped release history;</li>
-    <li><a href="https://github.com/m0n0x41d/haft/issues" target="_blank" rel="noopener">GitHub issues</a> for open work and discussion;</li>
-    <li><code>haft version</code>, <code>haft doctor</code>, and <code>haft interface</code> for the installed runtime surface.</li>
+    <li><strong>Team runtime.</strong> Git review and partial import exist; complete authority-aware replay and safe shared multi-worktree identity do not.</li>
+    <li><strong>Ceremony calibration.</strong> The hardest UX problem remains choosing enough structure for the cost of error without turning small work into bureaucracy.</li>
+    <li><strong>Identity reconciliation.</strong> Public v9 identity changes are alias-only; reviewed merge and split need a separate contract.</li>
+    <li><strong>Retrieval evaluation.</strong> Embedding compatibility exists, but superiority claims require a real parity measurement rather than intuition.</li>
   </ul>
 
   <p>
-    Runtime inspection proves only the installation being inspected. It does
-    not turn an unreleased development binary into the current product.
+    These are directions and return conditions, not release commitments. Check
+    the repository for work that has actually shipped.
   </p>
+
+  <h2>Where to check current work</h2>
+
+  <ul>
+    <li><a href="https://github.com/m0n0x41d/haft/releases" target="_blank" rel="noopener">GitHub Releases</a> for published versions;</li>
+    <li><a href="https://github.com/m0n0x41d/haft/blob/main/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG.md</a> for shipped changes;</li>
+    <li><a href="https://github.com/m0n0x41d/haft/issues" target="_blank" rel="noopener">GitHub issues</a> for open discussion;</li>
+    <li><code>haft version</code>, <code>haft doctor</code>, and <code>haft interface</code> for the installation you are using.</li>
+  </ul>
 </DocsLayout>

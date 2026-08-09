@@ -2,144 +2,124 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<DocsLayout title="Haft v9 skills, CLI, and MCP" description="Reference for the 12 independent skills, current CLI families, 12 MCP tools, and removed execution surfaces.">
+<DocsLayout title="Haft skills, CLI, and MCP reference" description="A complete v9 reference for users who need the exact surface after learning the normal conversational path.">
   <h1>Skills, CLI &amp; MCP</h1>
 
+  <div class="callout">
+    <p>
+      <strong>You do not need to memorize this page.</strong> In ordinary use,
+      talk to the coding agent and use <code>h-reason</code> when the route is
+      unclear. This is the reference for scripting, debugging, and exact
+      integration work.
+    </p>
+  </div>
+
   <p>
-    Haft exposes one project graph through host-agent skills, a manual CLI, and
-    the <code>haft serve</code> MCP server. The surfaces share the same kernel
-    contracts, but they do not carry the same authority. A visible command or
-    schema is not permission to perform its effect.
+    Skills help the host agent choose a method. The CLI gives a human direct
+    access. The <code>haft serve</code> MCP server exposes structured operations
+    to the host. All three use the same local project state.
   </p>
 
   <h2>The 12 v9 skills</h2>
 
-  <p>
-    These are independent capabilities, not workflow stages. Auto means the
-    host may route a matching request to the skill. It does not mean the skill
-    may invent operator authority or persist every result.
-  </p>
-
   <table>
-    <thead>
-      <tr>
-        <th>Skill</th>
-        <th>Routing</th>
-        <th>Current condition</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Skill</th><th>Use it when</th></tr></thead>
     <tbody>
-      <tr><td><code>h-reason</code></td><td>auto</td><td>Ambiguous FPF-aware question that needs the source-first umbrella</td></tr>
-      <tr><td><code>h-frame</code></td><td>auto</td><td>The problem itself is under-articulated</td></tr>
-      <tr><td><code>h-diagnose</code></td><td>auto</td><td>A concrete failure has rival causes</td></tr>
-      <tr><td><code>h-explore</code></td><td>auto</td><td>Genuinely distinct candidate approaches are needed</td></tr>
-      <tr><td><code>h-compare</code></td><td>auto</td><td>Existing candidates need a parity-based comparison</td></tr>
-      <tr><td><code>h-decide</code></td><td>auto router</td><td>A direct, unambiguous operator request binds one bounded choice</td></tr>
-      <tr><td><code>h-verify</code></td><td>auto</td><td>A recorded decision or claim must be tested against current evidence</td></tr>
-      <tr><td><code>h-status</code></td><td>auto</td><td>Live project state, drift, coverage, or readiness is the question</td></tr>
-      <tr><td><code>h-onboard</code></td><td>auto</td><td>Haft setup or the project profile is absent or incomplete</td></tr>
-      <tr><td><code>h-spec</code></td><td>auto</td><td>A typed spec carrier, lifecycle act, or source-currentness repair is current</td></tr>
-      <tr><td><code>h-note</code></td><td>auto</td><td>The operator asks to persist one non-binding fact, observation, caveat, or rationale</td></tr>
-      <tr><td><code>h-commission</code></td><td>manual only</td><td>The operator grants bounded execution authority through a WorkCommission</td></tr>
+      <tr><td><code>h-reason</code></td><td>The question is ambiguous and the right route is not yet clear</td></tr>
+      <tr><td><code>h-frame</code></td><td>The problem itself is under-articulated</td></tr>
+      <tr><td><code>h-diagnose</code></td><td>A concrete failure has rival causes</td></tr>
+      <tr><td><code>h-explore</code></td><td>You need genuinely different approaches</td></tr>
+      <tr><td><code>h-compare</code></td><td>Existing options need the same comparison basis</td></tr>
+      <tr><td><code>h-decide</code></td><td>You directly choose one option for one clear subject and scope</td></tr>
+      <tr><td><code>h-verify</code></td><td>A recorded decision or claim must meet current evidence</td></tr>
+      <tr><td><code>h-status</code></td><td>You want the current attention view: work, drift, evidence, or coverage</td></tr>
+      <tr><td><code>h-onboard</code></td><td>Project setup or scope detection needs attention</td></tr>
+      <tr><td><code>h-spec</code></td><td>The current product or software contract is in question</td></tr>
+      <tr><td><code>h-note</code></td><td>You explicitly want to save one non-binding observation</td></tr>
+      <tr><td><code>h-commission</code></td><td>You manually create durable, bounded authority for a runner</td></tr>
     </tbody>
   </table>
 
   <p>
-    Completion of one skill never implies that another must follow.
-    <code>h-decide</code> can route a sufficiently exact natural-language
-    choice; invoking the skill is not itself an approval receipt.
-    <code>h-commission</code> remains manual-only.
+    These are independent entry points. “Auto” routing means the host may use a
+    matching skill; it does not mean every answer is saved or that the agent
+    can invent a human choice. <code>h-commission</code> is manual-only.
   </p>
 
-  <h2>Current CLI families</h2>
+  <h2>CLI families</h2>
 
-  <p>Run <code>haft --help</code> for the complete installed command tree.</p>
+  <p>Run <code>haft --help</code> on the installed binary for the complete tree.</p>
 
   <table>
-    <thead>
-      <tr>
-        <th>CLI</th>
-        <th>Purpose</th>
-      </tr>
-    </thead>
+    <thead><tr><th>CLI</th><th>Purpose</th></tr></thead>
     <tbody>
-      <tr><td><code>haft init</code></td><td>Initialize project core and selected host integrations</td></tr>
-      <tr><td><code>haft serve</code></td><td>Start the project-bound MCP server</td></tr>
-      <tr><td><code>haft fpf query|lookup|inspect</code></td><td>Read the source-native FPF publication</td></tr>
-      <tr><td><code>haft graph explore</code></td><td>Orient by exact code symbol or bounded concern</td></tr>
-      <tr><td><code>haft spec ...</code></td><td>Inspect, validate, review, export, and route typed SpecSection lifecycle actions</td></tr>
-      <tr><td><code>haft memory ...</code></td><td>Resolve, read, validate, or admit typed project memory</td></tr>
-      <tr><td><code>haft onboard profile ...</code></td><td>Apply one readable, already-prepared profile choice</td></tr>
-      <tr><td><code>haft commission ...</code></td><td>Manage runner-neutral WorkCommission records</td></tr>
-      <tr><td><code>haft decision ...</code></td><td>Inspect governing sets and decision reconciliation</td></tr>
-      <tr><td><code>haft artifact create CAPABILITY --input-file ...</code></td><td>Create or update one artifact through its dedicated effect sink</td></tr>
-      <tr><td><code>haft sync</code></td><td>Import git-carried <code>.haft/*.md</code> projections into local SQLite</td></tr>
-      <tr><td><code>haft check</code></td><td>Run the deterministic CI-oriented governance check</td></tr>
-      <tr><td><code>haft doctor</code></td><td>Inspect installation and project-binding health</td></tr>
-      <tr><td><code>haft interface [capability] --json</code></td><td>Read compact machine-readable kernel contracts</td></tr>
+      <tr><td><code>haft init</code></td><td>Initialize project memory and selected host integrations</td></tr>
+      <tr><td><code>haft serve</code></td><td>Start the MCP server for this project</td></tr>
+      <tr><td><code>haft fpf query|lookup|inspect</code></td><td>Find and open the bundled FPF source</td></tr>
+      <tr><td><code>haft graph explore</code></td><td>Find code and related project records</td></tr>
+      <tr><td><code>haft spec ...</code></td><td>Draft, inspect, check, exchange, and manage specifications</td></tr>
+      <tr><td><code>haft memory ...</code></td><td>Resolve and inspect exact project memory</td></tr>
+      <tr><td><code>haft onboard ...</code></td><td>Inspect or complete project setup</td></tr>
+      <tr><td><code>haft decision ...</code></td><td>Inspect decisions and reconcile their links</td></tr>
+      <tr><td><code>haft commission ...</code></td><td>Manage durable records for external runner work</td></tr>
+      <tr><td><code>haft artifact create ...</code></td><td>Create one supported project record from an input file</td></tr>
+      <tr><td><code>haft sync</code></td><td>Import the supported subset of readable artifact projections</td></tr>
+      <tr><td><code>haft check</code></td><td>Run deterministic governance checks suitable for CI</td></tr>
+      <tr><td><code>haft doctor</code></td><td>Inspect installation and project-binding problems</td></tr>
+      <tr><td><code>haft interface [capability] --json</code></td><td>Read exact machine-facing contracts</td></tr>
     </tbody>
   </table>
 
-  <div class="callout">
-    <p>
-      <strong>Runtime truth:</strong> use the help and interface output from the
-      binary that is actually loaded by the host. Documentation describes the
-      release; it cannot prove that a stale MCP process has restarted onto it.
-    </p>
-  </div>
+  <h2>Check the version your host loaded</h2>
+
+  <p>
+    Documentation describes a release. An already running host may still have
+    an older binary and tool catalog in memory. After init or upgrade, restart
+    the host and use <code>haft version</code>, <code>haft doctor</code>, and
+    <code>haft interface</code> when exact behavior matters.
+  </p>
 
   <h2>The 12 MCP tools</h2>
 
   <table>
-    <thead>
-      <tr>
-        <th>Tool</th>
-        <th>Purpose</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Tool</th><th>Purpose</th></tr></thead>
     <tbody>
-      <tr><td><code>haft_note</code></td><td>Persist one non-binding note through the note contract</td></tr>
+      <tr><td><code>haft_query</code></td><td>Read status, FPF source, code context, specifications, decisions, and project memory</td></tr>
       <tr><td><code>haft_problem</code></td><td>Frame or characterize a problem</td></tr>
-      <tr><td><code>haft_solution</code></td><td>Explore or compare candidate solutions</td></tr>
-      <tr><td><code>haft_decision</code></td><td>Decision, claim, evidence, and baseline operations</td></tr>
-      <tr><td><code>haft_refresh</code></td><td>Scan and route evidence or decision maintenance</td></tr>
-      <tr><td><code>haft_query</code></td><td>Status, FPF, code graph, governing records, specs, and typed-memory reads</td></tr>
-      <tr><td><code>haft_method</code></td><td>Pull, close, and recover task-local MethodRuns</td></tr>
-      <tr><td><code>haft_commission</code></td><td>Runner-neutral WorkCommission lifecycle</td></tr>
-      <tr><td><code>haft_spec_section</code></td><td>Typed SpecSection lifecycle projection and gated acts</td></tr>
-      <tr><td><code>haft_onboard</code></td><td>Read setup status and prepare non-binding profile reviews</td></tr>
-      <tr><td><code>haft_entity</code></td><td>Establish one minimum non-binding EntityOfConcern with atomic aliases</td></tr>
-      <tr><td><code>haft_memory</code></td><td>Expert low-level typed-memory validation or admission</td></tr>
+      <tr><td><code>haft_solution</code></td><td>Explore or compare options</td></tr>
+      <tr><td><code>haft_decision</code></td><td>Work with decisions, claims, evidence, and baselines</td></tr>
+      <tr><td><code>haft_refresh</code></td><td>Scan and maintain stale or drifted records</td></tr>
+      <tr><td><code>haft_note</code></td><td>Save one non-binding note</td></tr>
+      <tr><td><code>haft_method</code></td><td>Open and close task-local engineering guidance</td></tr>
+      <tr><td><code>haft_commission</code></td><td>Manage runner-neutral commissions and run records</td></tr>
+      <tr><td><code>haft_spec_section</code></td><td>Read and update one specification section</td></tr>
+      <tr><td><code>haft_onboard</code></td><td>Read setup status and prepare a scope review when needed</td></tr>
+      <tr><td><code>haft_entity</code></td><td>Establish one exact, non-binding project identity</td></tr>
+      <tr><td><code>haft_memory</code></td><td>Low-level memory validation and admission for expert use</td></tr>
     </tbody>
   </table>
 
   <p>
-    MCP validates arguments server-side and returns structured errors. Creation
-    actions for decisions, commissions, profile changes, and other binding
-    effects still require their exact authority path. Model-supplied fields do
-    not prove authorization.
+    MCP validates arguments in the server and returns structured errors. A
+    tool being visible does not grant permission to create a human decision,
+    commission work, or change another binding state.
   </p>
 
   <h2>Removed from v9</h2>
 
   <ul>
-    <li><code>haft run</code> and <code>haft harness</code></li>
-    <li>the bundled Open-Sleigh and Elixir/OTP/BEAM runtime</li>
+    <li><code>haft run</code>, <code>haft harness</code>, and bundled Open-Sleigh execution</li>
+    <li>the Elixir/OTP/BEAM runtime dependency</li>
     <li><code>/h-search</code>, <code>/h-problems</code>, and <code>/h-view</code></li>
     <li><code>haft fpf search</code>; use <code>query</code>, <code>lookup</code>, or <code>inspect</code></li>
+    <li>the old five-stage workflow as a required product model</li>
   </ul>
-
-  <p>
-    Project search, active-problem attention, and projections remain available
-    through current <code>haft_query</code> actions and focused CLI families.
-    The removed slash-command files are not compatibility aliases.
-  </p>
 
   <h2>Related pages</h2>
 
   <ul>
-    <li><a href="/docs/reasoning">Source-native FPF reasoning</a></li>
-    <li><a href="/docs/concepts">Typed project memory</a></li>
-    <li><a href="/docs/decision-integrity">Authority and commissions</a></li>
+    <li><a href="/docs/first-steps">Return to the normal user path</a></li>
+    <li><a href="/docs/agent-prompt">Host-specific setup</a></li>
+    <li><a href="/docs/migration">Migration from v8.1</a></li>
   </ul>
 </DocsLayout>
