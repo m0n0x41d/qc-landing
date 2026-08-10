@@ -67,10 +67,14 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
   <h2>Can I use it on an existing project?</h2>
 
   <p>
-    Yes. Run <code>haft init</code> for the host you use and restart it. Haft
-    installs the default memory model automatically. A simple single-scope
-    codebase can be detected automatically; a genuinely ambiguous or
-    multi-scope project may need you to identify the intended scope.
+    Yes. If the codebase has never used Haft, run <code>haft init</code> for the
+    host you use and restart it. Once initialized, ordinary Haft upgrades need
+    only the new binary plus a host restart: explicitly compatible database
+    migrations activate when <code>haft serve</code> starts. Re-init is for
+    changing or refreshing the host carriers. Haft installs the default memory
+    model automatically. A simple single-scope codebase can be detected
+    automatically; a genuinely ambiguous or multi-scope project may need you
+    to identify the intended scope.
   </p>
 
   <h2>What does onboarding ready mean?</h2>

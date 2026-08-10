@@ -42,6 +42,14 @@ haft init --all      # both stable host integrations</code></pre>
   </p>
 
   <p>
+    Re-init is not required for routine project-database upgrades. After
+    installing a new Haft binary, restart or reconnect the host; the new
+    <code>haft serve</code> process activates only explicitly compatible
+    migration boundaries. Use re-init when the host integration or its managed
+    carriers actually need to change.
+  </p>
+
+  <p>
     Put project-specific rules outside the managed markers. Do not maintain a
     second handwritten copy of the Haft protocol beside the generated section;
     it will drift from the installed version.

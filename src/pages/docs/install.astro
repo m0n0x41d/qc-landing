@@ -22,7 +22,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
     agent-runtime requirement.
   </p>
 
-  <h2>Initialize one project</h2>
+  <h2>Initialize one new project</h2>
 
   <pre><code>cd /path/to/project
 haft init                    # interactive host selection in a terminal
@@ -44,6 +44,27 @@ haft init --all              # both stable host integrations</code></pre>
       process keeps using the binary and skill catalog it already loaded.
     </p>
   </div>
+
+  <h2>Upgrade an initialized project</h2>
+
+  <p>
+    Install the new binary and fully restart or reconnect the coding-agent
+    host. The new <code>haft serve</code> process applies only project-ledger
+    migration boundaries that the release explicitly declares startup-safe.
+    The current <code>57 -&gt; 58</code> transition first publishes a verified
+    private SQLite snapshot beside the ledger. A current database is not
+    rewritten and no backup is created.
+  </p>
+
+  <p>
+    Do not re-run <code>haft init</code> after every release just to maintain the
+    database. Re-init remains the operation for bootstrap, changing host
+    targets, or refreshing Haft-owned skills and managed instruction carriers.
+    If startup reports a manual chain, use the exact
+    <code>haft project migrate</code> command in that diagnostic; missing
+    binding, future schema, integrity, and stale WAL/SHM states have separate
+    recovery instructions.
+  </p>
 
   <h2>Verify the connection</h2>
 
